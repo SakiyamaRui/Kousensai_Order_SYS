@@ -1,15 +1,4 @@
 <?php
-    require_once('C:\Users\ic211216\Desktop\創造研究\Kousensai_Order_SYS\app\main.php');
-
-    /**
-     * Login
-     * @param string $username
-     * @param string $password
-     */
-    function storeLogin($username, $password) {
-        // 
-    }
-
     /**
      * @param string ユーザー名
      * @param string パスワード
