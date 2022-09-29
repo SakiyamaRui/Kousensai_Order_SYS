@@ -112,6 +112,7 @@
 |`quantity`| 個数 | INT(3)|
 |`passed_flag`| 受け渡し済みフラグ | BOOLEAN |
 |`product_option`| オプション情報 | JSON |
+|`unit_price`| 単価 | INT(4) |
 
 ### `T_ORDER_INFORMATION_MAIN`
 | 項目(カラム名) | 項目(和名) | 型・サイズ | ヌル | インデックス | その他 |
