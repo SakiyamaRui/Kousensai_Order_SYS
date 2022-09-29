@@ -96,6 +96,3 @@
         // DBとの接続を解除
         unset($DB);
     }
-
-
-    createStoreAccount('rui', '123', '1');
