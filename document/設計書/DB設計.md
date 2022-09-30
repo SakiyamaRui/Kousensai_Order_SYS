@@ -111,6 +111,7 @@
 |`product_id`| 商品識別子 | CHAR(5) | | INDEX |
 |`quantity`| 個数 | INT(3)|
 |`passed_flag`| 受け渡し済みフラグ | BOOLEAN |
+|`confirmed_order_flag`| 注文確定フラグ | BOOLEAN |
 |`product_option`| オプション情報 | JSON |
 |`unit_price`| 単価 | INT(4) |
 
@@ -122,7 +123,6 @@
 |`order_total_price`| 注文の合計金額|INT(5) |
 |`paid_flag`| 支払い済みフラグ | BOOLEAN |
 |`fingerprint`| フィンガープリント | VARCHAR(1024) || INDEX |
-|`confirmed_order_flag`| 注文確定フラグ | BOOLEAN |
 |`product_image_path`| 商品画像のURL | VARCHAR() |
 
 ### `T_CART_DATA`
