@@ -60,8 +60,8 @@
 | `T_PRODUCT_INFORMATION` |`ORDER_SYS_DB`| 商品に関する情報を管理 |
 | `T_ORDER_INFORMATION_DETAIL` |`ORDER_SYS_DB`| 注文した商品の情報を管理 |
 | `T_ORDER_INFORMATION_MAIN` | `ORDER_SYS_DB` | 注文とトークンを結びつける |
-| `T_IMAGE_SAVE_PATH` | `ORDER_SYS_DB` | 商品の画像のURLを管理 |
-| `T_QRCODE_IMAGE_PATH` | `ORDER_SYS_DB` | QRコードの画像のURLを管理 |
+|`T_CART_DATA`| `ORDER_SYS_DB` | カートデータ管理 |
+| `T_SAVE_QRCODE_PATH` | `ORDER_SYS_DB` | QRコードの画像のURLを管理 |
 |`T_STOCK` | `ORDER_SYS_DB` | 在庫管理 |
 
 
