@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品の情報を<?php echo $type; ?></title>
+
+    <link rel="stylesheet" href="/css/costomer.css">
+    <link rel="stylesheet" href="/css/item.css">
+    <?php include(ROOT_PATH.'\template\fonts.html'); ?>
+</head>
+<body>
+    <?php include(ROOT_PATH.'\template\costomer\header.html'); ?>
+
+    <div class="product-edit">
+        <div class="img">
+            <label>
+                <div class="display">
+                    No Image
+                </div>
+                <input type="file" accept="image/*" id="image-input">
+            </label>
+        </div>
+        <div class="product-info">
+            <div class="main-label">
+                商品の情報
+            </div>
+            <div class="product-name">
+                <input type="text" id="product-name" placeholder="商品名">
+            </div>
+            <div class="product-price">
+                ¥
+                <input type="text" id="product-price" placeholder="商品の値段">
+            </div>
+            <div class="product-detail">
+                <textarea placeholder="商品の解説"></textarea>
+            </div>
+        </div>
+
+        <div class="option-list">
+            <div class="label">
+                オプション
+            </div>
+        </div>
+
+        <div class="append-option">
+            オプションの追加
+        </div>
+    </div>
+    <div class="func">
+        <span class="btn">
+            保存
+        </span>
+    </div>
+</body>
+</html>
+
+<script>
+    window.addEventListener("DOMContentLoaded", (e) => {
+        //
+        let option_list = document.querySelector('.product-edit .option-list');
+        let append_option_btn = document.querySelector('.product-edit .append-option');
+        append_option_btn.addEventListener("click", () => {
+            // DOMの生成
+            let Dom = newOptionDOM();
+
+            // 追加
+            option_list.appendChild(Dom);
+        });
+    });
+
+    function newOptionDOM() {
+        let mainColumn = document.createElement("div");
+        mainColumn.setAttribute("class", "column");
+
+        /* first-row */
+        let first_row = document.createElement("div");
+        first_row.setAttribute("class", "first-row");
+            let option_name = document.createElement("div");
+            option_name.setAttribute("class", "option-name");
+                let option_name_input = document.createElement("input");
+                option_name_input.setAttribute("type", "text");
+                option_name_input.setAttribute("class", "option-name-value");
+                option_name_input.setAttribute("placeholder", "オプション名");
+            option_name.appendChild(document.createTextNode("オプション名:"));
+            option_name.appendChild(option_name_input);
+
+            let option_public = document.createElement("div");
+            option_public.setAttribute("class", "option-public");
+                let option_public_select = document.createElement("input");
+                option_public_select.setAttribute("type", "checkbox");
+                option_public_select.setAttribute("class", "isOption-public");
+            option_public.appendChild(document.createTextNode("非公開:"));
+            option_public.appendChild(option_public_select);
+        first_row.appendChild(option_name);
+        first_row.appendChild(option_public);
+
+        /* option-select-list */
+        let option_list = document.createElement("div");
+        option_list.setAttribute("class", "option-select-list");
+            let label = document.createElement("div");
+            label.setAttribute("class", "label");
+                let option_select_append = document.createElement("span");
+                option_select_append.setAttribute("class", "append");
+                option_select_append.appendChild(document.createTextNode('選択肢の追加'));
+            label.appendChild(document.createTextNode("オプションの選択肢"));
+            label.appendChild(option_select_append);
+
+            let head = document.createElement("div");
+            head.setAttribute("class", "head");
+                let headMenuList = ["選択肢", "初期値", "値段", "在庫数", ""];
+                headMenuList.forEach(elm => {
+                    let head_col = document.createElement("div");
+                    head_col.setAttribute("class", "head-column");
+                    head_col.appendChild(document.createTextNode(elm));
+
+                    head.appendChild(head_col);
+                });
+            let list = document.createElement("div");
+            list.setAttribute("class", "list");
+            list.appendChild(newOptionSelectionDOM());
+        option_list.appendChild(label);
+        option_list.appendChild(head);
+        option_list.appendChild(list);
+
+        /* delete */
+        let delete_btn = document.createElement("div");
+        delete_btn.setAttribute("class", "delete");
+        delete_btn.appendChild(document.createTextNode('オプションの削除'));
+
+        mainColumn.appendChild(first_row);
+        mainColumn.appendChild(option_list);
+        mainColumn.appendChild(delete_btn);
+
+        /* イベントリスナの設定 */
+        // 選択肢の追加
+        option_select_append.addEventListener('click', (e) => {
+            // 入力を正しく行っているか
+            let list = e.target.parentNode.parentNode.querySelector('.list');
+            let input_values = list.querySelectorAll('input.option-value');
+
+            let result = true;
+            input_values.forEach((elm) => {
+                if (elm.value == '') {
+                    alert('未記入の箇所があります');
+                    result = false;
+                    return false;
+                }
+            });
+
+            if (result == true) {
+                list.appendChild(newOptionSelectionDOM());
+            }
+        });
+        // オプションの削除
+        delete_btn.addEventListener("click", (e) => {
+            e.target.parentNode.remove();
+        });
+
+        return mainColumn;
+    }
+
+    function newOptionSelectionDOM() {
+        let option_column = document.createElement("div");
+        option_column.setAttribute("class", "option-column");
+
+        let column_body_list =[
+            {type: "text", class: "option-value", placeholder: "選択肢を入力"},
+            {type: "checkbox", class: "isDefault"},
+            {type: "text", class: "option-select-price", placeholder: "値段"},
+            {type: "text", class: "option-select-limit", placeholder: "在庫数"}
+        ];
+
+        column_body_list.forEach(elm => {
+            let div = document.createElement("div");
+            let input = document.createElement("input");
+            input.setAttribute("type", elm.type);
+            input.setAttribute("class", elm.class);
+
+            if (elm.hasOwnProperty('placeholder')) {
+                input.setAttribute("placeholder", elm.placeholder);
+            }
+
+            div.appendChild(input);
+            option_column.appendChild(div);
+        });
+
+        return option_column;
+    }
+</script>
