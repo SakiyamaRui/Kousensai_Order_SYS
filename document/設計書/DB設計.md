@@ -63,6 +63,7 @@
 |`T_CART_DATA`| `ORDER_SYS_DB` | カートデータ管理 |
 | `T_SAVE_QRCODE_PATH` | `ORDER_SYS_DB` | QRコードの画像のURLを管理 |
 |`T_STOCK` | `ORDER_SYS_DB` | 在庫管理 |
+|`T_NOTICE_DATA`| `ORDER_SYS_DB` | プッシュ通知に関するデータを管理 |
 
 
 ## データ・テーブル詳細
@@ -87,7 +88,7 @@
 | 項目(カラム名) | 項目(和名) | 型・サイズ | ヌル | インデックス | その他 |
 | :-- | :-- | :-: | :-: | :-: | :-- |
 | `store_id` | 店舗識別子 | CHAR(10) | | PRIMARY |
-| `store_name` | 店舗の名前 | VARCHAR(20) |
+| `store_name` | 店舗の名前 | VARCHAR(25) |
 
 
 
@@ -96,10 +97,10 @@
 | :-- | :-- | :-: | :-: | :-: | :-- |
 |`product_id`| 商品識別子 | CHAR(5) | | PRIMARY |
 |`store_id` | 店舗識別子 | CHAR(10) | | INDEX |
-|`product_name`| 商品の名前 | VARCHAR(20) |
+|`product_name`| 商品の名前 | VARCHAR(50) |
 |`product_detail`| 商品の説明 | Text |
-|`product_price`| 値段 | INT(4) | | INDEX |
-|`product_image_path`| 商品画像のURL | VARCHAR()|
+|`product_price`| 値段 | INT(4) |
+|`product_image_url`| 商品画像のURL | CHAR(55)| 〇 |
 |`product_option`|オプション情報| JSON |
 |`product_genre`| 商品のジャンル | VARCHAR(20) |
 |`orderable_flag`| 注文受付フラグ | BOOLEAN |
@@ -111,31 +112,27 @@
 |`product_id`| 商品識別子 | CHAR(5) | | INDEX |
 |`quantity`| 個数 | INT(3)|
 |`passed_flag`| 受け渡し済みフラグ | BOOLEAN |
-|`confirmed_order_flag`| 注文確定フラグ | BOOLEAN |
 |`product_option`| オプション情報 | JSON |
 |`unit_price`| 単価 | INT(4) |
+|`pickup_now`| 今すぐ受け取り | BOOLEAN || INDEX |
+|`desired_pickup_time`| 受け取り希望時間 | DATETIME || INDEX |
 
 ### `T_ORDER_INFORMATION_MAIN`
 | 項目(カラム名) | 項目(和名) | 型・サイズ | ヌル | インデックス | その他 |
 | :-- | :-- | :-: | :-: | :-: | :-- |
 |`token`| トークン | CHAR(50)|| PRIMARY |
-|`order_id`| 注文番号 | CHAR(5) |||
-|`order_total_price`| 注文の合計金額|INT(5) |
-|`paid_flag`| 支払い済みフラグ | BOOLEAN |
-|`fingerprint`| フィンガープリント | VARCHAR(1024) || INDEX |
-|`product_image_path`| 商品画像のURL | VARCHAR() |
+|`order_id`| 注文番号 | CHAR(5) |
+|`order_total_price`| 注文の合計金額 | INT(5) |
+|`confirmed_order_flag`| 注文確定フラグ | BOOLEAN |
+|`session_token`| セッショントークン | CHAR(50) || INDEX |
+|`product_image_path`| 商品画像のURL | CHAR(55) |
+|`order_time`| 注文時間 | DATETIME |
 
 ### `T_CART_DATA`
 | 項目(カラム名) | 項目(和名) | 型・サイズ | ヌル | インデックス | その他 |
 | :-- | :-- | :-: | :-: | :-: | :-- |
-|`fingerprint`| フィンガープリント | VARCHAR(1024) || PRIMARY ||
-|`product_in_cart`| カートの中の商品 | JSON ||
-
-### `T_SAVE_QRCODE_PATH`
-| 項目(カラム名) | 項目(和名) | 型・サイズ | ヌル | インデックス | その他 |
-| :-- | :-- | :-: | :-: | :-: | :-- |
-|`order_id`| 注文番号 | CHAR(5) || PRIMARY |
-|`qrcode_image_path`| QRコードの画像のURL | VARCHAR() |
+|`session_token`| セッショントークン | CHAR(50) || PRIMARY |
+|`product_in_cart`| カートの中の商品 | JSON |
 
 ### `T_STOCK`
 | 項目(カラム名) | 項目(和名) | 型・サイズ | ヌル | インデックス | その他 |
@@ -143,3 +140,12 @@
 |`product_id`| 商品識別子 | CHAR(5) || PRIMARY |
 |`all_stock`| 全ての在庫の数 | INT(4) |
 |`remaining_stock`| 残りの在庫数 | INT(4) |
+
+### `T_NOTICE_DATA`
+| 項目(カラム名) | 項目(和名) | 型・サイズ | ヌル | インデックス | その他 |
+| :-- | :-- | :-: | :-: | :-: | :-- |
+|`session_token`| セッショントークン | CHAR(50) || PRIMARY |
+|`fingerprint`| フィンガープリント | CHAR(32) |
+|`end_point`| エンドポイント | CHAR(188) |
+|`public_key`| 公開鍵 | CHAR(88) |
+|`authentication_token`| 認証トークン | CHAR(24) |
