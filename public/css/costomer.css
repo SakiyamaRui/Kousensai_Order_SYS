@@ -1,0 +1,301 @@
+body {
+  margin: 0;
+  font-family: sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: sans-serif;
+}
+body .head {
+  box-sizing: border-box;
+  padding: 5px 10px;
+  display: flex;
+  align-items: center;
+  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+  width: 100%;
+}
+body .head .title {
+  font-size: 22px;
+  font-family: "Noto Sans JP";
+  font-weight: 700;
+  flex-grow: 1;
+}
+body .head .order-history a {
+  font-size: 15px;
+  text-decoration: none;
+  color: black;
+}
+body .head .cart {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  cursor: pointer;
+}
+body .head .cart svg {
+  width: 25px;
+  height: auto;
+}
+body .menu-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  margin: 21px 8px;
+  width: 100%;
+  max-width: 600px;
+  row-gap: 10px;
+  -moz-column-gap: 10px;
+       column-gap: 10px;
+}
+body .menu-list .column {
+  min-height: 150px;
+  min-width: 180px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+  box-sizing: border-box;
+  margin: 3px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+body .menu-list .column .img {
+  flex-grow: 1;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.1);
+  font-size: 13px;
+  min-height: 100px;
+}
+body .menu-list .column .info {
+  box-sizing: border-box;
+  padding: 8px 10px;
+}
+body .menu-list .column .info .store-name {
+  font-size: 13px;
+}
+body .menu-list .column .info .title {
+  font-size: 18px;
+  font-family: "Noto Sans JP", sans-serif;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellips;
+}
+body .menu-list .column .info .price {
+  text-align: right;
+  font-family: "Noto Sans JP", sans-serif;
+  font-weight: 500;
+}
+body .menu-list .column .info .price .product-price {
+  font-size: 18px;
+}
+body .modal {
+  position: fixed;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+  width: 100vw;
+  height: 110vh;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+body .modal .content {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+  background-color: white;
+  max-height: 90vh;
+  box-sizing: border-box;
+  padding: 10px 30px;
+  border-radius: 3px;
+}
+body .modal .content .title {
+  font-size: 20px;
+  font-family: "Noto Sans JP";
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 12px;
+}
+body .modal .content .buttons {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+body .modal .content.product-detail-modal {
+  min-width: 380px;
+}
+body .modal .content.product-detail-modal .body {
+  margin: 8px;
+  display: flex;
+  flex-direction: column;
+}
+body .modal .content.product-detail-modal .body .img {
+  min-height: 100px;
+  flex-grow: 1;
+  overflow: hidden;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.1);
+  font-size: 13px;
+}
+body .modal .content.product-detail-modal .body .info {
+  margin: 10px 0;
+}
+body .modal .content.product-detail-modal .body .info .store-name {
+  line-height: 15px;
+  font-size: 13px;
+}
+body .modal .content.product-detail-modal .body .info .product-name {
+  font-size: 19px;
+  font-weight: 500;
+  font-family: "Noto Sans JP";
+  line-height: 30px;
+  margin-top: 5px;
+}
+body .modal .content.product-detail-modal .body .info .product-detail .detail-body {
+  margin-left: 20px;
+  max-height: 300px;
+}
+body .modal .content.product-detail-modal .body .options {
+  margin-top: 5px;
+}
+body .modal .content.product-detail-modal .body .options .option-list .column {
+  margin: 5px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+body .modal .content.product-detail-modal .body .options .option-list .column .option-name {
+  min-width: 50%;
+}
+body .modal .content.product-detail-modal .body .options .option-list .column .option-price {
+  flex-grow: 1;
+  text-align: center;
+  max-width: 10%;
+  min-width: 10%;
+}
+body .modal .content.product-detail-modal .body .options .option-list .column .option-select {
+  text-align: center;
+  max-width: 30%;
+  min-width: 30%;
+}
+body .modal .content.product-detail-modal .body .options .option-list .column .option-select select {
+  width: 100%;
+}
+body .modal .content.product-detail-modal .body .label {
+  margin-top: 5px;
+  font-size: 15px;
+}
+body .modal.hidden {
+  opacity: 0;
+  top: 150%;
+  pointer-events: none;
+}
+body .body.top-page {
+  display: flex;
+  flex-direction: column;
+  max-width: 350px;
+  width: 100%;
+  margin: 21px 3px;
+}
+body .body.top-page .new-order {
+  margin: 8px 8px;
+  text-align: center;
+}
+body .body.top-page .new-order a {
+  display: inline-flex;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  background-color: rgb(255, 64, 64);
+  text-decoration: none;
+  padding: 6px 13px;
+  min-width: 50%;
+}
+body .body.top-page .order-history > .label {
+  font-family: "Noto Sans JP", sans-serif;
+  font-weight: 500;
+  font-size: 19px;
+  margin-top: 12px;
+}
+body .body.top-page .order-history .order-list {
+  display: flex;
+  flex-direction: column;
+  margin-top: 5px;
+}
+body .body.top-page .order-history .order-list .column {
+  width: 100%;
+  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+  box-sizing: border-box;
+  padding: 8px;
+  border-radius: 3px;
+}
+body .body.top-page .order-history .order-list .column a {
+  text-decoration: none;
+  color: black;
+  display: flex;
+  flex-wrap: nowrap;
+}
+body .body.top-page .order-history .order-list .column a .content {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  justify-content: space-between;
+}
+body .body.top-page .order-history .order-list .column a .order-title {
+  width: calc(70% - 5px);
+  max-width: calc(70% - 5px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  font-family: "Noto Sans JP", sans-serif;
+  font-weight: 500;
+  font-size: 18px;
+  margin-left: 5px;
+}
+body .body.top-page .order-history .order-list .column a .status-label {
+  flex-grow: 1;
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 30%;
+}
+body .body.top-page .order-history .order-list .column a .status-label .label {
+  font-size: 12px;
+  text-align: center;
+}
+body .body.top-page .order-history .order-list .column a:hover {
+  text-decoration: underline;
+}
+
+span.btn {
+  box-sizing: border-box;
+  padding: 5px 10px;
+  background-color: rgb(0, 0, 0);
+  color: white;
+  border-radius: 3px;
+  margin: 5px 5px;
+  font-family: "Noto Sans JP";
+  font-weight: 500;
+  cursor: pointer;
+}
+span.btn:hover {
+  opacity: 0.8;
+}
+
+select {
+  box-sizing: border-box;
+  padding: 3px 10px;
+  border: 2px solid rgba(0, 0, 0, 0.8);
+  border-radius: 3px;
+}
+select:focus {
+  outline: none;
+}/*# sourceMappingURL=costomer.css.map */
