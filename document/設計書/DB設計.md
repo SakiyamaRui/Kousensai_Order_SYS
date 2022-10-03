@@ -61,10 +61,9 @@
 | `T_ORDER_INFORMATION_DETAIL` |`ORDER_SYS_DB`| 注文した商品の情報を管理 |
 | `T_ORDER_INFORMATION_MAIN` | `ORDER_SYS_DB` | 注文とトークンを結びつける |
 |`T_CART_DATA`| `ORDER_SYS_DB` | カートデータ管理 |
-| `T_SAVE_QRCODE_PATH` | `ORDER_SYS_DB` | QRコードの画像のURLを管理 |
-|`T_STOCK` | `ORDER_SYS_DB` | 在庫管理 |
+|`T_PRODUCT_STOCK` | `ORDER_SYS_DB` | 商品の在庫管理 |
+|`T_PRODUCT_OPTION_STOCK`| `ORDER_SYS_DB` | 商品のオプションの在庫管理 |
 |`T_NOTICE_DATA`| `ORDER_SYS_DB` | プッシュ通知に関するデータを管理 |
-
 
 ## データ・テーブル詳細
 ### `T_STORE_TERMINAL_SESSION`
@@ -100,8 +99,7 @@
 |`product_name`| 商品の名前 | VARCHAR(50) |
 |`product_detail`| 商品の説明 | Text |
 |`product_price`| 値段 | INT(4) |
-|`product_image_url`| 商品画像のURL | CHAR(55)| 〇 |
-|`product_option`|オプション情報| JSON |
+|`product_image_url`| 商品画像のURL | CHAR(55) | 〇 |
 |`orderable_flag`| 注文受付フラグ | BOOLEAN |
 
 ### `T_ORDER_INFORMATION_DETAIL`
@@ -133,12 +131,24 @@
 |`session_token`| セッショントークン | CHAR(50) || PRIMARY |
 |`product_in_cart`| カートの中の商品 | JSON |
 
-### `T_STOCK`
+### `T_PRODUCT_STOCK`
 | 項目(カラム名) | 項目(和名) | 型・サイズ | ヌル | インデックス | その他 |
 | :-- | :-- | :-: | :-: | :-: | :-- |
 |`product_id`| 商品識別子 | CHAR(5) || PRIMARY |
 |`all_stock`| 全ての在庫の数 | INT(4) |
-|`remaining_stock`| 残りの在庫数 | INT(4) |
+|`product_remaining_stock`| 残りの在庫数 | INT(4) |
+
+### `T_PRODUCT_OPTION_STOCK`
+| 項目(カラム名) | 項目(和名) | 型・サイズ | ヌル | インデックス | その他 |
+| :-- | :-- | :-: | :-: | :-: | :-- |
+|`product_id`| 商品識別子 | CHAR(5) || PRIMARY |
+|`option_name`| オプション名 | VARCHAR(30) || INDEX |
+|`option_value`| オプションの値 | VARCHAR(30) | 〇 |
+|`default_value`| オプションの値のデフォルト値 | BOOLEAN |
+|`option_index`| オプションのインデックス | INT(2) |
+|`user_display_flag`| ユーザーに表示するかどうかフラグ | BOOLEAN |
+|`option_remaining_stock`| オプションの残りの在庫数 | INT(4) |
+|`add_option_stock`| オプションの在庫の追加値 | INT(4) |
 
 ### `T_NOTICE_DATA`
 | 項目(カラム名) | 項目(和名) | 型・サイズ | ヌル | インデックス | その他 |
