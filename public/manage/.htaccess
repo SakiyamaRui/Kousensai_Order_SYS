@@ -1,0 +1,5 @@
+# Default Page Change
+DirectoryIndex manage.php
+
+RewriteEngine on
+RewriteRule ^(.*)$ manage.php [L]
