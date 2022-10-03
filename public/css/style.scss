@@ -1,0 +1,225 @@
+@charset "utf-8";
+// レスポンシブ対応のためのメディアクエリーをmixin(使いまわしできるもの)で定義
+@use "mixin/mq" as m;
+
+:root {
+    // ログインボックスのbackground-colorということでbgc-login__box
+    --bgc-login-box: rgba(205, 205, 205, 0.3);
+    // ボタンのbackground-colorということでbgc-btn
+    --bgc-btn:#000;
+    // ボタンのcolor(文字色)ということでcolor-btn
+    --color-btn: #fff;
+}
+
+body {
+    font-family: sans-serif;
+    padding-bottom: 60px;
+
+    // QRコード読み取り画面が立ち上がったら、スクロールできないように、画面を固定
+    &.QR-view-on {
+        position:fixed;
+        width: 100%;
+        height: 100%;
+    }
+}
+
+// inputタグに関するスタイル
+input {
+    display: block;
+    border: 1px solid #000;
+    max-width: 390px;
+    width: 100%;
+    margin: 0 auto;
+    height: 52px;
+    border-radius: 10px;
+    padding-left: 23px;
+    background-color: #fff;
+
+    @include m.sp {
+        max-width: 253px;
+        height: 40px;
+    }
+}
+
+.input {
+
+    &__pass {
+        margin-top: 22px;
+    }
+}
+
+.header {
+    width: 100%;
+    height: 58px;
+    border-top: solid 2px #000000;
+    border-bottom: solid 2px #000000;
+
+    &__title {
+        font-size: 35px;
+        text-align: center;
+        line-height: 58px;
+        font-weight: bold;
+    }
+}
+
+// パスワードの表示非表示に関するスタイル
+.pass {
+    &__wrapper {
+        position: relative;
+        max-width: 390px;
+        width: 100%;
+        margin: 0 auto;
+
+        @include m.sp {
+            max-width: 253px;
+        }
+    }
+
+    &__view {
+        position: absolute;
+        top: 50%;
+        right: 0;
+        cursor: pointer;
+        transform: translate(-50%, -50%);
+    }
+}
+
+
+// ボタンに関するベーススタイル
+.btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--bgc-btn);
+    color: var(--color-btn);
+    margin:0 auto;
+    border-radius: 5px;
+    cursor: pointer;
+
+    &__view {
+        position: absolute;
+    }
+
+    &__submit {
+        margin-top: 40px;
+        text-align: center;
+        max-width: 429px;
+        width: 100%;
+        height: 85px;
+
+        @include m.sp {
+            max-width: 275px;
+            height: 50px;
+        }
+    }
+
+    &__QR {
+        margin-top: 25px;
+        max-width: 219px;
+        width: 100%;
+        font-size: 15px;
+        text-align: right;
+        height: 41px;
+    }
+}
+
+// 手入力でログインする画面のスタイル
+.login {
+
+    max-width: 620px;
+    margin-top: 51px;
+    width: 100%;
+    margin: 51px auto 0 auto;
+
+    &__title {
+        font-size: 45px;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    &__box {
+        margin-top: 22px;
+        max-width: 620px;
+        padding-top: 10%;
+        padding-bottom: 10%;
+        margin: 22px auto 0 auto;
+        width: 100%;
+        background-color: var(--bgc-login-box);
+
+        @include m.sp {
+            max-width: 319px;
+        }
+    }
+
+
+}
+
+
+// デフォルト（非表示状態）のQRコード読み取り画面のスタイル
+.QR {
+
+    &__display {
+        visibility: hidden;
+        width: 600px;
+        height: 450px;
+        border-radius: 20px;
+        transition: all 0.4s;
+        position: fixed;
+        z-index: 3;
+        top: 200%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+        background-color: #000;
+
+        @include m.sp {
+            width: 150px;
+            height: 200px;
+        }
+
+        @include m.tab {
+            width: 300px;
+            height: 400px;
+        }
+    }
+
+
+    &__btn-back {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 71px;
+        width: 142px;
+        height: 41px;
+        background-color: rgba(205, 205, 205, 0.25);
+        border-radius: 10px;
+    }
+}
+
+// QRコード読み取り画面が立ち上がったときのスタイル
+.QR-view-on {
+
+    .QR {
+        &__display {
+            visibility: visible;
+            top: 55%;
+        }
+    
+    }
+}
+
+// QRコード読み取り画面が立ち上がった時の背景のマスクのスタイル
+.QR-view-on {
+    &.mask {
+        display:block;
+        background-color:#000;
+        transition: all 0.3s;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        position: fixed;
+        opacity: 0.2;
+        z-index:2;
+        cursor: pointer;
+    }
+}
