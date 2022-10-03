@@ -102,7 +102,6 @@
 |`product_price`| 値段 | INT(4) |
 |`product_image_url`| 商品画像のURL | CHAR(55)| 〇 |
 |`product_option`|オプション情報| JSON |
-|`product_genre`| 商品のジャンル | VARCHAR(20) |
 |`orderable_flag`| 注文受付フラグ | BOOLEAN |
 
 ### `T_ORDER_INFORMATION_DETAIL`
