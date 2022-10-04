@@ -67,6 +67,11 @@ body {
             border-radius: 3px;
             cursor: pointer;
 
+            a {
+                color: black;
+                text-decoration: none;
+            }
+
             .img {
                 flex-grow: 1;
                 overflow: hidden;
