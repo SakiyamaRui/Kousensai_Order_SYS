@@ -68,8 +68,12 @@ body {
             cursor: pointer;
 
             a {
-                color: black;
                 text-decoration: none;
+                color: black;
+
+                &:hover {
+                    opacity: .8;
+                }
             }
 
             .img {
@@ -95,7 +99,7 @@ body {
                     font-family: 'Noto Sans JP', sans-serif;
                     overflow: hidden;
                     white-space: nowrap;
-                    text-overflow: ellips;
+                    text-overflow: ellipsis;
                 }
 
                 .price {

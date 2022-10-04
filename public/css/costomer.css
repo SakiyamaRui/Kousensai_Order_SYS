@@ -58,8 +58,11 @@ body .menu-list .column {
   cursor: pointer;
 }
 body .menu-list .column a {
-  color: black;
   text-decoration: none;
+  color: black;
+}
+body .menu-list .column a:hover {
+  opacity: 0.8;
 }
 body .menu-list .column .img {
   flex-grow: 1;
@@ -83,7 +86,7 @@ body .menu-list .column .info .title {
   font-family: "Noto Sans JP", sans-serif;
   overflow: hidden;
   white-space: nowrap;
-  text-overflow: ellips;
+  text-overflow: ellipsis;
 }
 body .menu-list .column .info .price {
   text-align: right;
