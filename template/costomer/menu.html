@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>メニュー一覧</title>
+
+    <link rel="stylesheet" href="/css/costomer.css">
+
+    <!--Google Fonts-->
+    <?php include(ROOT_PATH.'\template\fonts.html'); ?>
+</head>
+<body>
+    <?php include(ROOT_PATH.'\template\costomer\header.html'); ?>
+
+    <div class="menu-list">
+        <?php echo $menu_list_html; ?>
+    </div>
+
+    <div class="modal hidden product-detail-modal">
+        <div class="content product-detail-modal">
+            <div class="title">
+                カートに追加
+            </div>
+            <div class="body">
+                <div class="img">
+                    No Image
+                </div>
+                <div class="info">
+                    <div class="store-name">
+                        店舗名
+                    </div>
+                    <div class="product-name">
+                        商品名
+                    </div>
+                    <div class="product-detail">
+                        <div class="label">
+                            商品の詳細
+                        </div>
+                        <div class="detail-body">
+                            商品の詳細
+                        </div>
+                    </div>
+                </div>
+                <div class="options">
+                    <div class="label">
+                        オプション
+                    </div>
+                    <div class="option-list">
+                    </div>
+                </div>
+            </div>
+            <div class="buttons">
+                <div class="quantity">
+                    数量:
+                    <select id="quantity-select">
+                        <option value="1" selected>1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                    </select>
+                </div>
+                <span class="total-price">
+                    <span class="total">100</span>円
+                </span>
+                <span class="btn">
+                    カートに追加
+                </span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<script>
+    (function() {
+        //
+
+        document.getElementById('quantity-select').addEventListener('change', opeTotalAmount);
+
+        let modal = document.querySelector('.modal.product-detail-modal');
+        let modal_store_name = modal.querySelector('.body .info .store-name');
+        let modal_product_name = modal.querySelector('.body .info .product-name');
+        let modal_product_details = modal.querySelector('.body .info .product-detail .detail-body');
+        let modal_options_list = modal.querySelector('.body .options .option-list');
+        let modal_total_price = modal.querySelector('.buttons .total-price .total');
+
+        let modal_option_selecting = {};
+        let modal_option_selecting_price = {};
+        let modal_session_data = {};
+
+        function cardAddModalSet(data) {
+            // モーダルを表示
+            modal.classList.remove('hidden');
+
+            // データを挿入
+            modal_store_name.innerText = data['store_name'];
+            modal_product_name.innerText = data['product_name'];
+            modal_product_details.innerText = data['detial'];
+            modal_total_price.innerText = data['price'];
+
+            // データ等リセット
+            modal_option_selecting = {};
+            modal_option_selecting_price = {};
+            modal_session_data = data;
+
+            // オプション一覧を挿入
+            for (let key in data['option']) {
+                let val = data['option'][key];
+
+                let column = document.createElement('div');
+                column.setAttribute('class', 'column');
+
+                let name = document.createElement('div');
+                name.setAttribute('class', 'option-name');
+                name.appendChild(document.createTextNode(key));
+                
+                let select = document.createElement('div');
+                select.setAttribute('class', 'option-select');
+                let selectBox = document.createElement('select');
+                selectBox.setAttribute('key', key);
+
+                let defaultSelect = null;
+                if (val.hasOwnProperty('default')) {
+                    defaultSelect = val['default'];
+                }
+                
+                switch (val['type']) {
+                    case 'num':
+                        for (let i = val['min']; i < val['max']; i++) {
+                            //
+                        }
+                        break;
+                    case 'select':
+                        val['options'].forEach(elm => {
+                            let option = document.createElement('option');
+                            option.setAttribute('value', elm['name']);
+                            option.appendChild(document.createTextNode(elm['name']));
+
+                            if (elm.hasOwnProperty('price')) {
+                                option.setAttribute('price', String(elm.price));
+                            }else{
+                                if (elm.name != defaultSelect) {
+                                    option.setAttribute('price', String(val['price']));
+                                }
+                            }
+
+                            if (elm.name == defaultSelect) {
+                                option.setAttribute('selected', '1');
+                                option.setAttribute('price', '0');
+                            }
+                            selectBox.appendChild(option);
+                        });
+                        break;
+                }
+                select.appendChild(selectBox);
+
+                let option_price = document.createElement('div');
+                option_price.setAttribute('class', 'option-price');
+                option_price.appendChild(document.createTextNode('0'));
+
+                // オプションの変更のイベント追加
+                selectBox.addEventListener('change', (e) => {
+                    let optionKey = e.currentTarget.getAttribute('key');
+
+                    let currentSelect;
+                    if (modal_option_selecting.hasOwnProperty(optionKey)) {
+                        currentSelect = modal_option_selecting[optionKey];
+                    }else{
+                        modal_option_selecting[optionKey] = {};
+                    }
+
+                    modal_option_selecting[optionKey] = e.currentTarget.value;
+
+                    // 値段を取得
+                    let price = e.currentTarget.children[e.currentTarget.selectedIndex].getAttribute('price');
+                    modal_option_selecting_price['price'] = Number(price);
+
+                    // 合計の値段を出す
+                    let sum = data['price'];
+                    for (let key in modal_option_selecting_price) {
+                        sum += modal_option_selecting_price[key];
+                    }
+
+                    // 金額を隣りにプリント
+                    let parent = e.currentTarget.parentElement.parentElement;
+                    parent.querySelector('.option-price').innerText = `${modal_option_selecting_price['price']}`;
+
+                    // 合計金額のプリント
+                    modal_session_data['unitPrice'] = sum;
+                    opeTotalAmount();
+
+                });
+                console.log(selectBox);
+
+                column.appendChild(name);
+                column.appendChild(select);
+                column.appendChild(option_price);
+                modal_options_list.appendChild(column);
+            }
+        }
+
+        function opeTotalAmount() {
+            let unitPrice = ('unitPrice' in modal_session_data)? modal_session_data['unitPrice']: modal_session_data['price'];
+            let quantity = Number(document.getElementById('quantity-select').value);
+
+            let total = unitPrice * quantity;
+
+            modal_total_price.innerText = `${total}`;
+            
+            return total;
+        }
+    }());
+</script>
