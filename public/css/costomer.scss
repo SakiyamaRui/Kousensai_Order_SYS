@@ -55,7 +55,7 @@ body {
         row-gap: 10px;
         column-gap: 10px;
         box-sizing: border-box;
-        
+
         @media screen and (min-width: 401px) and (max-width: 600px) {
             grid-template-columns: 1fr 1fr;
         }
@@ -271,6 +271,7 @@ body {
                     text-decoration: none;
                     padding: 6px 13px;
                     min-width: 50%;
+                    border-radius: 3px;
                 }
             }
 
@@ -345,6 +346,90 @@ body {
                     }
                 }
             }
+        }
+    }
+
+    .product-detail {
+        width: 100%;
+        max-width: 500px;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        margin-top: 21px;
+
+        .img {
+            aspect-ratio: 4/3;
+            width: 100%;
+            height: auto;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(0, 0, 0, .1);
+            overflow: hidden;
+            border-radius: 3px;
+        }
+
+        .product-info {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 0 10px;
+
+            .store-name {
+                font-size: 15px;
+            }
+            .product-name,
+            .price {
+                font-weight: 500;
+                font-family: 'Noto Sans JP', sans-serif;
+            }
+            .product-name {
+                text-align: left;
+                font-size: 19px;
+            }
+            .price {
+                text-align: right;
+                font-size: 16px;
+                span.price {
+                    font-size: 20px;
+                }
+            }
+
+            .detail {
+                .label {
+                    font-size: 15px;
+                }
+                .body {
+                    min-height: 100px;
+                    margin-bottom: 12px;
+                }
+            }
+        }
+    }
+
+    .func {
+        width: 100%;
+        max-width: 500px;
+
+        display: flex;
+        justify-content: space-around;
+
+        .price {
+            width: 60px;
+            justify-content: flex-end;
+            display: flex;
+            align-items: center;
+        }
+
+        .add-btn {
+            background-color: rgba(255, 64, 64, 1);
+            box-sizing: border-box;
+            padding: 4px 12px;
+            color: white;
+            border-radius: 3px;
         }
     }
 }

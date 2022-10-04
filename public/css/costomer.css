@@ -233,6 +233,7 @@ body .body.top-page .new-order a {
   text-decoration: none;
   padding: 6px 13px;
   min-width: 50%;
+  border-radius: 3px;
 }
 body .body.top-page .order-history > .label {
   font-family: "Noto Sans JP", sans-serif;
@@ -292,6 +293,78 @@ body .body.top-page .order-history .order-list .column a .status-label .label {
 }
 body .body.top-page .order-history .order-list .column a:hover {
   text-decoration: underline;
+}
+body .product-detail {
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 21px;
+}
+body .product-detail .img {
+  aspect-ratio: 4/3;
+  width: 100%;
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  border-radius: 3px;
+}
+body .product-detail .product-info {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0 10px;
+}
+body .product-detail .product-info .store-name {
+  font-size: 15px;
+}
+body .product-detail .product-info .product-name,
+body .product-detail .product-info .price {
+  font-weight: 500;
+  font-family: "Noto Sans JP", sans-serif;
+}
+body .product-detail .product-info .product-name {
+  text-align: left;
+  font-size: 19px;
+}
+body .product-detail .product-info .price {
+  text-align: right;
+  font-size: 16px;
+}
+body .product-detail .product-info .price span.price {
+  font-size: 20px;
+}
+body .product-detail .product-info .detail .label {
+  font-size: 15px;
+}
+body .product-detail .product-info .detail .body {
+  min-height: 100px;
+  margin-bottom: 12px;
+}
+body .func {
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  justify-content: space-around;
+}
+body .func .price {
+  width: 60px;
+  justify-content: flex-end;
+  display: flex;
+  align-items: center;
+}
+body .func .add-btn {
+  background-color: rgb(255, 64, 64);
+  box-sizing: border-box;
+  padding: 4px 12px;
+  color: white;
+  border-radius: 3px;
 }
 
 span.btn {
