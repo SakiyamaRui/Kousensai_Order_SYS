@@ -50,10 +50,20 @@ body {
         display: grid;
         grid-template-columns: 1fr 1fr 1fr;
         margin: 21px 8px;
-        width: 100%;
+        width: calc(100% - 16px);
         max-width: 600px;
         row-gap: 10px;
         column-gap: 10px;
+        box-sizing: border-box;
+        
+        @media screen and (min-width: 401px) and (max-width: 600px) {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        @media screen and (max-width: 400px) {
+            grid-template-columns: 1fr;
+            padding: 0 8px;
+        }
 
         .column {
             min-height: 150px;
