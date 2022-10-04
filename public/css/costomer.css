@@ -57,6 +57,13 @@ body .menu-list .column {
   border-radius: 3px;
   cursor: pointer;
 }
+body .menu-list .column a {
+  text-decoration: none;
+  color: black;
+}
+body .menu-list .column a:hover {
+  opacity: 0.8;
+}
 body .menu-list .column .img {
   flex-grow: 1;
   overflow: hidden;
