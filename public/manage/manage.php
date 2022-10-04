@@ -6,6 +6,7 @@
 
     switch ($request[0]) {
         case 'login':
+            require_once(ROOT_PATH .'\template\store\login.html');
             break;
 
         case 'item':
