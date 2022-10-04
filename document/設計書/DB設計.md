@@ -118,8 +118,7 @@
 |`order_id`| 注文番号 | CHAR(5) |
 |`order_total_price`| 注文の合計金額 | INT(5) |
 |`confirmed_order_flag`| 注文確定フラグ | BOOLEAN |
-|`session_token`| セッショントークン | CHAR(50) || INDEX |
-|`product_image_path`| 商品画像のURL | CHAR(55) |
+|`session_token`| セッショントークン | CHAR(50) || INDEX | 端末固有の値（cookieなどで保存） |
 |`order_time`| 注文時間 | DATETIME |
 |`pickup_now`| 今すぐ受け取り | BOOLEAN || INDEX |
 |`pickup_time`| 受け取り希望時間 | DATETIME || INDEX |
@@ -127,16 +126,16 @@
 ### `T_CART_DATA`
 | 項目(カラム名) | 項目(和名) | 型・サイズ | ヌル | インデックス | その他 |
 | :-- | :-- | :-: | :-: | :-: | :-- |
-|`session_token`| セッショントークン | CHAR(50) || PRIMARY |
+|`session_token`| セッショントークン | CHAR(50) || PRIMARY | 端末固有の値（cookieなどで保存） |
 |`product_in_cart`| カートの中の商品 | JSON |
 
 ### `T_PRODUCT_OPTIONS`
 | 項目(カラム名) | 項目(和名) | 型・サイズ | ヌル | インデックス | その他 |
 | :-- | :-- | :-: | :-: | :-: | :-- |
 |`product_id`| 商品識別子 | CHAR(5) || PRIMARY |
-|`option_name`| オプション名 | VARCHAR(30) || INDEX |
+|`option_name`| オプション名 | VARCHAR(30) || INDEX | 学割や商品全体の在庫数も含める |
 |`option_value`| オプションの値 | VARCHAR(30) | 〇 |
-|`default_value`| オプションの値のデフォルト値 | BOOLEAN |
+|`default_value`| オプションの値のデフォルト値 | BOOLEAN | 何も選択しなかったときの値を示す |
 |`option_index`| インデックス番号 | INT(2) |
 |`user_display_flag`| ユーザーに表示するかどうかフラグ | BOOLEAN |
 |`option_remaining_stock`| オプションの残りの在庫数 | INT(4) |
@@ -145,8 +144,8 @@
 ### `T_NOTICE_DATA`
 | 項目(カラム名) | 項目(和名) | 型・サイズ | ヌル | インデックス | その他 |
 | :-- | :-- | :-: | :-: | :-: | :-- |
-|`session_token`| セッショントークン | CHAR(50) || PRIMARY |
-|`fingerprint`| フィンガープリント | CHAR(32) |
+|`session_token`| セッショントークン | CHAR(50) || PRIMARY | 端末固有の値（cookieなどで保存） |
+|`fingerprint`| フィンガープリント | CHAR(32) ||| 端末固有の値（被る可能性がある、セッショントークンが消えた時の保険） |
 |`end_point`| エンドポイント | CHAR(188) | 〇 |
 |`public_key`| 公開鍵 | CHAR(88) | 〇 |
 |`authentication_token`| 認証トークン | CHAR(24) | 〇 |
