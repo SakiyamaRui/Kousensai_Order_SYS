@@ -1,5 +1,5 @@
 <?php
-    require_once('C:\Users\ic211216\Desktop\創造研究\Kousensai_Order_SYS\app\main.php');
+    require_once(dirname(__DIR__).'/path.php');
 
     preg_match('/^\/manage\/([\w\/]*)\/?/', $_SERVER['REQUEST_URI'], $matches);
     $request = explode('/', $matches[1]);
