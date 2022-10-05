@@ -32,7 +32,6 @@
                 );
 
                 json_encode($decode_data);
-                var_dump(json_last_error());
                 
                 require_once(ROOT_PATH . '\template\costomer\product-detail.html');
             }catch (Exception $e) {
