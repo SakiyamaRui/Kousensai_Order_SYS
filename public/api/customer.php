@@ -14,6 +14,20 @@
         // カート情報の変更
         case 'changeCartData':
             break;
+        case 'cartAppend':
+            if (!isset($_POST['order_data'])) {
+                // 403エラー
+            }
+
+            // 追加する関数の呼び出し
+            $result = add_cart($_POST['order_data']);
+
+            if ($result == false) {
+                // エラーを出力
+            }else{
+                echo 'true';
+            }
+            break;
         // webPush通知の登録
         case 'notice-subscription':
             break;
