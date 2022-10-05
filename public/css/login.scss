@@ -1,7 +1,6 @@
 @charset "utf-8";
-// レスポンシブ対応のためのメディアクエリーをmixin(使いまわしできるもの)で定義
-@use "mixin/mq" as m;
 
+// 変数
 :root {
     // ログインボックスのbackground-colorということでbgc-login__box
     --bgc-login-box: rgba(205, 205, 205, 0.3);
@@ -11,16 +10,12 @@
     --color-btn: #fff;
 }
 
+// ここから下がメインのスタイル
+
 body {
     font-family: sans-serif;
     padding-bottom: 60px;
 
-    // QRコード読み取り画面が立ち上がったら、スクロールできないように、画面を固定
-    &.QR-view-on {
-        position:fixed;
-        width: 100%;
-        height: 100%;
-    }
 }
 
 // inputタグに関するスタイル
@@ -30,15 +25,9 @@ input {
     max-width: 390px;
     width: 100%;
     margin: 0 auto;
-    height: 52px;
     border-radius: 10px;
-    padding-left: 23px;
+    padding: 15px 0 15px 23px;
     background-color: #fff;
-
-    @include m.sp {
-        max-width: 253px;
-        height: 40px;
-    }
 }
 
 .input {
@@ -69,14 +58,12 @@ input {
         max-width: 390px;
         width: 100%;
         margin: 0 auto;
-
-        @include m.sp {
-            max-width: 253px;
-        }
     }
 
     &__view {
         position: absolute;
+        width: 25px;
+        height: 25px;
         top: 50%;
         right: 0;
         cursor: pointer;
@@ -106,11 +93,6 @@ input {
         max-width: 429px;
         width: 100%;
         height: 85px;
-
-        @include m.sp {
-            max-width: 275px;
-            height: 50px;
-        }
     }
 
     &__QR {
@@ -145,10 +127,6 @@ input {
         margin: 22px auto 0 auto;
         width: 100%;
         background-color: var(--bgc-login-box);
-
-        @include m.sp {
-            max-width: 319px;
-        }
     }
 
 
@@ -171,15 +149,6 @@ input {
         transform: translate(-50%,-50%);
         background-color: #000;
 
-        @include m.sp {
-            width: 150px;
-            height: 200px;
-        }
-
-        @include m.tab {
-            width: 300px;
-            height: 400px;
-        }
     }
 
 
@@ -195,31 +164,63 @@ input {
     }
 }
 
-// QRコード読み取り画面が立ち上がったときのスタイル
-.QR-view-on {
+.mask {
+    display: block;
+    background-color:#000;
+    transition: all 0.3s;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    position: fixed;
+    opacity: 0;
+    pointer-events: none;
+    z-index:2;
+    cursor: pointer;
+}
+
+
+// スマホ用のレスポンシブ
+@media (max-width:480px) {
+    input {
+        max-width: 253px;
+    }
+
+    .pass {
+        max-width: 253px;
+
+        &__wrapper {
+            max-width: 253px;
+        }
+    }
+
+    .btn {
+        &__submit {
+            max-width: 275px;
+            height: 50px;
+        }
+    }
+
+    .login {
+        &__box {
+            max-width: 319px;
+        }
+    }
 
     .QR {
         &__display {
-            visibility: visible;
-            top: 55%;
+            width: 150px;
+            height: 200px;
         }
-    
     }
 }
 
-// QRコード読み取り画面が立ち上がった時の背景のマスクのスタイル
-.QR-view-on {
-    &.mask {
-        display:block;
-        background-color:#000;
-        transition: all 0.3s;
-        width: 100%;
-        height: 100%;
-        top: 0;
-        left: 0;
-        position: fixed;
-        opacity: 0.2;
-        z-index:2;
-        cursor: pointer;
+// タブレット用のレスポンシブ
+@media (max-width: 680px) {
+    .QR {
+        &__display {
+            width: 300px;
+            height: 400px;
+        }
     }
 }
