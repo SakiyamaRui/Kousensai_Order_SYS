@@ -77,18 +77,19 @@ function getOptionData($id_list, $type = 0) {
     if (!is_array($id_list)) {
         // 配列でない場合
         $sql = "SELECT * FROM
-                    `T_PRODUCT_OPTIONS`
+                    ORDER_SYS_DB.`T_PRODUCT_OPTIONS`
                 WHERE
                     `product_id` = :product_id
-                ORDER BY 
-                    `option_index` ASC";
+                GROUP BY
+                    `product_id`,
+                    `option_name`,
+                    `option_value`
+                ";
         $sql = $DB -> prepare($sql);
 
         $sql -> bindValue(':product_id', $id_list, PDO::PARAM_STR);
         $sql -> execute();
         $data = $sql -> fetchAll(PDO::FETCH_ASSOC|PDO::FETCH_GROUP);
-
-        var_dump($data);
     }else{
         // 配列の場合
         $inClause = substr(str_repeat(',?', count($id_list)), 1);
@@ -151,4 +152,9 @@ function getOptionData($id_list, $type = 0) {
     }
 
     return $return_array;
+}
+
+function getOptionDataRelease($id) {
+    $data = array_values(getOptionData($id)[$id]);
+    return $data;
 }
