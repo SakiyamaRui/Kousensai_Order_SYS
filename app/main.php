@@ -24,5 +24,6 @@
     // ファイルの読み込み
     require_once(ROOT_PATH.'\app\DB\database.php');
     require_once(ROOT_PATH.'\app\secure\token.php');
+    require_once(ROOT_PATH.'\app\PRODUCT\getData.php');
     // require_once(ROOT_PATH.'\app\server.php');
 
