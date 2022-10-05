@@ -17,7 +17,7 @@ function getAllProductIndexList() {
 
     //DB接続
     $DB = DB_Connect();
-    $sql = "SELECT `product_id`,`store_id`, `product_name`, `product_price`, `product_image_url` FROM ORDER_SYS_DB.`T_PRODUCT_INFORMATION` WHERE 1 ORDER BY `product_price` ASC";
+    $sql = "SELECT `product_id`,`store_id`, `product_name`, `product_price`, `product_image_url` FROM ORDER_SYS_DB.`T_PRODUCT_INFORMATION` WHERE `orderable_flag` = 1 ORDER BY `product_price` ASC";
     $sql = $DB -> prepare($sql);
     $sql -> execute();
     $All_product_data = $sql -> fetchAll(PDO::FETCH_ASSOC);
@@ -59,5 +59,96 @@ function getAllProductIndexList() {
         unset($val);
     }
 
+    unset($DB);
     return $return_data;
+}
+
+
+// Optionデータの取得
+function getOptionData($id_list, $type = 0) {
+    /**
+     * $type = 0: 在庫状況なし
+     * $type = 1: 在庫状況も取得
+     */
+    // DBへ接続
+    $DB = DB_Connect();
+
+    // 配列ではない場合と配列の場合でsql実行を変える
+    if (!is_array($id_list)) {
+        // 配列でない場合
+        $sql = "SELECT * FROM
+                    `T_PRODUCT_OPTIONS`
+                WHERE
+                    `product_id` = :product_id
+                ORDER BY 
+                    `option_index` ASC";
+        $sql = $DB -> prepare($sql);
+
+        $sql -> bindValue(':product_id', $id_list, PDO::PARAM_STR);
+        $sql -> execute();
+        $data = $sql -> fetchAll(PDO::FETCH_ASSOC|PDO::FETCH_GROUP);
+
+        var_dump($data);
+    }else{
+        // 配列の場合
+        $inClause = substr(str_repeat(',?', count($id_list)), 1);
+        $sql = "SELECT
+                    *
+                FROM
+                    ORDER_SYS_DB.`T_PRODUCT_OPTIONS`
+                WHERE
+                    `product_id` IN(%s)
+                GROUP BY
+                    `product_id`,
+                    `option_name`,
+                    `option_value`";
+        $sql = $DB -> prepare(sprintf($sql, $inClause));
+
+        $sql -> execute($id_list);
+        $data = $sql -> fetchAll(PDO::FETCH_ASSOC|PDO::FETCH_GROUP);
+    }
+
+    // フォーマットに変換する
+    $return_array = Array();
+    foreach($data as $key => $val) {
+        $return_array[$key] = Array();
+        $column = &$return_array[$key];
+
+        foreach($val as $option_select) {
+            if ($option_select['option_name'] == '全体の在庫') {
+                $column[$option_select['option_name']] = ($option_select['option_remaining_stock'] == -1)? INF: $option_select['option_remaining_stock'];
+                continue;
+            }
+
+            if (!isset($column[$option_select['option_name']])) $column[$option_select['option_name']] = Array('name' => '', 'isPublic' => '', 'option_values' => Array(), 'default' => '');
+
+            $append = Array(
+                'value' => $option_select['option_value'],
+                'price' => $option_select['add_option_price'],
+                'index' => $option_select['option_index']
+            );
+            if ($type == 1) {
+                $append['stock'] = ($option_select['option_remaining_stock'] == -1)? INF: $option_select['option_remaining_stock'];
+            }
+
+            array_push($column[$option_select['option_name']]['option_values'], $append);
+
+            if ($column[$option_select['option_name']]['name'] == '') {
+                $column[$option_select['option_name']]['name'] = $option_select['option_name'];
+            }
+
+            if ($column[$option_select['option_name']]['isPublic'] == '') {
+                $column[$option_select['option_name']]['isPublic'] = ($option_select['user_display_flag'] == 1)? true: false;
+            }
+
+            if ($option_select['default_value'] == 1) {
+                $column[$option_select['option_name']]['default'] = $option_select['option_value'];
+            }
+
+        }
+
+        unset($column);
+    }
+
+    return $return_array;
 }
