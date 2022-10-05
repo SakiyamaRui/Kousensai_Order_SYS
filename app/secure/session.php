@@ -92,8 +92,7 @@
                 $sql -> bindValue(':new_token', $new_id, PDO::PARAM_STR);
                 $sql -> bindValue(':fingerprint', $_POST['fingerprint'], PDO::PARAM_STR);
 
-                $sql -> execute();
-                $result = $sql -> fetch();
+                $result = $sql -> execute();
 
                 if ($result == false) {
                     return false;
