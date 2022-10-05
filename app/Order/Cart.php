@@ -3,9 +3,9 @@
     require_once(dirname(__DIR__).'\main.php');
 
     // 関数定義
-    function add_cart($data){
+    function add_cart($data){                       //カートに商品を追加する関数
         $token_id = session::token_start();
-        $DB = DB_Connect();
+        $DB = DB_Connect();                         //DBと接続
 
         if ($token_id == false) return false; 
 
@@ -65,6 +65,26 @@
         $_SESSION['cart'] = Array();
 
         $result = seve_cart($DB);                                                                                       
+        unset($DB);                                                                                                    
+        return $result;
+    }
+
+    function change_cart_data($index, $data)
+    {
+        $token_id = session::token_start();
+        $DB = DB_Connect();
+
+        if ($token_id == false) return false; 
+
+        // セッション内にカート情報があるか確認
+        if (isset($_SESSION['cart'])) 
+        {
+            $result = getCartData($DB);
+
+            if ($result == false) return false;
+        }
+
+        $_SESSION['cart'][$index] = $data;
         unset($DB);                                                                                                    
         return $result;
     }
