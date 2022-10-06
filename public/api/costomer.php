@@ -57,4 +57,13 @@
         // webPush通知の登録
         case 'notice-subscription':
             break;
+        
+        // デバック
+        case 'debug':
+            orderReserve();
+            break;
+
+        default:
+            // 404
+            break;
     }
