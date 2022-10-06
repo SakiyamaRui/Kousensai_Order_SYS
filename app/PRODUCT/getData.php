@@ -221,3 +221,11 @@ function getProductData($id_list) {
     return $list;
 }
 
+function getPriceList($DB, $id_list) {
+    $inClause = substr(str_repeat(',?', count($store_id_list)), 1);
+    $sql = "SELECT `product_id `, `product_price` FROM ORDER_SYS_DB.`T_PRODUCT_INFORMATION` WHERE `product_id` IN(%s)";
+    $sql = $DB -> prepare(sprintf($sql, $inClause));
+    $sql -> execute($store_id_list);
+    return array_column($sql -> fetchAll(PDO::FETCH_ASSOC), NULL, 'store_id');
+}
+
