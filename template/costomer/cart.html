@@ -90,12 +90,15 @@
                 item_head.appendChild(product_name);
                 item_head.appendChild(delete_btn);
                 //
-                let option = document.createElement('div');
-                option.setAttribute('class', 'option');
-                    let label = document.createElement('div');
-                    label.setAttribute('class', 'label');
-                    label.appendChild(document.createTextNode('オプション'));
-                option.appendChild(label);
+                let option;
+                if (e.product_data.options.length > 0) {
+                    option = document.createElement('div');
+                    option.setAttribute('class', 'option');
+                        let label = document.createElement('div');
+                        label.setAttribute('class', 'label');
+                        label.appendChild(document.createTextNode('オプション'));
+                    option.appendChild(label);
+                }
                 // オプション
                 e.product_data.options.forEach(elm => {
                     option.appendChild(optionDOMCreate(elm, e.options, index));
@@ -112,6 +115,7 @@
                         let quantity_option = document.createElement('option');
                         quantity_option.setAttribute('value', i);
                         quantity_option.appendChild(document.createTextNode(i));
+                        if (i == e.quantity) quantity_option.setAttribute('selected', '');
                         selector.appendChild(quantity_option);
                     }
                     quantity.appendChild(selector);
@@ -162,7 +166,7 @@
                 item_total.appendChild(total_price);
 
                 column.appendChild(item_head);
-                column.appendChild(option);
+                if (e.product_data.options.length > 0) column.appendChild(option);
                 column.appendChild(item_total);
 
                 item_append_place.appendChild(column);
@@ -224,7 +228,6 @@
                 // 選択したValueをoption_selectへ代入
                 let option_name = e.target.getAttribute('option-name');
                 let i = e.target.getAttribute('index');
-                console.log(order_data[i].option_select);
                 order_data[i].option_select[option_name] = e.target.value;
 
                 // オプションの値段を取得
@@ -250,7 +253,7 @@
         }
 
         function itemTotalSum(i) {
-            let select = order_data[i].option_select;
+            let select = order_data[i]['option_select'];
             let sum = cartList[i]['product_data']['price'];
 
             for (let key in select) {
