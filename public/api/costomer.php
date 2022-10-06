@@ -29,6 +29,8 @@
                 echo 'true';
             }
             break;
+        case 'cartRemove':
+            break;
         // webPush通知の登録
         case 'notice-subscription':
             break;
