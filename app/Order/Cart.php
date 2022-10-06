@@ -10,9 +10,9 @@
         if ($token_id == false) return false; 
 
         // セッション内にカート情報があるか確認
-        if (isset($_SESSION['cart'])) 
+        if (!isset($_SESSION['cart'])) 
         {
-            $result = getCartData($DB);
+            $result = getCartData($DB, $token_id);
 
             if ($result == false) return false;
         }
@@ -20,7 +20,7 @@
         //カートにデータ(商品)を追加
         array_push($_SESSION['cart'], $data); 
 
-        $result = seve_cart($DB);                                                                                       
+        $result = save_cart($DB, $token_id);                                                                                       
         unset($DB);                                                                                                    
         return $result;
     }
@@ -33,16 +33,16 @@
         if ($token_id == false) return false; 
 
         // セッション内にカート情報があるか確認
-        if (isset($_SESSION['cart'])) 
+        if (!isset($_SESSION['cart'])) 
         {
-            $result = getCartData($DB);
+            $result = getCartData($DB, $token_id);
 
             if ($result == false) return false;
         }
 
         $_SESSION['cart'] = array_splice($_SESSION['cart'], $index, 1);
 
-        $result = seve_cart($DB);                                                                                       
+        $result = save_cart($DB, $token_id);
         unset($DB);                                                                                                    
         return $result;
     }
@@ -55,16 +55,16 @@
         if ($token_id == false) return false; 
 
         // セッション内にカート情報があるか確認
-        if (isset($_SESSION['cart'])) 
+        if (!isset($_SESSION['cart'])) 
         {
-            $result = getCartData($DB);
+            $result = getCartData($DB, $token_id);
 
             if ($result == false) return false;
         }
 
         $_SESSION['cart'] = Array();
 
-        $result = seve_cart($DB);                                                                                       
+        $result = save_cart($DB, $token_id);
         unset($DB);                                                                                                    
         return $result;
     }
@@ -77,23 +77,24 @@
         if ($token_id == false) return false; 
 
         // セッション内にカート情報があるか確認
-        if (isset($_SESSION['cart'])) 
+        if (!isset($_SESSION['cart'])) 
         {
-            $result = getCartData($DB);
+            $result = getCartData($DB, $token_id);
 
             if ($result == false) return false;
         }
 
         $_SESSION['cart'][$index] = $data;
+        $result = save_cart($DB, $token_id);
         unset($DB);                                                                                                    
         return $result;
     }
 
     // 関数定義
-    function save_cart($DB) {
+    function save_cart($DB, $token_id) {
         $json_data = json_encode($_SESSION['cart']);                                                                    //jsonを配列化
         
-        $sql = "UPDATE ORDER_SYS_DB.`T_CART_DATA` SET `cart_data` = :json_data WHERE `session_token` = :session_token"; // カート情報をアップデート
+        $sql = "UPDATE ORDER_SYS_DB.`T_CART_DATA` SET `product_in_cart` = :json_data WHERE `session_token` = :session_token"; // カート情報をアップデート
         $sql = $DB -> prepare($sql);                                                                                    // sql文の実行準備
         $sql -> bindValue(':json_data', $json_data, PDO::PARAM_STR);                                                    // プレースホルダーの置き換え
         $sql -> bindValue(':session_token', $token_id, PDO::PARAM_STR);                                                 // プレースホルダーの置き換え
@@ -105,7 +106,7 @@
 
     }
 
-    function getCartData($DB) 
+    function getCartData($DB, $token_id) 
     {
         $sql = "SELECT `product_in_cart` FROM ORDER_SYS_DB.`T_CART_DATA` WHERE `session_token` = :session_token";   // カート情報を取得
         $sql = $DB -> prepare($sql);                                                                                // sqlを実行準備する
@@ -115,7 +116,7 @@
 
         if ($cart_data == false) return false;
 
-        $_SESSION['cart'] = json_decode($cart_data, true);                                                          // jsonを配列化
+        $_SESSION['cart'] = json_decode($cart_data['product_in_cart'], true);                                                          // jsonを配列化
         
         return true;
     }
