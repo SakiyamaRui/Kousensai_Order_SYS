@@ -583,6 +583,7 @@ body {
                         padding: 0 4px;
                         padding-bottom: 8px;
                         border-bottom: 1px solid rgba(0, 0, 0, .1);
+                        position: relative;
 
                         .shop {
                             font-size: 14px;
@@ -591,6 +592,22 @@ body {
                         .name {
                             font-size: 18px;
                             font-family: 'Noto Sans JP', sans-serif;
+                        }
+
+                        .delete {
+                            color: rgb(2, 20, 173);
+                            cursor: pointer;
+                            text-align: center;
+                            box-sizing: border-box;
+                            padding: 3px 6px;
+                            position: absolute;
+                            transform: translate(-50%, -50%);
+                            top: 45%;
+                            right: 0;
+
+                            &:hover {
+                                background-color: rgba(0, 0, 0, 0.05);
+                            }
                         }
                     }
 

@@ -48,12 +48,18 @@
         let order_data = [];
         let cartList = [];
         let option_prices = [];
+        let item_append_place;
         window.addEventListener("DOMContentLoaded", () => {
             cartList = JSON.parse(document.getElementById("cart_info").textContent);
-            let item_append_place = document.querySelector('.item-body .list');
-            let index = 0;
+            item_append_place = document.querySelector('.item-body .list');
 
             // DOMの作成
+            domCreate(cartList);
+            orderTotal();
+        });
+
+        function domCreate(cartList) {
+            let index = 0;
             cartList.forEach(e => {
                 let column = document.createElement('div');
                 column.setAttribute('class', 'column');
@@ -75,9 +81,14 @@
                     let product_name = document.createElement('div');
                     product_name.setAttribute('class', 'name');
                     product_name.appendChild(document.createTextNode(e.product_data.product_name));
+
+                    let delete_btn = document.createElement('div');
+                    delete_btn.setAttribute('class', 'delete');
+                    delete_btn.appendChild(document.createTextNode('削除'));
                 
                 item_head.appendChild(shop);
                 item_head.appendChild(product_name);
+                item_head.appendChild(delete_btn);
                 //
                 let option = document.createElement('div');
                 option.setAttribute('class', 'option');
@@ -118,6 +129,25 @@
                         changeCartData(i);
                     });
 
+                    // 削除ボタン
+                    delete_btn.addEventListener('click', (e) => {
+                        let i = e.target.getAttribute('index');
+
+                        // すべての配列から削除
+                        order_data.splice(i, 1);
+                        cartList.splice(i, 1);
+                        option_prices.splice(i, 1);
+
+                        item_append_place.innerHTML = '';
+
+                        // 再描画
+                        domCreate(cartList);
+                        orderTotal();
+
+                        // 変更を保存
+                        cartItemChangeSave(i, 'delete');
+                    });
+
                     let total_price = document.createElement('div');
                     total_price.setAttribute('class', 'item-total-price');
                     total_price.appendChild(document.createTextNode('合計: '));
@@ -139,9 +169,7 @@
 
                 index++;
             });
-
-            orderTotal();
-        });
+        }
 
         function changeCartData(index) {
             // フォーマットの作成
