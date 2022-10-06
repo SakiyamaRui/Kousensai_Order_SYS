@@ -165,3 +165,55 @@ function getOptionDataRelease($id) {
         return Array();
     }
 }
+
+function getProductData($id_list) {
+    $DB = DB_Connect();
+
+    $sql = "SELECT
+                `product_id`,
+                `store_id`,
+                `product_name`,
+                `product_price`
+            FROM
+                ORDER_SYS_DB.`T_PRODUCT_INFORMATION`
+            WHERE
+                `product_id` IN(%s);";
+    $inClause = substr(str_repeat(',?', count($id_list)), 1);
+
+    $sql = $DB -> prepare(sprintf($sql, $inClause));
+    $sql -> execute($id_list);
+    $record = $sql -> fetchAll(PDO::FETCH_ASSOC);
+
+    //
+    $list = Array();
+    foreach ($record as $row) {
+        $list[$row['product_id']] = Array(
+            'shop_name' => $row['store_id'],
+            'product_name' => $row['product_name'],
+            'price' => $row['product_price'],
+            'options' => Array()
+        );
+    }
+
+    // オプション・店舗名を取得
+    $store_id_list = array_column($record, 'store_id');
+
+    // 店舗名
+    $inClause = substr(str_repeat(',?', count($store_id_list)), 1);
+    $sql = "SELECT * FROM ORDER_SYS_DB.`T_STORE_INFORMATION` WHERE `store_id`IN(%s)";
+    $sql = $DB -> prepare(sprintf($sql, $inClause));
+    $sql -> execute($store_id_list);
+    $store_name_list = array_column($sql -> fetchAll(PDO::FETCH_ASSOC), NULL, 'store_id');
+
+    // オプション
+    $options = getOptionData($id_list);
+
+    // 置き換える
+    foreach($list as $key => &$column) {
+        $column['options'] = array_values($options[$key]);
+        $column['shop_name'] = $store_name_list[$column['shop_name']]['store_name'];
+    }
+
+    return $list;
+}
+
