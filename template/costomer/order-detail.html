@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注文の詳細</title>
+
+    <link rel="stylesheet" href="/css/costomer.css">
+
+    <!--Google Fonts-->
+    <?php include(ROOT_PATH.'\template\fonts.html'); ?>
+</head>
+<body>
+    <?php include(ROOT_PATH.'\template\costomer\header.html'); ?>
+
+    <div class="order-detail">
+        <div class="qr">
+            <img src="/api/costomer.php?mode=qr-code">
+            <div class="order-id">
+                注文番号: {order-id}
+            </div>
+        </div>
+
+        <div class="detail">
+            <div class="content">
+                <div class="label">
+                    ステータス
+                </div>
+                <div class="order-status">
+                    <div class="top">
+                        支払い待ち
+                    </div>
+                    <div class="body">
+                        支払いが完了するまで注文が確定しません。
+                        <div>
+                            支払いを完了させてください。
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="content">
+                <div class="label">
+                    受け取り希望時間
+                </div>
+                <div class="time">
+                    今すぐ
+                </div>
+            </div>
+            <div class="content">
+                <div class="label">
+                    通知の受け取り
+                </div>
+                <div class="notice-request">
+                    <div class="status">
+                        設定済み
+                    </div>
+                    <button>
+                        通知の設定
+                    </button>
+                </div>
+            </div>
+            <div class="content">
+                <div class="label">
+                    注文の詳細
+                </div>
+                <div class="list">
+                    <div class="item">
+                        <div class="column">
+                            <div class="menu">
+                                商品名
+                            </div>
+                            <div class="price">
+                                0
+                            </div>
+                            <div class="option">
+                                <div class="name">
+                                    サイズ
+                                </div>
+                                <div class="select">大盛り</div>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="menu">
+                                商品名
+                            </div>
+                            <div class="price">
+                                0
+                            </div>
+                            <div class="option">
+                                <div class="name">
+                                    サイズ
+                                </div>
+                                <div class="select">大盛り</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="total">
+                        合計: <span class="total">0</span>円
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
