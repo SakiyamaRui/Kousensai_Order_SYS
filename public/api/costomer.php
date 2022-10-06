@@ -42,6 +42,17 @@
             }
             break;
         case 'cartRemove':
+            if (!isset($request['index'])) {
+                // 403エラー
+            }
+
+            $result = remove_cart($request['index']);
+
+            if ($result == false) {
+                // エラーを出力
+            }else{
+                echo 'true';
+            }
             break;
         // webPush通知の登録
         case 'notice-subscription':
