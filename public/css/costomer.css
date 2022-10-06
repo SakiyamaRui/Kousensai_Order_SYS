@@ -32,6 +32,11 @@ body .head .cart {
   padding: 10px;
   cursor: pointer;
 }
+body .head .cart a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 body .head .cart svg {
   width: 25px;
   height: auto;

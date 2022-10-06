@@ -39,6 +39,12 @@ body {
             padding: 10px;
             cursor: pointer;
 
+            a {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
             svg {
                 width: 25px;
                 height: auto;
