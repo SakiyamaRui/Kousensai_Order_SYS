@@ -117,7 +117,9 @@ function getOptionData($id_list, $type = 0) {
 
         foreach($val as $option_select) {
             if ($option_select['option_name'] == '全体の在庫') {
-                $column[$option_select['option_name']] = ($option_select['option_remaining_stock'] == -1)? INF: $option_select['option_remaining_stock'];
+                if ($type == 1) {
+                    $column[$option_select['option_name']] = ($option_select['option_remaining_stock'] == -1)? INF: $option_select['option_remaining_stock'];
+                }
                 continue;
             }
 
@@ -155,6 +157,11 @@ function getOptionData($id_list, $type = 0) {
 }
 
 function getOptionDataRelease($id) {
-    $data = array_values(getOptionData($id)[$id]);
-    return $data;
+    $data = getOptionData($id);
+
+    if (isset($data[$id])) {
+        return array_values($data[$id]);
+    }else{
+        return Array();
+    }
 }
