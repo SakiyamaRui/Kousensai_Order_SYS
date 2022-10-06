@@ -25,7 +25,7 @@
         return $result;
     }
 
-    function remove_cart($index) 
+    function remove_cart($index)
     {
         $token_id = session::token_start();
         $DB = DB_Connect();
