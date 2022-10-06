@@ -33,8 +33,9 @@
 
         static function token_start() {
             self::start();
+            $request = json_decode(file_get_contents('php://input'), 1);
 
-            if (!isset($_SESSION['token'])) {
+            if (isset($_SESSION['token'])) {
                 return $_SESSION['token'];
             }
 
@@ -45,8 +46,8 @@
             }
 
             // 転送してフィンガープリントから値を取得
-            if (!isset($_POST['fingerprint'])) return null;
-            if ($_POST['fingerprint'] != '') {
+            if (!isset($request['fingerprint'])) return null;
+            if ($request['fingerprint'] != '') {
                 $DB = DB_Connect();
 
                 $sql = "SELECT
@@ -56,56 +57,58 @@
                         WHERE
                             `fingerprint` = :fingerprint";
                 $sql = $DB -> prepare($sql);
-                $sql -> bindValue(':fingerprint', $_POST['fingerprint'], PDO::PARAM_STR);
+                $sql -> bindValue(':fingerprint', $request['fingerprint'], PDO::PARAM_STR);
 
                 $sql -> execute();
                 $result = $sql -> fetch(PDO::FETCH_ASSOC);
                 if ($result != false) {
                     $_SESSION['token'] = $result['session_token'];
+                    setcookie('SESS_TOKEN', $_SESSION['token'], time() + 60 * 60 * 48, '/', 'localhost', true, true);
                     return $_SESSION['token'];
                 }
             }
 
-            if ($result != false) {
-                // 新しいセッションの開始
-                $sql = "INSERT INTO
-                            `T_NOTICE_DATA` (
-                                `session_token`,
-                                `fingerprint`
-                            )
-                        VALUES(
-                            :new_token,
-                            :fingerprint
-                        );
-                        INSERT INTO
-                            `T_CART_DATA`(
-                                `session_token`,
-                                `product_in_cart`
-                            )
-                        VALUES (
-                            :new_token,
-                            '[]'
-                        );";
-                
-                $new_id = session::newToken();
-                $sql = $DB -> prepare($sql);
-                $sql -> bindValue(':new_token', $new_id, PDO::PARAM_STR);
-                $sql -> bindValue(':fingerprint', $_POST['fingerprint'], PDO::PARAM_STR);
+            // 新しいセッションの開始
+            $sql = "INSERT INTO
+                        ORDER_SYS_DB.`T_NOTICE_DATA` (
+                            `session_token`,
+                            `fingerprint`
+                        )
+                    VALUES(
+                        :new_token,
+                        :fingerprint
+                    );
+                    INSERT INTO
+                        ORDER_SYS_DB.`T_CART_DATA`(
+                            `session_token`,
+                            `product_in_cart`
+                        )
+                    VALUES (
+                        :new_token,
+                        '[]'
+                    );";
 
-                $result = $sql -> execute();
+            $new_id = session::newToken($DB);
+            $sql = $DB -> prepare($sql);
+            $sql -> bindValue(':new_token', $new_id, PDO::PARAM_STR);
+            $sql -> bindValue(':fingerprint', $request['fingerprint'], PDO::PARAM_STR);
 
-                if ($result == false) {
-                    return false;
-                }else{
-                    $_SESSION['token'] = $result['session_token'];
-                    return $_SESSION['token'];
-                }
+            $result = $sql -> execute();
+
+            if ($result == false) {
+                return false;
+            }else{
+                $_SESSION['token'] = $new_id;
+                setcookie('SESS_TOKEN', $_SESSION['token'], time() + 60 * 60 * 48, '/', 'localhost', true, true);
+                return $_SESSION['token'];
             }
+
+            return false;
         }
 
         static function newToken($DB) {
             while (1) {
-                $new_id = generateToken($length);
+                $new_id = generateToken(50);
 
                 $sql = "SELECT * FROM ORDER_SYS_DB.`T_NOTICE_DATA` WHERE `session_token` = :session_token";
                 $sql = $DB -> prepare($sql);
