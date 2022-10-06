@@ -106,7 +106,7 @@
 
     }
 
-    function getCartData($DB, $token_id) 
+    function getCartData($DB, $token_id)
     {
         $sql = "SELECT `product_in_cart` FROM ORDER_SYS_DB.`T_CART_DATA` WHERE `session_token` = :session_token";   // カート情報を取得
         $sql = $DB -> prepare($sql);                                                                                // sqlを実行準備する
