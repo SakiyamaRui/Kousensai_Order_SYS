@@ -14,6 +14,18 @@
             break;
         // カート情報の変更
         case 'changeCartData':
+            if (!isset($request['data']) || isset($request['index'])) {
+                // 403エラー
+            }
+
+            // 追加する関数の呼び出し
+            $result = change_cart_data($request['index'], $request['data']);
+
+            if ($result == false) {
+                // エラーを出力
+            }else{
+                echo 'true';
+            }
             break;
         case 'cartAppend':
             if (!isset($request['order_data'])) {
@@ -28,6 +40,8 @@
             }else{
                 echo 'true';
             }
+            break;
+        case 'cartRemove':
             break;
         // webPush通知の登録
         case 'notice-subscription':

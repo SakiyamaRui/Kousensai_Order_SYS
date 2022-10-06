@@ -15,14 +15,18 @@
 
         // カートの中にある商品IDをリスト化
         $product_id_list = array_unique(array_column($_SESSION['cart'], 'product_id'));
-        
-        // 商品情報を取得する
-        $product_list = getProductData($product_id_list);
 
-        // フォーマット化
-        $cart_data = $_SESSION['cart'];
-        foreach ($cart_data as &$val) {
-            $val['product_data'] = $product_list[$val['product_id']];
+        if (count($product_id_list) != 0) {
+            // 商品情報を取得する
+            $product_list = getProductData($product_id_list);
+
+            // フォーマット化
+            $cart_data = $_SESSION['cart'];
+            foreach ($cart_data as &$val) {
+                $val['product_data'] = $product_list[$val['product_id']];
+            }
+        }else{
+            $cart_data = [];
         }
     }
 

@@ -11,4 +11,7 @@
         // webPush通知の登録
         case 'notice-subscription':
             break;
+        case 'practice':
+            echo 'Hello World!';
+            break;
     }
