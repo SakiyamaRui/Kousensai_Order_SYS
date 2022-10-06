@@ -26,6 +26,9 @@
     require_once(ROOT_PATH.'\app\secure\token.php');
     require_once(ROOT_PATH.'\app\secure\session.php');
     require_once(ROOT_PATH.'\app\PRODUCT\getData.php');
+    require_once(ROOT_PATH.'\app\PRODUCT\getinformation.php');
     require_once(ROOT_PATH.'\app\Order\Cart.php');
+    require_once(ROOT_PATH.'\app\Order\order-request.php');
+    require_once(ROOT_PATH.'\app\PRODUCT\stock_check.php');
     // require_once(ROOT_PATH.'\app\server.php');
 
