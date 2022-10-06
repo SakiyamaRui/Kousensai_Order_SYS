@@ -1,7 +1,8 @@
 <?php
+    require_once(dirname(__DIR__).'/path.php');
 
     if($_SERVER["REQUEST_METHOD"] == "POST"){
-        $request = file_get_contents('php://input');
+        $request = json_decode(file_get_contents('php://input'), 1);
     }
 
     switch ($_GET['mode']) {
@@ -15,12 +16,12 @@
         case 'changeCartData':
             break;
         case 'cartAppend':
-            if (!isset($_POST['order_data'])) {
+            if (!isset($request['order_data'])) {
                 // 403エラー
             }
 
             // 追加する関数の呼び出し
-            $result = add_cart($_POST['order_data']);
+            $result = add_cart($request['order_data']);
 
             if ($result == false) {
                 // エラーを出力
