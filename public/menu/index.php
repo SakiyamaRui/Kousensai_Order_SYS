@@ -1,5 +1,5 @@
 <?php
-    require_once('../path.php');
+    require_once(dirname(__DIR__).'/path.php');
 
     preg_match('/^\/menu\/([\w\/]*)\/?/', $_SERVER['REQUEST_URI'], $matches);
     $request = explode('/', $matches[1]);
@@ -27,11 +27,10 @@
                 $options = getOptionDataRelease($product_id);
 
                 $decode_data = Array(
-                    'price' => 0,
+                    'product_id' => $product_id,
+                    'price' => 300,
                     'options' => $options
                 );
-
-                json_encode($decode_data);
                 
                 require_once(ROOT_PATH . '\template\costomer\product-detail.html');
             }catch (Exception $e) {
