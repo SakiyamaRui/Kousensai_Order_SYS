@@ -15,24 +15,24 @@
 
     <div class="product-detail">
         <div class="img">
-            No Image
+            <?php echo ($detail['img'] == NULL)? 'No Image': '<img src="'.$data['img'].'">'; ?>
         </div>
         <div class="product-info">
             <div class="store-name">
-                {store_name}
+                <?php echo $detail['store_name']; ?>
             </div>
             <div class="product-name">
-                {product_name}
+                <?php echo $detail['product_name']; ?>
             </div>
             <div class="price">
-                <span class="price">{price}</span>円
+                <span class="price"><?php echo $detail['price']; ?></span>円
             </div>
             <div class="detail">
                 <div class="label">
                     詳細情報
                 </div>
                 <div class="body">
-                    {product_detail}
+                    <?php echo $detail['product_detail']; ?>
                 </div>
             </div>
         </div>

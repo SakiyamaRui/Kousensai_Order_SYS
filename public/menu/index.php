@@ -23,12 +23,14 @@
             try {
                 $product_id = $request[1];
 
+                $detail = getProductDetail($product_id);
+
                 // オプション情報の取得
                 $options = getOptionDataRelease($product_id);
 
                 $decode_data = Array(
                     'product_id' => $product_id,
-                    'price' => 300,
+                    'price' => $detail['price'],
                     'options' => $options
                 );
                 

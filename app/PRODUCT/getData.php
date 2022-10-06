@@ -210,7 +210,11 @@ function getProductData($id_list) {
 
     // 置き換える
     foreach($list as $key => &$column) {
-        $column['options'] = array_values($options[$key]);
+        if (isset($options[$key])) {
+            $column['options'] = array_values($options[$key]);
+        }else{
+            $column['options'] = Array();
+        }
         $column['shop_name'] = $store_name_list[$column['shop_name']]['store_name'];
     }
 
