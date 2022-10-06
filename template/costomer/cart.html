@@ -113,6 +113,9 @@
                         // 合計値の計算
                         itemTotalSum(i);
                         itemTotalUpdate(i);
+
+                        // 変更を保存
+                        changeCartData(i);
                     });
 
                     let total_price = document.createElement('div');
@@ -139,6 +142,17 @@
 
             orderTotal();
         });
+
+        function changeCartData(index) {
+            // フォーマットの作成
+            let cart_item = {
+                product_id: cartList[index].product_id,
+                quantity: order_data[index].quantity,
+                options: order_data[index].option_select
+            };
+
+            cartItemChangeSave(index, 'change', cart_item);
+        }
 
         function optionDOMCreate(data, selected, index) {
             let column = document.createElement('div');
@@ -192,6 +206,9 @@
                 // 合計値を取得
                 itemTotalSum(i);
                 itemTotalUpdate(i);
+
+                // 変更を保存
+                changeCartData(i);
             });
 
             return column;
@@ -229,6 +246,43 @@
             // 画面へ描画
             document.querySelector('.order-head .info .quantity .num').innerText = quantity;
             document.querySelector('.order-head .info .price .num.total-price').innerText = price;
+        }
+
+        function cartItemChangeSave(index, type, changes = []) {
+            let url = '';
+            switch (type) {
+                case 'change':
+                    url = '/api/costomer.php?mode=changeCartData';
+                    break;
+                case 'delete':
+                    url = '/api/costomer.php?mode=cartRemove';
+                    break;
+            }
+
+            return new Promise(resolve, reject => {
+                let xhr = new XMLHttpRequest();
+
+                let json = {
+                    index: index,
+                    data: changes
+                };
+
+                xhr.open('POST', url);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.send(JSON.stringify(json));
+
+                xhr.onreadystatechange = () => {
+                    if (xhr.readyState == 4) {
+                        switch(xhr.status) {
+                            case 200:
+                                // 通信成功
+                                console.log(xhr.responseText);
+                                resolve(xhr.responseText);
+                                break;
+                        }
+                    }
+                }
+            });
         }
     }());
 </script>
