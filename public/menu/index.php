@@ -1,5 +1,5 @@
 <?php
-    require_once('../path.php');
+    require_once(dirname(__DIR__).'/path.php');
 
     preg_match('/^\/menu\/([\w\/]*)\/?/', $_SERVER['REQUEST_URI'], $matches);
     $request = explode('/', $matches[1]);
