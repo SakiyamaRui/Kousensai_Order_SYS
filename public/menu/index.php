@@ -1,5 +1,5 @@
 <?php
-    require_once('../path.php');
+    require_once(dirname(__DIR__).'/path.php');
 
     preg_match('/^\/menu\/([\w\/]*)\/?/', $_SERVER['REQUEST_URI'], $matches);
     $request = explode('/', $matches[1]);
@@ -9,43 +9,7 @@
     switch($request[0]) {
         // メニュー一覧
         case '':
-            $menu_list = Array(
-                Array(
-                    'store_name' => 'ぱーらーしまりん',
-                    'product_name' => '焼きそば',
-                    'price' => 300,
-                    'img' => NULL,
-                    'product_id' => '12345'
-                ),
-                Array(
-                    'store_name' => 'ぱーらーしまりん',
-                    'product_name' => 'ホットドック',
-                    'price' => 200,
-                    'img' => NULL,
-                    'product_id' => '12346'
-                ),
-                Array(
-                    'store_name' => 'ぱーらーしまりん',
-                    'product_name' => 'しゅわとろサイダー',
-                    'price' => 150,
-                    'img' => NULL,
-                    'product_id' => '12347'
-                ),
-                Array(
-                    'store_name' => 'ぱーらーしまりん',
-                    'product_name' => 'トロピカルサイダー',
-                    'price' => 150,
-                    'img' => NULL,
-                    'product_id' => '12348'
-                ),
-                Array(
-                    'store_name' => 'ぱーらーしまりん',
-                    'product_name' => 'さんぴん茶',
-                    'price' => 100,
-                    'img' => NULL,
-                    'product_id' => '12349'
-                ),
-            );
+            $menu_list = getAllProductIndexList();
 
             //
             $menu_list_html = '';
@@ -58,9 +22,22 @@
         case 'product':
             try {
                 $product_id = $request[1];
-                echo $product_id;
+
+                $detail = getProductDetail($product_id);
+
+                // オプション情報の取得
+                $options = getOptionDataRelease($product_id);
+
+                $decode_data = Array(
+                    'product_id' => $product_id,
+                    'price' => $detail['price'],
+                    'options' => $options
+                );
+                
+                require_once(ROOT_PATH . '\template\costomer\product-detail.html');
             }catch (Exception $e) {
                 // 404
+                echo $e;
             }
             break;
     }

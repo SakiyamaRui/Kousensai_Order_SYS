@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{product_name} | 沖縄高専祭2022</title>
+
+    <link rel="stylesheet" href="/css/costomer.css">
+    <!--Google Fonts-->
+    <?php include(ROOT_PATH.'\template\fonts.html'); ?>
+</head>
+<body>
+    <?php include(ROOT_PATH.'\template\costomer\header.html'); ?>
+
+    <div class="product-detail">
+        <div class="img">
+            <?php echo ($detail['img'] == NULL)? 'No Image': '<img src="'.$data['img'].'">'; ?>
+        </div>
+        <div class="product-info">
+            <div class="store-name">
+                <?php echo $detail['store_name']; ?>
+            </div>
+            <div class="product-name">
+                <?php echo $detail['product_name']; ?>
+            </div>
+            <div class="price">
+                <span class="price"><?php echo $detail['price']; ?></span>円
+            </div>
+            <div class="detail">
+                <div class="label">
+                    詳細情報
+                </div>
+                <div class="body">
+                    <?php echo $detail['product_detail']; ?>
+                </div>
+            </div>
+        </div>
+        <div class="option">
+            <div class="label">
+                オプション
+            </div>
+        </div>
+    </div>
+    <div class="func">
+        <div class="quantity">
+            数量: 
+            <select id="quantity">
+                <option value="1" selected>1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+        </div>
+        <div class="price">
+            <span class="all-price">
+                0
+            </span>
+            円
+        </div>
+        <div class="add-btn" id="append-cart">
+            カートに追加
+        </div>
+    </div>
+</body>
+</html>
+<script type="application/json" id="menu_info">
+    <?php echo json_encode($decode_data, JSON_UNESCAPED_UNICODE).PHP_EOL; ?>
+</script>
+<script>
+    (function() {
+        //
+        let option_prices = {};
+        let option_select = {};
+
+        window.addEventListener('DOMContentLoaded', () => {
+            // 商品情報を取得
+            product_json = JSON.parse(document.getElementById('menu_info').textContent);
+
+            // オプションを画面へ描画
+            let options = product_json['options'];
+            let option_append_place = document.querySelector('.product-detail .option');
+            options.forEach(elm => {
+                option_prices[elm.name] = {};
+                option_select[elm.name] = elm.default;
+                elm["option_values"].forEach(val => option_prices[elm.name][val.value] = val.price);
+
+                if (elm.isPublic == false) {
+                    return false;
+                }
+                let element = optionDOMCreate(elm);
+                option_append_place.appendChild(element);
+            });
+
+            totalPriceDOM = document.querySelector('span.all-price');
+            totalPriceDOM.innerText = getOptionTotalPrice();
+
+            // イベントの設定
+            document.getElementById('quantity').addEventListener('change', () => {
+                totalPriceDOM.innerText = getOptionTotalPrice();
+            });
+
+        });
+
+        document.getElementById('append-cart').addEventListener('click', () => {
+            // ボタン
+            
+            let xhr = new XMLHttpRequest();
+            let json = formatData();
+
+            xhr.open('POST', '/api/costomer.php?mode=cartAppend');
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.send(JSON.stringify(json));
+
+            xhr.onreadystatechange = () => {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        console.log(xhr.responseText);
+                    }
+                }
+            }
+        });
+
+        function formatData() {
+            $submit_format = {
+                'fingerprint': '1234567890',
+                'order_data': {
+                    'product_id': product_json.product_id,
+                    'quantity': Number(document.getElementById('quantity').value),
+                    'options': option_select
+                }
+            };
+
+            return $submit_format;
+        }
+
+        function optionDOMCreate(data) {
+            let column = document.createElement('div');
+            column.setAttribute('class', 'column');
+
+            let option_name = document.createElement('div');
+            option_name.setAttribute('class', 'option-name');
+            option_name.appendChild(document.createTextNode(data.name));
+
+            let select_parent = document.createElement('div');
+            select_parent.setAttribute('class', 'select');
+            let selector = document.createElement('select');
+            selector.setAttribute('class', 'option_select');
+            selector.setAttribute('option-name', data.name);
+
+            data["option_values"].sort((a, b) => a.index - b.index);
+
+            data["option_values"].forEach(val => {
+                let option = document.createElement('option');
+                option.setAttribute('value', val.value);
+                option.appendChild(document.createTextNode(val.value));
+                if (val.value == data.default) option.setAttribute('selected', '');
+
+                selector.appendChild(option);
+            });
+            select_parent.appendChild(selector);
+
+            let price = document.createElement('div');
+            price.setAttribute('class', 'price');
+            price.appendChild(document.createTextNode(data["option_values"].find(e => e.value == data.default)?.price));
+
+            column.appendChild(option_name);
+            column.appendChild(select_parent);
+            column.appendChild(price);
+
+            // イベントリスナ
+            selector.addEventListener('change', (e) => {
+                // 選択したValueをoption_selectへ代入
+                let option_name = e.target.getAttribute('option-name');
+                option_select[option_name] = e.target.value;
+
+                // オプションの値段を取得
+                let option_price = option_prices[option_name][option_select[option_name]];
+                e.target.parentElement.nextSibling.innerText = option_price;
+
+                // 合計値を取得
+                let totalPrice = getOptionTotalPrice();
+                totalPriceDOM.innerText = totalPrice;
+            });
+
+            return column;
+        }
+
+        function getOptionTotalPrice() {
+            let sum = product_json.price;
+            let quantity = Number(document.getElementById('quantity').value);
+
+            for (let key in option_select) {
+                sum += option_prices[key][option_select[key]];
+            }
+
+            return sum * quantity;
+        }
+    }());
+</script>

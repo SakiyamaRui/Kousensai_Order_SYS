@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>カート情報</title>
+    
+    <link rel="stylesheet" href="/css/costomer.css">
+
+    <!--Google Fonts-->
+    <?php include(ROOT_PATH.'\template\fonts.html'); ?>
+</head>
+<body>
+    <?php include(ROOT_PATH.'\template\costomer\header.html'); ?>
+
+    <div class="cart-body">
+        <div class="order-head">
+            <div class="info">
+                <div class="quantity">
+                    <span class="num">0</span>点
+                </div>
+                <div class="price">
+                    合計: <span class="num total-price">0</span>円
+                </div>
+            </div>
+            <div class="order-request-btn">
+                注文を予約する
+            </div>
+        </div>
+
+        <div class="item-body">
+            <div class="label">
+                カート一覧
+            </div>
+            <div class="list">
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<script type="application/json" id="cart_info">
+    <?php echo json_encode($cart_data, JSON_UNESCAPED_UNICODE); ?>
+</script>
+<script>
+    (function() {
+        // カート一覧を表示する
+        let order_data = [];
+        let cartList = [];
+        let option_prices = [];
+        window.addEventListener("DOMContentLoaded", () => {
+            cartList = JSON.parse(document.getElementById("cart_info").textContent);
+            let item_append_place = document.querySelector('.item-body .list');
+            let index = 0;
+
+            // DOMの作成
+            cartList.forEach(e => {
+                let column = document.createElement('div');
+                column.setAttribute('class', 'column');
+                column.setAttribute('index', index);
+
+                order_data.push({
+                    option_select: e.options,
+                    total: 0,
+                    quantity: 1,
+                });
+                option_prices.push({});
+
+                let item_head = document.createElement('div');
+                item_head.setAttribute('class', 'item-head');
+                    let shop = document.createElement('div');
+                    shop.setAttribute('class', 'shop');
+                    shop.appendChild(document.createTextNode(e.product_data.shop_name));
+
+                    let product_name = document.createElement('div');
+                    product_name.setAttribute('class', 'name');
+                    product_name.appendChild(document.createTextNode(e.product_data.product_name));
+                
+                item_head.appendChild(shop);
+                item_head.appendChild(product_name);
+                //
+                let option = document.createElement('div');
+                option.setAttribute('class', 'option');
+                    let label = document.createElement('div');
+                    label.setAttribute('class', 'label');
+                    label.appendChild(document.createTextNode('オプション'));
+                option.appendChild(label);
+                // オプション
+                e.product_data.options.forEach(elm => {
+                    option.appendChild(optionDOMCreate(elm, e.options, index));
+                });
+
+                let item_total = document.createElement('div');
+                item_total.setAttribute('class', 'item-total');
+                    let quantity = document.createElement('div');
+                    quantity.setAttribute('class', 'quantity');
+                    quantity.appendChild(document.createTextNode('数量: '));
+                    let selector = document.createElement('select');
+                    selector.setAttribute('index', index);
+                    for (let i = 1; i <= 5; i++) {
+                        let quantity_option = document.createElement('option');
+                        quantity_option.setAttribute('value', i);
+                        quantity_option.appendChild(document.createTextNode(i));
+                        selector.appendChild(quantity_option);
+                    }
+                    quantity.appendChild(selector);
+
+                    // 数量のイベントリスナ
+                    selector.addEventListener('change', (e) => {
+                        let i = e.target.getAttribute('index');
+                        order_data[i].quantity = Number(e.target.value);
+                        
+                        // 合計値の計算
+                        itemTotalSum(i);
+                        itemTotalUpdate(i);
+
+                        // 変更を保存
+                        changeCartData(i);
+                    });
+
+                    let total_price = document.createElement('div');
+                    total_price.setAttribute('class', 'item-total-price');
+                    total_price.appendChild(document.createTextNode('合計: '));
+                    let span_price = document.createElement('span');
+                    span_price.setAttribute('class', 'price');
+                    // 合計値の計算
+                    itemTotalSum(index);
+                    span_price.appendChild(document.createTextNode(order_data[index].total));
+                    total_price.appendChild(span_price);
+                    total_price.appendChild(document.createTextNode('円'));
+                item_total.appendChild(quantity);
+                item_total.appendChild(total_price);
+
+                column.appendChild(item_head);
+                column.appendChild(option);
+                column.appendChild(item_total);
+
+                item_append_place.appendChild(column);
+
+                index++;
+            });
+
+            orderTotal();
+        });
+
+        function changeCartData(index) {
+            // フォーマットの作成
+            let cart_item = {
+                product_id: cartList[index].product_id,
+                quantity: order_data[index].quantity,
+                options: order_data[index].option_select
+            };
+
+            cartItemChangeSave(index, 'change', cart_item);
+        }
+
+        function optionDOMCreate(data, selected, index) {
+            let column = document.createElement('div');
+            column.setAttribute('class', 'column');
+
+            let option_name = document.createElement('div');
+            option_name.setAttribute('class', 'option-name');
+            option_name.appendChild(document.createTextNode(data.name));
+            option_prices[index][data.name] = {};
+
+            let select_parent = document.createElement('div');
+            select_parent.setAttribute('class', 'select');
+            let selector = document.createElement('select');
+            selector.setAttribute('class', 'option_select');
+            selector.setAttribute('option-name', data.name);
+            selector.setAttribute('index', index);
+
+            data["option_values"].sort((a, b) => a.index - b.index);
+
+            data["option_values"].forEach(val => {
+                let option = document.createElement('option');
+                option.setAttribute('value', val.value);
+                option.appendChild(document.createTextNode(val.value));
+                if (val.value == selected[data.name]) option.setAttribute('selected', '');
+                option_prices[index][data.name][val.value] = val.price;
+
+                selector.appendChild(option);
+            });
+            select_parent.appendChild(selector);
+
+            let price = document.createElement('div');
+            price.setAttribute('class', 'price');
+            price.appendChild(document.createTextNode(data["option_values"].find(e => e.value == selected[data.name])?.price));
+
+            column.appendChild(option_name);
+            column.appendChild(select_parent);
+            column.appendChild(price);
+
+            // イベントリスナ
+            selector.addEventListener('change', (e) => {
+                // 選択したValueをoption_selectへ代入
+                let option_name = e.target.getAttribute('option-name');
+                let i = e.target.getAttribute('index');
+                console.log(order_data[i].option_select);
+                order_data[i].option_select[option_name] = e.target.value;
+
+                // オプションの値段を取得
+                let option_price = option_prices[i][option_name][order_data[i].option_select[option_name]];
+                e.target.parentElement.nextSibling.innerText = option_price;
+
+                // 合計値を取得
+                itemTotalSum(i);
+                itemTotalUpdate(i);
+
+                // 変更を保存
+                changeCartData(i);
+            });
+
+            return column;
+        }
+
+        function itemTotalUpdate(i) {
+            let column = document.querySelector(`.list .column[index="${i}"]`);
+            column.querySelector('.item-total-price .price').innerText = order_data[i].total;
+
+            orderTotal();
+        }
+
+        function itemTotalSum(i) {
+            let select = order_data[i].option_select;
+            let sum = cartList[i]['product_data']['price'];
+
+            for (let key in select) {
+                sum += option_prices[i][key][select[key]];
+            }
+
+            sum = sum * order_data[i].quantity;
+
+            order_data[i].total = sum;
+        }
+
+        function orderTotal() {
+            let quantity = 0;
+            let price = 0;
+
+            order_data.forEach(e => {
+                quantity += e.quantity;
+                price += e.total;
+            });
+
+            // 画面へ描画
+            document.querySelector('.order-head .info .quantity .num').innerText = quantity;
+            document.querySelector('.order-head .info .price .num.total-price').innerText = price;
+        }
+
+        function cartItemChangeSave(index, type, changes = []) {
+            let url = '';
+            switch (type) {
+                case 'change':
+                    url = '/api/costomer.php?mode=changeCartData';
+                    break;
+                case 'delete':
+                    url = '/api/costomer.php?mode=cartRemove';
+                    break;
+            }
+
+            return new Promise((resolve, reject) => {
+                let xhr = new XMLHttpRequest();
+
+                let json = {
+                    index: index,
+                    data: changes
+                };
+
+                xhr.open('POST', url);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.send(JSON.stringify(json));
+
+                xhr.onreadystatechange = () => {
+                    if (xhr.readyState == 4) {
+                        switch(xhr.status) {
+                            case 200:
+                                // 通信成功
+                                console.log(xhr.responseText);
+                                resolve(xhr.responseText);
+                                break;
+                        }
+                    }
+                }
+            });
+        }
+    }());
+</script>

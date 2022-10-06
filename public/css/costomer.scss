@@ -39,6 +39,12 @@ body {
             padding: 10px;
             cursor: pointer;
 
+            a {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
             svg {
                 width: 25px;
                 height: auto;
@@ -356,6 +362,8 @@ body {
         align-items: center;
         flex-direction: column;
         margin-top: 21px;
+        padding: 0 8px;
+        box-sizing: border-box;
 
         .img {
             aspect-ratio: 4/3;
@@ -408,20 +416,66 @@ body {
                 }
             }
         }
+
+        .option {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+
+            .label {
+                width: 100%;
+                box-sizing: border-box;
+                padding: 0 8px;
+                margin-top: 12px;
+            }
+
+            .column {
+                display: grid;
+                align-items: center;
+                grid-template-columns: 1fr auto 40px;
+                margin: 3px 8px;
+
+                .select {
+                    width: 100%;
+                    select {
+                        width: 100%;
+                        padding: 3px 3px;
+                    }
+                }
+
+                .price {
+                    text-align: right;
+                }
+            }
+        }
     }
 
     .func {
-        width: 100%;
+        width: calc(100% - 16px);
         max-width: 500px;
 
         display: flex;
         justify-content: space-around;
+        box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
+                    rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+        padding: 8px 0;
+        margin: 0 8px;
+        margin-top: 12px;
+
+
+        .quantity {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+        }
 
         .price {
             width: 60px;
             justify-content: flex-end;
             display: flex;
             align-items: center;
+            font-size: 18px;
         }
 
         .add-btn {
@@ -430,6 +484,165 @@ body {
             padding: 4px 12px;
             color: white;
             border-radius: 3px;
+            cursor: pointer;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+            flex-shrink: 1;
+
+            &:hover {
+                opacity: .8;
+            }
+        }
+    }
+
+    .cart-body {
+        max-width: 500px;
+        width: calc(100% - 16px);
+        margin: 0 8px;
+        margin-top: 21px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .order-head {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            width: 100%;
+            max-width: 300px;
+            box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
+                    rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+            box-sizing: border-box;
+            border-radius: 3px;
+            padding: 12px 30px;
+
+            .info {
+                display: flex;
+                justify-content: center;
+                font-family: 'Noto Sans JP', sans-serif;
+
+                span.num {
+                    font-size: 20px;
+                    padding: 0 2px;
+                }
+
+                .quantity {
+                    margin-right: 15px;
+                    font-size: 16px;
+                }
+
+                .price {
+                    font-size: 16px;
+                }
+            }
+
+            .order-request-btn {
+                text-align: center;
+                display: inline-flex;
+                box-sizing: border-box;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                background-color: rgb(255, 64, 64);
+                text-decoration: none;
+                padding: 6px 13px;
+                border-radius: 3px;
+                margin: 8px 0;
+                cursor: pointer;
+            }
+        }
+
+        .item-body {
+            width: calc(100% - 16px);
+            max-width: 400px;
+            margin: 0 8px;
+            margin-top: 12px;
+
+            .label {
+                font-family: 'Noto Sans JP', sans-serif;
+                font-size: 19px;
+                margin-bottom: 4px;
+            }
+
+            .list {
+                display: flex;
+                flex-direction: column;
+
+                .column {
+                    padding: 8px;
+                    box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
+                        rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+                    box-sizing: border-box;
+                    border-radius: 3px;
+                    margin: 6px 0;
+                    
+                    .item-head {
+                        margin-top: 4px;
+                        box-sizing: border-box;
+                        padding: 0 4px;
+                        padding-bottom: 8px;
+                        border-bottom: 1px solid rgba(0, 0, 0, .1);
+
+                        .shop {
+                            font-size: 14px;
+                            line-height: 15px;
+                        }
+                        .name {
+                            font-size: 18px;
+                            font-family: 'Noto Sans JP', sans-serif;
+                        }
+                    }
+
+                    .option {
+                        .label {
+                            font-size: 17px;
+                        }
+                        .column {
+                            box-shadow: unset;
+
+                            display: grid;
+                            align-items: center;
+                            grid-template-columns: 1fr auto 40px;
+                            margin: 3px 8px;
+
+                            .select {
+                                width: 100%;
+                                select {
+                                    width: 100%;
+                                    padding: 3px 3px;
+                                }
+                            }
+
+                            .price {
+                                text-align: right;
+                            }
+                        }
+                    }
+
+                    .item-total {
+                        border-top: 1px solid rgba(0, 0, 0, .1);
+                        box-sizing: border-box;
+                        padding: 10px 0 5px 0;
+                        display: flex;
+
+                        > div {
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            width: 50%;
+                        }
+
+                        .item-total-price {
+                            font-family: 'Noto Sans JP', sans-serif;
+                            .price {
+                                font-size: 18px;
+                                padding: 0 2px;
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
