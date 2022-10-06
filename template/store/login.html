@@ -6,8 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>高専祭店舗用ログイン</title>
-    <link rel="stylesheet" href="/css/reset.css">
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/ress/dist/ress.min.css">
+    <link rel="stylesheet" href="/css/login.css?123">
 </head>
 
 <body>
@@ -28,8 +28,8 @@
                     <div class="pass__wrapper">
                         <input id="password" name="password" class="input__pass" type="password" placeholder="パスワード">
                         <!-- パスワードの表示、非表示の切り替え -->
-                        <span id="view">
-                            <svg class="pass__view" width="25" height="25" viewBox="0 0 25 25" fill="none"
+                        <div id="view" class="pass__view">
+                            <svg width="25" height="25" viewBox="0 0 25 25" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <path
                                     d="M3.43239 16.3639C3.83925 16.7707 4.49874 16.7706 4.90546 16.3637C5.31217 15.9568 5.31207 15.2973 4.90521 14.8905L2.51506 12.5011L6.12819 8.88774C8.30913 6.70669 11.4052 5.81802 14.3681 6.44233C14.931 6.56094 15.4834 6.20073 15.602 5.63779C15.7206 5.07485 15.3604 4.52236 14.7975 4.40376C11.1527 3.63579 7.33921 4.73032 4.65508 7.4146L0.305318 11.7646C-0.101496 12.1714 -0.101447 12.8311 0.305464 13.2378L3.43239 16.3639Z"
@@ -47,7 +47,7 @@
                                     d="M24.6935 0.305091C24.2868 -0.101697 23.6272 -0.101697 23.2205 0.305091L0.305074 23.2218C-0.101691 23.6286 -0.101691 24.2881 0.305074 24.6949C0.711838 25.1017 1.37137 25.1017 1.77814 24.6949L24.6935 1.77824C25.1003 1.37145 25.1003 0.711878 24.6935 0.305091Z"
                                     fill="#311111" />
                             </svg>
-                        </span>
+                        </div>
                     </div>
 
                     <div class="btn btn__submit" type="submit" id="login-button">ログイン</div>
