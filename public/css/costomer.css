@@ -32,6 +32,11 @@ body .head .cart {
   padding: 10px;
   cursor: pointer;
 }
+body .head .cart a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 body .head .cart svg {
   width: 25px;
   height: auto;
@@ -301,6 +306,8 @@ body .product-detail {
   align-items: center;
   flex-direction: column;
   margin-top: 21px;
+  padding: 0 8px;
+  box-sizing: border-box;
 }
 body .product-detail .img {
   aspect-ratio: 4/3;
@@ -347,17 +354,55 @@ body .product-detail .product-info .detail .body {
   min-height: 100px;
   margin-bottom: 12px;
 }
-body .func {
+body .product-detail .option {
+  display: flex;
+  flex-direction: column;
   width: 100%;
+}
+body .product-detail .option .label {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0 8px;
+  margin-top: 12px;
+}
+body .product-detail .option .column {
+  display: grid;
+  align-items: center;
+  grid-template-columns: 1fr auto 40px;
+  margin: 3px 8px;
+}
+body .product-detail .option .column .select {
+  width: 100%;
+}
+body .product-detail .option .column .select select {
+  width: 100%;
+  padding: 3px 3px;
+}
+body .product-detail .option .column .price {
+  text-align: right;
+}
+body .func {
+  width: calc(100% - 16px);
   max-width: 500px;
   display: flex;
   justify-content: space-around;
+  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+  padding: 8px 0;
+  margin: 0 8px;
+  margin-top: 12px;
+}
+body .func .quantity {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
 }
 body .func .price {
   width: 60px;
   justify-content: flex-end;
   display: flex;
   align-items: center;
+  font-size: 18px;
 }
 body .func .add-btn {
   background-color: rgb(255, 64, 64);
@@ -365,6 +410,140 @@ body .func .add-btn {
   padding: 4px 12px;
   color: white;
   border-radius: 3px;
+  cursor: pointer;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  flex-shrink: 1;
+}
+body .func .add-btn:hover {
+  opacity: 0.8;
+}
+body .cart-body {
+  max-width: 500px;
+  width: calc(100% - 16px);
+  margin: 0 8px;
+  margin-top: 21px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+body .cart-body .order-head {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+  max-width: 300px;
+  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+  box-sizing: border-box;
+  border-radius: 3px;
+  padding: 12px 30px;
+}
+body .cart-body .order-head .info {
+  display: flex;
+  justify-content: center;
+  font-family: "Noto Sans JP", sans-serif;
+}
+body .cart-body .order-head .info span.num {
+  font-size: 20px;
+  padding: 0 2px;
+}
+body .cart-body .order-head .info .quantity {
+  margin-right: 15px;
+  font-size: 16px;
+}
+body .cart-body .order-head .info .price {
+  font-size: 16px;
+}
+body .cart-body .order-head .order-request-btn {
+  text-align: center;
+  display: inline-flex;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  background-color: rgb(255, 64, 64);
+  text-decoration: none;
+  padding: 6px 13px;
+  border-radius: 3px;
+  margin: 8px 0;
+  cursor: pointer;
+}
+body .cart-body .item-body {
+  width: calc(100% - 16px);
+  max-width: 400px;
+  margin: 0 8px;
+  margin-top: 12px;
+}
+body .cart-body .item-body .label {
+  font-family: "Noto Sans JP", sans-serif;
+  font-size: 19px;
+  margin-bottom: 4px;
+}
+body .cart-body .item-body .list {
+  display: flex;
+  flex-direction: column;
+}
+body .cart-body .item-body .list .column {
+  padding: 8px;
+  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+  box-sizing: border-box;
+  border-radius: 3px;
+  margin: 6px 0;
+}
+body .cart-body .item-body .list .column .item-head {
+  margin-top: 4px;
+  box-sizing: border-box;
+  padding: 0 4px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+body .cart-body .item-body .list .column .item-head .shop {
+  font-size: 14px;
+  line-height: 15px;
+}
+body .cart-body .item-body .list .column .item-head .name {
+  font-size: 18px;
+  font-family: "Noto Sans JP", sans-serif;
+}
+body .cart-body .item-body .list .column .option .label {
+  font-size: 17px;
+}
+body .cart-body .item-body .list .column .option .column {
+  box-shadow: unset;
+  display: grid;
+  align-items: center;
+  grid-template-columns: 1fr auto 40px;
+  margin: 3px 8px;
+}
+body .cart-body .item-body .list .column .option .column .select {
+  width: 100%;
+}
+body .cart-body .item-body .list .column .option .column .select select {
+  width: 100%;
+  padding: 3px 3px;
+}
+body .cart-body .item-body .list .column .option .column .price {
+  text-align: right;
+}
+body .cart-body .item-body .list .column .item-total {
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  padding: 10px 0 5px 0;
+  display: flex;
+}
+body .cart-body .item-body .list .column .item-total > div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50%;
+}
+body .cart-body .item-body .list .column .item-total .item-total-price {
+  font-family: "Noto Sans JP", sans-serif;
+}
+body .cart-body .item-body .list .column .item-total .item-total-price .price {
+  font-size: 18px;
+  padding: 0 2px;
 }
 
 span.btn {
