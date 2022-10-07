@@ -105,7 +105,7 @@ function getOptionData($id_list, $type = 0) {
                     `option_value`";
         $sql = $DB -> prepare(sprintf($sql, $inClause));
 
-        $sql -> execute($id_list);
+        $sql -> execute(array_values($id_list));
         $data = $sql -> fetchAll(PDO::FETCH_ASSOC|PDO::FETCH_GROUP);
     }
 
@@ -166,9 +166,12 @@ function getOptionDataRelease($id) {
     }
 }
 
-function getProductData($id_list) {
-    $DB = DB_Connect();
+function getProductData($id_list, $DB = false) {
+    if ($DB == false) {
+        $DB = DB_Connect();
+    }
 
+    $inClause = substr(str_repeat(',?', count($id_list)), 1);
     $sql = "SELECT
                 `product_id`,
                 `store_id`,
@@ -177,11 +180,9 @@ function getProductData($id_list) {
             FROM
                 ORDER_SYS_DB.`T_PRODUCT_INFORMATION`
             WHERE
-                `product_id` IN(%s);";
-    $inClause = substr(str_repeat(',?', count($id_list)), 1);
-
+                `product_id` IN(%s)";
     $sql = $DB -> prepare(sprintf($sql, $inClause));
-    $sql -> execute($id_list);
+    $sql -> execute(array_values($id_list));
     $record = $sql -> fetchAll(PDO::FETCH_ASSOC);
 
     //
@@ -200,7 +201,7 @@ function getProductData($id_list) {
 
     // 店舗名
     $inClause = substr(str_repeat(',?', count($store_id_list)), 1);
-    $sql = "SELECT * FROM ORDER_SYS_DB.`T_STORE_INFORMATION` WHERE `store_id`IN(%s)";
+    $sql = "SELECT * FROM ORDER_SYS_DB.`T_STORE_INFORMATION` WHERE `store_id` IN(%s)";
     $sql = $DB -> prepare(sprintf($sql, $inClause));
     $sql -> execute($store_id_list);
     $store_name_list = array_column($sql -> fetchAll(PDO::FETCH_ASSOC), NULL, 'store_id');
@@ -222,10 +223,10 @@ function getProductData($id_list) {
 }
 
 function getPriceList($DB, $id_list) {
-    $inClause = substr(str_repeat(',?', count($store_id_list)), 1);
-    $sql = "SELECT `product_id `, `product_price` FROM ORDER_SYS_DB.`T_PRODUCT_INFORMATION` WHERE `product_id` IN(%s)";
+    $inClause = substr(str_repeat(',?', count($id_list)), 1);
+    $sql = "SELECT `product_id`, `product_price` FROM ORDER_SYS_DB.`T_PRODUCT_INFORMATION` WHERE `product_id` IN(%s)";
     $sql = $DB -> prepare(sprintf($sql, $inClause));
-    $sql -> execute($store_id_list);
-    return array_column($sql -> fetchAll(PDO::FETCH_ASSOC), NULL, 'store_id');
+    $sql -> execute($id_list);
+    return array_column($sql -> fetchAll(PDO::FETCH_ASSOC), NULL, 'product_id');
 }
 
