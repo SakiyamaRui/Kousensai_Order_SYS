@@ -40,5 +40,6 @@ function getProductDetail($id) {
     
     $return_data['store_name'] = $sql -> fetch(PDO::FETCH_ASSOC)['store_name'];
 
+    unset($sql);
     return $return_data;
 }

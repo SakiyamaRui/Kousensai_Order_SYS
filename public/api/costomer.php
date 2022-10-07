@@ -60,4 +60,15 @@
         // webPush通知の登録
         case 'notice-subscription':
             break;
+        
+        // デバック
+        case 'debug':
+            var_dump(orderReserve(Array('pickup_now' => true)));
+            //
+            //var_dump(generateRandomNumberID(5));
+            break;
+
+        default:
+            // 404
+            break;
     }
