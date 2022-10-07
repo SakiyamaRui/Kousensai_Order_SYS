@@ -1,0 +1,5 @@
+# Default Page Change
+DirectoryIndex order_detail.php
+
+RewriteEngine on
+RewriteRule ^(.*)$ order_detail.php [L]

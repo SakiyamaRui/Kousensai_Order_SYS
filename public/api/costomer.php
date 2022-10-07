@@ -54,6 +54,9 @@
                 echo 'true';
             }
             break;
+        case 'qr-code':
+            require_once(ROOT_PATH.'\public\api\0.gif');
+            break;
         // webPush通知の登録
         case 'notice-subscription':
             break;
