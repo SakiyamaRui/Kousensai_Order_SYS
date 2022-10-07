@@ -60,7 +60,9 @@
         
         // デバック
         case 'debug':
-            orderReserve();
+            var_dump(orderReserve(Array('pickup_now' => true)));
+            //
+            //var_dump(generateRandomNumberID(5));
             break;
 
         default:
