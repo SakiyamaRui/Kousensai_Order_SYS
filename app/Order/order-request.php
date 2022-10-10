@@ -1,5 +1,5 @@
 <?php
-    function orderReserve($option) {
+    function orderReserve($option, $fingerPrint = '') {
 
         // tokenIDの取得
         $token_id = session::token_start();
@@ -94,6 +94,11 @@
         $sql -> bindValue(':session_token', $_SESSION['token'], PDO::PARAM_STR);
         $sql -> bindValue(':token', $id['token'], PDO::PARAM_STR);
         $result = $sql ->execute();
+
+        // フィンガープリントのアップデート
+        if ($fingerPrint != '') {
+            session::fingerPrintUpdate($token_id, $fingerPrint, $DB);
+        }
 
         unset($DB);
         if ($result == true) {
