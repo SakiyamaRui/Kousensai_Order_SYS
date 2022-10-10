@@ -257,6 +257,7 @@ body .body.top-page .order-history .order-list .column {
   box-sizing: border-box;
   padding: 8px;
   border-radius: 3px;
+  margin-bottom: 5px;
 }
 body .body.top-page .order-history .order-list .column a {
   text-decoration: none;
