@@ -24,7 +24,7 @@
                     合計: <span class="num total-price">0</span>円
                 </div>
             </div>
-            <div class="order-request-btn">
+            <div class="order-request-btn" id="order-request-btn">
                 注文を予約する
             </div>
         </div>
@@ -56,6 +56,23 @@
             // DOMの作成
             domCreate(cartList);
             orderTotal();
+
+            // 注文ボタンの作成
+            let orderRequestBtn = document.getElementById('order-request-btn');
+            orderRequestBtn.addEventListener('click', () => {
+                //
+                if (cartList.length == 0) {
+                    alert('カートの中に商品がありません');
+                    return false;
+                }
+
+                // 確認
+                if (!confirm('注文を行いますか？\n注文は支払い後に確定されます。')) {
+                    return false;
+                }
+
+                // フォーマットの作成
+            });
         });
 
         function domCreate(cartList) {
@@ -135,7 +152,7 @@
 
                     // 削除ボタン
                     delete_btn.addEventListener('click', (e) => {
-                        let i = e.target.getAttribute('index');
+                        let i = e.currentTarget.parentElement.parentElement.getAttribute('index');
 
                         // すべての配列から削除
                         order_data.splice(i, 1);
