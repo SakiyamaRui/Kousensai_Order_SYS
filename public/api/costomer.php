@@ -54,6 +54,24 @@
                 echo 'true';
             }
             break;
+        case 'orderRequest':
+            if($_SERVER["REQUEST_METHOD"] != "POST") {
+                // 404
+            }
+
+            // 在庫確認・予約処理
+            $result = orderReserve(
+                Array(
+                    'pickup_now' => $request['pickup_now'],
+                    'pickup_time' => (isset($request['pickup_time']))? $request['pickup_time']: '00:00'
+                ),
+                $request['fingerPrint']
+            );
+
+            echo json_encode($result, JSON_UNESCAPED_UNICODE);
+            exit;
+
+            break;
         case 'qr-code':
             require_once(ROOT_PATH.'\public\api\0.gif');
             break;
@@ -65,7 +83,6 @@
         case 'debug':
             var_dump(orderReserve(Array('pickup_now' => true)));
             //
-            //var_dump(generateRandomNumberID(5));
             break;
 
         default:
