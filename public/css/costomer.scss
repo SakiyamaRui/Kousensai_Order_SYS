@@ -246,6 +246,30 @@ body {
                     }
                 }
             }
+
+            &.request-time {
+                max-width: min(98%, 400px);
+                width: 100%;
+
+                .comment {
+                    font-size: 15px;
+                    text-align: center;
+
+                    &.detail {
+                        font-size: 14px;
+                        text-align: left;
+                    }
+                }
+                .selector {
+                    text-align: center;
+                    margin: 24px 0;
+                    font-family: 'Noto Sans JP', sans-serif;
+                }
+
+                .buttons {
+                    margin-top: 18px;
+                }
+            }
         }
 
         &.hidden {
@@ -301,7 +325,7 @@ body {
                         box-sizing: border-box;
                         padding: 8px;
                         border-radius: 3px;
-                        margin-bottom: 5px;
+                        margin-bottom: 15px;
 
                         a {
                             text-decoration: none;
@@ -804,7 +828,7 @@ body {
 span.btn {
     box-sizing: border-box;
     padding: 5px 10px;
-    background-color: rgb(0, 0, 0);
+    background-color: rgb(255, 64, 64);
     color: white;
     border-radius: 3px;
     margin: 5px 5px;
