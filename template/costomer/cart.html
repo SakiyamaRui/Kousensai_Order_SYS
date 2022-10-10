@@ -10,6 +10,7 @@
 
     <!--Google Fonts-->
     <?php include(ROOT_PATH.'\template\fonts.html'); ?>
+    <script src="/js/fingerPrint.js"></script>
 </head>
 <body>
     <?php include(ROOT_PATH.'\template\costomer\header.html'); ?>
@@ -61,7 +62,7 @@
 
             // 注文ボタンの作成
             let orderRequestBtn = document.getElementById('order-request-btn');
-            orderRequestBtn.addEventListener('click', () => {
+            orderRequestBtn.addEventListener('click', async () => {
                 //
                 if (cartList.length == 0) {
                     alert('カートの中に商品がありません');
@@ -77,6 +78,41 @@
                 document.getElementById('loading').classList.remove('hidden');
 
                 // フォーマットの作成
+                var fingerPrint = '';
+                try{
+                    let fp = await (await fpPromise).get();
+                    fingerPrint = fp.visitorId;
+                }catch (e) {
+                    console.log('FingerPrint Error');
+                }
+
+                let submit_data = {
+                    'fingerPrint': fingerPrint
+                };
+
+                // xhr
+                let xhr = new XMLHttpRequest();
+                xhr.open('POST', '/api/costomer.php?mode=orderRequest');
+                xhr.setRequestHeader("Content-Type", "application/json");
+                xhr.send(JSON.stringify(submit_data));
+
+                xhr.onreadystatechange = () => {
+                    if (xhr.readyState === XMLHttpRequest.DONE) {
+
+                        if (xhr.status >= 200 && xhr.status < 400) {
+                            // リクエストが正常に完了
+                            let responceText = JSON.parse(xhr.responseText);
+
+                            // 在庫不足の確認
+                            console.log(responceText);
+                        }else{
+                            // リクエストでエラーが発生
+                            document.getElementById('loading').classList.add('hidden');
+                            alert('リクエストが正常に処理できませんでした。\nもう一度お試しください。');
+                            location.reload();
+                        }
+                    }
+                }
             });
         });
 
