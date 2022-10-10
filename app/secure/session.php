@@ -31,7 +31,8 @@
             return true;
         }
 
-        static function token_start() {
+        static function token_start($DB = null) {
+            $DB_flag = false;
             self::start();
             $request = json_decode(file_get_contents('php://input'), 1);
 
@@ -46,29 +47,44 @@
             }
 
             // 転送してフィンガープリントから値を取得
-            if (!isset($request['fingerprint'])) return null;
-            if ($request['fingerprint'] != '') {
-                $DB = DB_Connect();
+            if ($request != null) {
+                if (!isset($request['fingerprint'])) return null;
+                if ($request['fingerprint'] != '') {
+                    if ($DB == null) {
+                        $DB = DB_Connect();
+                        $DB_flag = true;
+                    }
 
-                $sql = "SELECT
-                            `session_token`
-                        FROM
-                            ORDER_SYS_DB.`T_NOTICE_DATA`
-                        WHERE
-                            `fingerprint` = :fingerprint";
-                $sql = $DB -> prepare($sql);
-                $sql -> bindValue(':fingerprint', $request['fingerprint'], PDO::PARAM_STR);
+                    $sql = "SELECT
+                                `session_token`
+                            FROM
+                                ORDER_SYS_DB.`T_NOTICE_DATA`
+                            WHERE
+                                `fingerprint` = :fingerprint";
+                    $sql = $DB -> prepare($sql);
+                    $sql -> bindValue(':fingerprint', $request['fingerprint'], PDO::PARAM_STR);
 
-                $sql -> execute();
-                $result = $sql -> fetch(PDO::FETCH_ASSOC);
-                if ($result != false) {
-                    $_SESSION['token'] = $result['session_token'];
-                    setcookie('SESS_TOKEN', $_SESSION['token'], time() + 60 * 60 * 48, '/', 'localhost', true, true);
-                    return $_SESSION['token'];
+                    $sql -> execute();
+                    $result = $sql -> fetch(PDO::FETCH_ASSOC);
+                    if ($result != false) {
+                        $_SESSION['token'] = $result['session_token'];
+                        setcookie('SESS_TOKEN', $_SESSION['token'], time() + 60 * 60 * 48, '/', DOMAIN, true, true);
+                        
+                        if ($DB_flag) {
+                            unset($DB);
+                        }
+
+                        return $_SESSION['token'];
+                    }
                 }
             }
 
             // 新しいセッションの開始
+            if ($DB == null) {
+                $DB = DB_Connect();
+                $DB_flag = true;
+            }
+
             $sql = "INSERT INTO
                         ORDER_SYS_DB.`T_NOTICE_DATA` (
                             `session_token`,
@@ -91,15 +107,22 @@
             $new_id = session::newToken($DB);
             $sql = $DB -> prepare($sql);
             $sql -> bindValue(':new_token', $new_id, PDO::PARAM_STR);
-            $sql -> bindValue(':fingerprint', $request['fingerprint'], PDO::PARAM_STR);
+            $sql -> bindValue(':fingerprint', (isset($request['fingerprint']))? $request['fingerprint']: NULL, (isset($request['fingerprint']))? PDO::PARAM_STR: PDO::PARAM_NULL);
 
             $result = $sql -> execute();
 
             if ($result == false) {
+                if ($DB_flag) {
+                    unset($DB);
+                }
                 return false;
             }else{
                 $_SESSION['token'] = $new_id;
-                setcookie('SESS_TOKEN', $_SESSION['token'], time() + 60 * 60 * 48, '/', 'localhost', true, true);
+                setcookie('SESS_TOKEN', $_SESSION['token'], time() + 60 * 60 * 48, '/', DOMAIN, true, true);
+
+                if ($DB_flag) {
+                    unset($DB);
+                }
                 return $_SESSION['token'];
             }
 
