@@ -6,7 +6,7 @@
 
         if ($token_id == false) {
             // トークンの復元に失敗
-            return 'token-error';
+            return Array('result' => false, 'type' => 'token-error');
         }else{
             $DB = DB_Connect();
             getCartData($DB, $token_id);
@@ -26,7 +26,7 @@
         $result = stockCheck($_SESSION['cart']);
 
         if ($result !== true) {
-            return $result;
+            return Array('result' => false, 'type' => 'stock', 'detail' => $result);
         }
 
         // テーブルに追加
@@ -98,7 +98,14 @@
         unset($DB);
         if ($result == true) {
             reset_cart();
-            return true;
+            return Array(
+                'result' => true,
+                'type' => 'order-correct',
+                'detail' => Array(
+                    'token' => $id['token'],
+                    'order_id' => $id['order_id']
+                )
+            );
         }
     }
 
