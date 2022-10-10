@@ -13,6 +13,7 @@
 </head>
 <body>
     <?php include(ROOT_PATH.'\template\costomer\header.html'); ?>
+    <?php include(ROOT_PATH.'\template\loading.html'); ?>
 
     <div class="cart-body">
         <div class="order-head">
@@ -52,6 +53,7 @@
         window.addEventListener("DOMContentLoaded", () => {
             cartList = JSON.parse(document.getElementById("cart_info").textContent);
             item_append_place = document.querySelector('.item-body .list');
+            document.getElementById('loading').classList.add('hidden');
 
             // DOMの作成
             domCreate(cartList);
@@ -70,6 +72,9 @@
                 if (!confirm('注文を行いますか？\n注文は支払い後に確定されます。')) {
                     return false;
                 }
+
+                // ローディングモーダルの表示
+                document.getElementById('loading').classList.remove('hidden');
 
                 // フォーマットの作成
             });
