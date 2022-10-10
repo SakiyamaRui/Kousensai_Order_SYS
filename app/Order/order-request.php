@@ -61,7 +61,7 @@
             $sql -> bindValue(":product_id${key}", $val['product_id'], PDO::PARAM_STR);
             $sql -> bindValue(":quantity${key}", $val['quantity'], PDO::PARAM_INT);
             $sql -> bindValue(":product_option${key}", json_encode($val['options'], JSON_UNESCAPED_UNICODE), PDO::PARAM_STR);
-            $sql -> bindValue(":unit_price${key}", $price, PDO::PARAM_INT);
+            $sql -> bindValue(":unit_price${key}", $price[$val['product_id']]['product_price'], PDO::PARAM_INT);
         }
 
         $sql -> execute();
