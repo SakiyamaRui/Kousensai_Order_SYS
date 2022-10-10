@@ -39,6 +39,34 @@
             </div>
         </div>
     </div>
+    <div class="modal hidden" id="pickup-time-modal">
+        <div class="content request-time">
+            <div class="title">
+                時間指定
+            </div>
+            <div class="comment">
+                商品を受け取る時間を指定してください
+            </div>
+            <div class="selector">
+                受け取り希望時間: 
+                <select id="order_pickup_time">
+                    <option value="今すぐ">今すぐ</option>
+                    <option value="09:00">09:00</option>
+                </select>
+            </div>
+            <div class="comment detail">
+                商品を受け取る時間は20分以降から2時間後まで、5分単位で指定できます。
+                <div>
+                    混雑状況により希望時間より遅くなる可能性があります。常に注文履歴より状況を確認してください。
+                </div>
+            </div>
+            <div class="buttons">
+                <span class="btn">
+                    確定
+                </span>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
 <script type="application/json" id="cart_info">
@@ -74,6 +102,9 @@
                     return false;
                 }
 
+                // 時間指定
+                let request_pickup_time = await pickUpTime();
+                
                 // ローディングモーダルの表示
                 document.getElementById('loading').classList.remove('hidden');
 
@@ -87,7 +118,9 @@
                 }
 
                 let submit_data = {
-                    'fingerPrint': fingerPrint
+                    'fingerPrint': fingerPrint,
+                    'pickup_now': (request_pickup_time == '今すぐ')? true: false,
+                    'pickup_time': (request_pickup_time == '今すぐ')? '00:00': request_pickup_time
                 };
 
                 // xhr
@@ -104,6 +137,23 @@
                             let responceText = JSON.parse(xhr.responseText);
 
                             // 在庫不足の確認
+                            if (responceText['result'] == true) {
+                                // リダイレクトを行う
+                                location.href = `/detail/${responceText['detail']['token']}/`
+                            }else{
+                                // エラー等が発生
+                                switch (responceText['type']) {
+                                    case 'stock':
+                                        // 在庫切れ
+                                        alert('一部商品が在庫切れです。\n在庫状況については、在庫状況のページを確認してください。');
+                                        document.getElementById('loading').classList.add('hidden');
+                                        break;
+                                    default:
+                                        alert('予期せぬエラーが発生しました。\n係の方へ連絡してください。');
+                                        document.getElementById('loading').classList.add('hidden');
+                                        break;
+                                }
+                            }
                             console.log(responceText);
                         }else{
                             // リクエストでエラーが発生
@@ -372,6 +422,63 @@
                     }
                 }
             });
+        }
+
+        function pickUpTime() {
+            let modal = document.getElementById('pickup-time-modal');
+            // 時間を生成
+            let select = document.getElementById('order_pickup_time');
+            select.innerHTML = '';
+
+            let select_pls = document.createElement('option');
+            select_pls.appendChild(document.createTextNode('選択してください'));
+            select_pls.setAttribute('disabled', '');
+            select_pls.setAttribute('selected', '');
+            select_pls.setAttribute('value', 'null');
+            select.appendChild(select_pls);
+
+            let pickup_now = document.createElement('option');
+            pickup_now.appendChild(document.createTextNode('今すぐ'));
+            pickup_now.setAttribute('value', '今すぐ');
+            select.appendChild(pickup_now);
+
+            let start_timecode = Math.ceil((new Date().getTime() / 1000 + (20 * 60)) / 60 / 5) * 60 * 5;
+            let limit_timecode = start_timecode + 2 * 60 * 60;
+
+            for (let t = start_timecode; t <= limit_timecode; t += 5 * 60) {
+                let time = new Date(t * 1000);
+                let timeString = `${('00' + time.getHours()).slice( -2 )}:${('00' + time.getMinutes()).slice( -2 )}`;
+                
+                let option = document.createElement('option');
+                option.setAttribute('value', timeString);
+                option.appendChild(document.createTextNode(timeString));
+
+                select.appendChild(option);
+            }
+
+            // モーダルの表示
+            modal.classList.remove('hidden');
+
+            return new Promise((resolve, reject) => {
+                // クリックされたときの処理
+                let btn = modal.querySelector('.buttons .btn');
+
+                let event = () => {
+                    let selector = document.getElementById('order_pickup_time');
+
+                    if (selector.value == 'null') {
+                        alert('時刻を選択してください');
+                        return false;
+                    }
+
+                    modal.classList.add('hidden');
+                    btn.removeEventListener('click', event);
+                    resolve(selector.value);
+                }
+
+                btn.addEventListener('click', event);
+            });
+
         }
     }());
 </script>
