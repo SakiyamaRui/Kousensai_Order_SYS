@@ -73,7 +73,19 @@
 
             break;
         case 'qr-code':
-            require_once(ROOT_PATH.'\public\api\0.gif');
+
+            // QRコード画像があるかチェック
+            $token = $_GET['token'];
+            $path = ROOT_PATH . "\\tmp\qr\\${token}.png";
+            
+            if (!file_exists($path)) {
+                qrCodeGen($token, $path);
+            }
+
+            // 出力
+            header('Content-Type: image/png');
+            readfile($path);
+            exit;
             break;
         // webPush通知の登録
         case 'notice-subscription':
