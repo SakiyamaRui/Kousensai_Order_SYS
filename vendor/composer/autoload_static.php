@@ -42,18 +42,27 @@ class ComposerStaticInit393f0ef5e02005da10c51911fc8eb708
         array (
             'FG\\' => 3,
         ),
+        'E' => 
+        array (
+            'Endroid\\QrCode\\' => 15,
+        ),
+        'D' => 
+        array (
+            'DASPRiD\\Enum\\' => 13,
+        ),
         'B' => 
         array (
             'Brick\\Math\\' => 11,
             'Base64Url\\' => 10,
+            'BaconQrCode\\' => 12,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
         'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/http-message/src',
-            1 => __DIR__ . '/..' . '/psr/http-factory/src',
+            0 => __DIR__ . '/..' . '/psr/http-factory/src',
+            1 => __DIR__ . '/..' . '/psr/http-message/src',
         ),
         'Psr\\Http\\Client\\' => 
         array (
@@ -103,6 +112,14 @@ class ComposerStaticInit393f0ef5e02005da10c51911fc8eb708
         array (
             0 => __DIR__ . '/..' . '/fgrosse/phpasn1/lib',
         ),
+        'Endroid\\QrCode\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/endroid/qr-code/src',
+        ),
+        'DASPRiD\\Enum\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/dasprid/enum/src',
+        ),
         'Brick\\Math\\' => 
         array (
             0 => __DIR__ . '/..' . '/brick/math/src',
@@ -110,6 +127,10 @@ class ComposerStaticInit393f0ef5e02005da10c51911fc8eb708
         'Base64Url\\' => 
         array (
             0 => __DIR__ . '/..' . '/spomky-labs/base64url/src',
+        ),
+        'BaconQrCode\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/bacon/bacon-qr-code/src',
         ),
     );
 
