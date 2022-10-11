@@ -68,7 +68,7 @@
     // 通知の受け取り設定
     $notice_bool = isNoticeSetting($record['session_token'], $DB);
     $notice_setting = ($notice_bool)?
-        '<div class="notice-request"><div class="status">設定済み</div><button id="notice-request-button">端末の変更</button></div></div>':
+        '<div class="notice-request"><div class="status">設定済み</div><button id="notice-request-button">端末の変更</button></div>':
         '<div class="notice-request"><div class="status">未設定</div><button id="notice-request-button">通知の設定</button></div>';
     //
 

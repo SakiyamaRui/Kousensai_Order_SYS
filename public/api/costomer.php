@@ -90,6 +90,18 @@
             break;
         // webPush通知の登録
         case 'notice-subscription':
+            if($_SERVER["REQUEST_METHOD"] != "POST") {
+                // 404
+            }
+
+            $result = noticeSubscribe($request);
+
+            if ($result == true) {
+                echo 'true';
+            }else{
+                echo 'false';
+            }
+
             break;
         
         // デバック
