@@ -212,6 +212,26 @@ body .modal .content.product-detail-modal .body .label {
   margin-top: 5px;
   font-size: 15px;
 }
+body .modal .content.request-time {
+  max-width: min(98%, 400px);
+  width: 100%;
+}
+body .modal .content.request-time .comment {
+  font-size: 15px;
+  text-align: center;
+}
+body .modal .content.request-time .comment.detail {
+  font-size: 14px;
+  text-align: left;
+}
+body .modal .content.request-time .selector {
+  text-align: center;
+  margin: 24px 0;
+  font-family: "Noto Sans JP", sans-serif;
+}
+body .modal .content.request-time .buttons {
+  margin-top: 18px;
+}
 body .modal.hidden {
   opacity: 0;
   top: 150%;
@@ -257,6 +277,7 @@ body .body.top-page .order-history .order-list .column {
   box-sizing: border-box;
   padding: 8px;
   border-radius: 3px;
+  margin-bottom: 15px;
 }
 body .body.top-page .order-history .order-list .column a {
   text-decoration: none;
@@ -390,6 +411,7 @@ body .func {
   padding: 8px 0;
   margin: 0 8px;
   margin-top: 12px;
+  margin-bottom: 21px;
 }
 body .func .quantity {
   display: flex;
@@ -497,6 +519,7 @@ body .cart-body .item-body .list .column .item-head {
   padding: 0 4px;
   padding-bottom: 8px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  position: relative;
 }
 body .cart-body .item-body .list .column .item-head .shop {
   font-size: 14px;
@@ -505,6 +528,20 @@ body .cart-body .item-body .list .column .item-head .shop {
 body .cart-body .item-body .list .column .item-head .name {
   font-size: 18px;
   font-family: "Noto Sans JP", sans-serif;
+}
+body .cart-body .item-body .list .column .item-head .delete {
+  color: rgb(2, 20, 173);
+  cursor: pointer;
+  text-align: center;
+  box-sizing: border-box;
+  padding: 3px 6px;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 45%;
+  right: 0;
+}
+body .cart-body .item-body .list .column .item-head .delete:hover {
+  background-color: rgba(0, 0, 0, 0.05);
 }
 body .cart-body .item-body .list .column .option .label {
   font-size: 17px;
@@ -545,11 +582,126 @@ body .cart-body .item-body .list .column .item-total .item-total-price .price {
   font-size: 18px;
   padding: 0 2px;
 }
+body .order-detail {
+  margin-top: 36px;
+  max-width: 480px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+body .order-detail .qr {
+  max-width: 300px;
+  width: 100%;
+  text-align: center;
+  margin-bottom: 21px;
+}
+body .order-detail .qr img {
+  width: 60%;
+  max-width: 200px;
+  pointer-events: none;
+}
+body .order-detail .detail {
+  width: calc(100% - 16px);
+  max-width: 480px;
+  margin: 0 8px;
+}
+body .order-detail .detail .content {
+  width: 100%;
+  padding: 0 8px;
+  margin-top: 36px;
+  box-sizing: border-box;
+}
+body .order-detail .detail .content:first-of-type {
+  margin-top: 0;
+}
+body .order-detail .detail .content .label {
+  font-size: 19px;
+  font-family: "Noto Sans JP", sans-serif;
+  margin-bottom: 8px;
+}
+body .order-detail .detail .content .order-status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+body .order-detail .detail .content .order-status .top {
+  font-size: 22px;
+  text-align: center;
+  font-family: "Noto Sans JP", sans-serif;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+body .order-detail .detail .content .order-status .body {
+  font-size: 15px;
+}
+body .order-detail .detail .content .notice-request {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+body .order-detail .detail .content .notice-request .status {
+  text-align: center;
+  font-size: 22px;
+  text-align: center;
+  font-family: "Noto Sans JP", sans-serif;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+body .order-detail .detail .content .list .item {
+  display: flex;
+  flex-direction: column;
+  margin: 0 8px;
+}
+body .order-detail .detail .content .list .item .quantity,
+body .order-detail .detail .content .list .item .price {
+  text-align: center;
+}
+body .order-detail .detail .content .list .item .column {
+  display: grid;
+  grid-template-columns: 1fr 50px;
+  margin-bottom: 8px;
+  align-items: center;
+}
+body .order-detail .detail .content .list .item .column .menu {
+  font-size: 17px;
+}
+body .order-detail .detail .content .list .item .column .option {
+  margin-left: 15px;
+  grid-column: 1/4;
+  display: grid;
+  grid-template-columns: 1fr 80px 50px 50px;
+  align-items: center;
+}
+body .order-detail .detail .content .list .item .column .option .name,
+body .order-detail .detail .content .list .item .column .option .select {
+  font-size: 15px;
+}
+body .order-detail .detail .content .list > .total {
+  border-top: 1px solid rgb(74, 74, 74);
+  box-sizing: border-box;
+  padding: 8px;
+  text-align: right;
+  font-family: "Noto Sans JP", sans-serif;
+  font-size: 18px;
+  margin-top: 8px;
+}
+body .order-detail .detail .content .list > .total span.total {
+  padding: 0 3px;
+  font-size: 20px;
+}
+body .order-detail .detail .content .time {
+  font-size: 22px;
+  font-family: "Noto Sans JP";
+  font-weight: 700;
+  padding: 0 5px;
+  text-align: center;
+}
 
 span.btn {
   box-sizing: border-box;
   padding: 5px 10px;
-  background-color: rgb(0, 0, 0);
+  background-color: rgb(255, 64, 64);
   color: white;
   border-radius: 3px;
   margin: 5px 5px;

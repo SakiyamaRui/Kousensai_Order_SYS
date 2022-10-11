@@ -10,9 +10,11 @@
 
     <!--Google Fonts-->
     <?php include(ROOT_PATH.'\template\fonts.html'); ?>
+    <script src="/js/fingerPrint.js"></script>
 </head>
 <body>
     <?php include(ROOT_PATH.'\template\costomer\header.html'); ?>
+    <?php include(ROOT_PATH.'\template\loading.html'); ?>
 
     <div class="cart-body">
         <div class="order-head">
@@ -24,7 +26,7 @@
                     合計: <span class="num total-price">0</span>円
                 </div>
             </div>
-            <div class="order-request-btn">
+            <div class="order-request-btn" id="order-request-btn">
                 注文を予約する
             </div>
         </div>
@@ -34,6 +36,34 @@
                 カート一覧
             </div>
             <div class="list">
+            </div>
+        </div>
+    </div>
+    <div class="modal hidden" id="pickup-time-modal">
+        <div class="content request-time">
+            <div class="title">
+                時間指定
+            </div>
+            <div class="comment">
+                商品を受け取る時間を指定してください
+            </div>
+            <div class="selector">
+                受け取り希望時間: 
+                <select id="order_pickup_time">
+                    <option value="今すぐ">今すぐ</option>
+                    <option value="09:00">09:00</option>
+                </select>
+            </div>
+            <div class="comment detail">
+                商品を受け取る時間は20分以降から2時間後まで、5分単位で指定できます。
+                <div>
+                    混雑状況により希望時間より遅くなる可能性があります。常に注文履歴より状況を確認してください。
+                </div>
+            </div>
+            <div class="buttons">
+                <span class="btn">
+                    確定
+                </span>
             </div>
         </div>
     </div>
@@ -48,12 +78,96 @@
         let order_data = [];
         let cartList = [];
         let option_prices = [];
+        let item_append_place;
         window.addEventListener("DOMContentLoaded", () => {
             cartList = JSON.parse(document.getElementById("cart_info").textContent);
-            let item_append_place = document.querySelector('.item-body .list');
-            let index = 0;
+            item_append_place = document.querySelector('.item-body .list');
+            document.getElementById('loading').classList.add('hidden');
 
             // DOMの作成
+            domCreate(cartList);
+            orderTotal();
+
+            // 注文ボタンの作成
+            let orderRequestBtn = document.getElementById('order-request-btn');
+            orderRequestBtn.addEventListener('click', async () => {
+                //
+                if (cartList.length == 0) {
+                    alert('カートの中に商品がありません');
+                    return false;
+                }
+
+                // 確認
+                if (!confirm('注文を行いますか？\n注文は支払い後に確定されます。')) {
+                    return false;
+                }
+
+                // 時間指定
+                let request_pickup_time = await pickUpTime();
+                
+                // ローディングモーダルの表示
+                document.getElementById('loading').classList.remove('hidden');
+
+                // フォーマットの作成
+                var fingerPrint = '';
+                try{
+                    let fp = await (await fpPromise).get();
+                    fingerPrint = fp.visitorId;
+                }catch (e) {
+                    console.log('FingerPrint Error');
+                }
+
+                let submit_data = {
+                    'fingerPrint': fingerPrint,
+                    'pickup_now': (request_pickup_time == '今すぐ')? true: false,
+                    'pickup_time': (request_pickup_time == '今すぐ')? '00:00': request_pickup_time
+                };
+
+                // xhr
+                let xhr = new XMLHttpRequest();
+                xhr.open('POST', '/api/costomer.php?mode=orderRequest');
+                xhr.setRequestHeader("Content-Type", "application/json");
+                xhr.send(JSON.stringify(submit_data));
+
+                xhr.onreadystatechange = () => {
+                    if (xhr.readyState === XMLHttpRequest.DONE) {
+
+                        if (xhr.status >= 200 && xhr.status < 400) {
+                            // リクエストが正常に完了
+                            let responceText = JSON.parse(xhr.responseText);
+
+                            // 在庫不足の確認
+                            if (responceText['result'] == true) {
+                                // リダイレクトを行う
+                                location.href = `/detail/${responceText['detail']['token']}/`
+                            }else{
+                                // エラー等が発生
+                                switch (responceText['type']) {
+                                    case 'stock':
+                                        // 在庫切れ
+                                        alert('一部商品が在庫切れです。\n在庫状況については、在庫状況のページを確認してください。');
+                                        document.getElementById('loading').classList.add('hidden');
+                                        break;
+                                    default:
+                                        alert('予期せぬエラーが発生しました。\n係の方へ連絡してください。');
+                                        document.getElementById('loading').classList.add('hidden');
+                                        break;
+                                }
+                            }
+                            console.log(responceText);
+                        }else{
+                            // リクエストでエラーが発生
+                            document.getElementById('loading').classList.add('hidden');
+                            alert('リクエストが正常に処理できませんでした。\nもう一度お試しください。');
+                            location.reload();
+                        }
+                    }
+                }
+            });
+        });
+
+        function domCreate(cartList) {
+            let index = 0;
             cartList.forEach(e => {
                 let column = document.createElement('div');
                 column.setAttribute('class', 'column');
@@ -75,16 +189,24 @@
                     let product_name = document.createElement('div');
                     product_name.setAttribute('class', 'name');
                     product_name.appendChild(document.createTextNode(e.product_data.product_name));
+
+                    let delete_btn = document.createElement('div');
+                    delete_btn.setAttribute('class', 'delete');
+                    delete_btn.appendChild(document.createTextNode('削除'));
                 
                 item_head.appendChild(shop);
                 item_head.appendChild(product_name);
+                item_head.appendChild(delete_btn);
                 //
-                let option = document.createElement('div');
-                option.setAttribute('class', 'option');
-                    let label = document.createElement('div');
-                    label.setAttribute('class', 'label');
-                    label.appendChild(document.createTextNode('オプション'));
-                option.appendChild(label);
+                let option;
+                if (e.product_data.options.length > 0) {
+                    option = document.createElement('div');
+                    option.setAttribute('class', 'option');
+                        let label = document.createElement('div');
+                        label.setAttribute('class', 'label');
+                        label.appendChild(document.createTextNode('オプション'));
+                    option.appendChild(label);
+                }
                 // オプション
                 e.product_data.options.forEach(elm => {
                     option.appendChild(optionDOMCreate(elm, e.options, index));
@@ -101,6 +223,7 @@
                         let quantity_option = document.createElement('option');
                         quantity_option.setAttribute('value', i);
                         quantity_option.appendChild(document.createTextNode(i));
+                        if (i == e.quantity) quantity_option.setAttribute('selected', '');
                         selector.appendChild(quantity_option);
                     }
                     quantity.appendChild(selector);
@@ -118,6 +241,25 @@
                         changeCartData(i);
                     });
 
+                    // 削除ボタン
+                    delete_btn.addEventListener('click', (e) => {
+                        let i = e.currentTarget.parentElement.parentElement.getAttribute('index');
+
+                        // すべての配列から削除
+                        order_data.splice(i, 1);
+                        cartList.splice(i, 1);
+                        option_prices.splice(i, 1);
+
+                        item_append_place.innerHTML = '';
+
+                        // 再描画
+                        domCreate(cartList);
+                        orderTotal();
+
+                        // 変更を保存
+                        cartItemChangeSave(i, 'delete');
+                    });
+
                     let total_price = document.createElement('div');
                     total_price.setAttribute('class', 'item-total-price');
                     total_price.appendChild(document.createTextNode('合計: '));
@@ -132,16 +274,14 @@
                 item_total.appendChild(total_price);
 
                 column.appendChild(item_head);
-                column.appendChild(option);
+                if (e.product_data.options.length > 0) column.appendChild(option);
                 column.appendChild(item_total);
 
                 item_append_place.appendChild(column);
 
                 index++;
             });
-
-            orderTotal();
-        });
+        }
 
         function changeCartData(index) {
             // フォーマットの作成
@@ -196,7 +336,6 @@
                 // 選択したValueをoption_selectへ代入
                 let option_name = e.target.getAttribute('option-name');
                 let i = e.target.getAttribute('index');
-                console.log(order_data[i].option_select);
                 order_data[i].option_select[option_name] = e.target.value;
 
                 // オプションの値段を取得
@@ -222,7 +361,7 @@
         }
 
         function itemTotalSum(i) {
-            let select = order_data[i].option_select;
+            let select = order_data[i]['option_select'];
             let sum = cartList[i]['product_data']['price'];
 
             for (let key in select) {
@@ -283,6 +422,63 @@
                     }
                 }
             });
+        }
+
+        function pickUpTime() {
+            let modal = document.getElementById('pickup-time-modal');
+            // 時間を生成
+            let select = document.getElementById('order_pickup_time');
+            select.innerHTML = '';
+
+            let select_pls = document.createElement('option');
+            select_pls.appendChild(document.createTextNode('選択してください'));
+            select_pls.setAttribute('disabled', '');
+            select_pls.setAttribute('selected', '');
+            select_pls.setAttribute('value', 'null');
+            select.appendChild(select_pls);
+
+            let pickup_now = document.createElement('option');
+            pickup_now.appendChild(document.createTextNode('今すぐ'));
+            pickup_now.setAttribute('value', '今すぐ');
+            select.appendChild(pickup_now);
+
+            let start_timecode = Math.ceil((new Date().getTime() / 1000 + (20 * 60)) / 60 / 5) * 60 * 5;
+            let limit_timecode = start_timecode + 2 * 60 * 60;
+
+            for (let t = start_timecode; t <= limit_timecode; t += 5 * 60) {
+                let time = new Date(t * 1000);
+                let timeString = `${('00' + time.getHours()).slice( -2 )}:${('00' + time.getMinutes()).slice( -2 )}`;
+                
+                let option = document.createElement('option');
+                option.setAttribute('value', timeString);
+                option.appendChild(document.createTextNode(timeString));
+
+                select.appendChild(option);
+            }
+
+            // モーダルの表示
+            modal.classList.remove('hidden');
+
+            return new Promise((resolve, reject) => {
+                // クリックされたときの処理
+                let btn = modal.querySelector('.buttons .btn');
+
+                let event = () => {
+                    let selector = document.getElementById('order_pickup_time');
+
+                    if (selector.value == 'null') {
+                        alert('時刻を選択してください');
+                        return false;
+                    }
+
+                    modal.classList.add('hidden');
+                    btn.removeEventListener('click', event);
+                    resolve(selector.value);
+                }
+
+                btn.addEventListener('click', event);
+            });
+
         }
     }());
 </script>

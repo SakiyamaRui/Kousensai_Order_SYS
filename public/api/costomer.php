@@ -42,8 +42,50 @@
             }
             break;
         case 'cartRemove':
+            if (!isset($request['index'])) {
+                // 403エラー
+            }
+
+            $result = remove_cart($request['index']);
+
+            if ($result == false) {
+                // エラーを出力
+            }else{
+                echo 'true';
+            }
+            break;
+        case 'orderRequest':
+            if($_SERVER["REQUEST_METHOD"] != "POST") {
+                // 404
+            }
+
+            // 在庫確認・予約処理
+            $result = orderReserve(
+                Array(
+                    'pickup_now' => $request['pickup_now'],
+                    'pickup_time' => (isset($request['pickup_time']))? $request['pickup_time']: '00:00'
+                ),
+                $request['fingerPrint']
+            );
+
+            echo json_encode($result, JSON_UNESCAPED_UNICODE);
+            exit;
+
+            break;
+        case 'qr-code':
+            require_once(ROOT_PATH.'\public\api\0.gif');
             break;
         // webPush通知の登録
         case 'notice-subscription':
+            break;
+        
+        // デバック
+        case 'debug':
+            var_dump(orderReserve(Array('pickup_now' => true)));
+            //
+            break;
+
+        default:
+            // 404
             break;
     }

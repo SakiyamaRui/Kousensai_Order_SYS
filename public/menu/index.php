@@ -23,12 +23,14 @@
             try {
                 $product_id = $request[1];
 
+                $detail = getProductDetail($product_id);
+
                 // オプション情報の取得
                 $options = getOptionDataRelease($product_id);
 
                 $decode_data = Array(
                     'product_id' => $product_id,
-                    'price' => 300,
+                    'price' => $detail['price'],
                     'options' => $options
                 );
                 
@@ -46,7 +48,7 @@
         $product_id = $data['product_id'];
 
         // データの置き換え
-        $url = "https://localhost/menu/product/${product_id}/";
+        $url = "/menu/product/${product_id}/";
         $column_html = str_replace('{product_url}', $url, $product_column_template);
 
         $img = ($data['img'] == NULL)? 'No Image': '<img src="'.$data['img'].'">';

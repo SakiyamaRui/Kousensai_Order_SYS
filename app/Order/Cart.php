@@ -25,7 +25,7 @@
         return $result;
     }
 
-    function remove_cart($index) 
+    function remove_cart($index)
     {
         $token_id = session::token_start();
         $DB = DB_Connect();
@@ -40,7 +40,7 @@
             if ($result == false) return false;
         }
 
-        $_SESSION['cart'] = array_splice($_SESSION['cart'], $index, 1);
+        array_splice($_SESSION['cart'], $index, 1);
 
         $result = save_cart($DB, $token_id);
         unset($DB);                                                                                                    
