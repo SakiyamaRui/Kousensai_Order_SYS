@@ -76,10 +76,11 @@
 
             // QRコード画像があるかチェック
             $token = $_GET['token'];
+            $qr_value = "https://".DOMAIN."/detail/${token}/";
             $path = ROOT_PATH . "\\tmp\qr\\${token}.png";
             
             if (!file_exists($path)) {
-                qrCodeGen($token, $path);
+                qrCodeGen($qr_value, $path);
             }
 
             // 出力
