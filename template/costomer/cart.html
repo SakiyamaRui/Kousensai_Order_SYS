@@ -226,6 +226,7 @@
                         if (i == e.quantity) quantity_option.setAttribute('selected', '');
                         selector.appendChild(quantity_option);
                     }
+                    order_data[index].quantity = e.quantity;
                     quantity.appendChild(selector);
 
                     // 数量のイベントリスナ
@@ -371,6 +372,7 @@
             sum = sum * order_data[i].quantity;
 
             order_data[i].total = sum;
+            console.log(order_data[i].total, order_data[i].quantity);
         }
 
         function orderTotal() {
