@@ -33,6 +33,7 @@
     require_once(ROOT_PATH.'\app\Order\pull-order.php');
     require_once(ROOT_PATH.'\app\PRODUCT\stock_check.php');
     require_once(ROOT_PATH.'\app\notice\notice-settings.php');
+    require_once(ROOT_PATH.'\app\notice\notice-subscribe.php');
     require_once(ROOT_PATH.'\app\qr-code\qr-code.php');
     // require_once(ROOT_PATH.'\app\server.php');
 
