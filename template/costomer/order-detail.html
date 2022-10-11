@@ -18,7 +18,7 @@
         <div class="qr">
             <img src="/api/costomer.php?mode=qr-code">
             <div class="order-id">
-                注文番号: {order-id}
+                注文番号: <?php echo $order_id; ?>
             </div>
         </div>
 
@@ -29,13 +29,10 @@
                 </div>
                 <div class="order-status">
                     <div class="top">
-                        支払い待ち
+                        <?php echo $status; ?>
                     </div>
                     <div class="body">
-                        支払いが完了するまで注文が確定しません。
-                        <div>
-                            支払いを完了させてください。
-                        </div>
+                        <?php echo $status_body; ?>
                     </div>
                 </div>
             </div>
@@ -44,7 +41,7 @@
                     受け取り希望時間
                 </div>
                 <div class="time">
-                    今すぐ
+                    <?php echo $pickup_time; ?>
                 </div>
             </div>
             <div class="content">
@@ -52,12 +49,7 @@
                     通知の受け取り
                 </div>
                 <div class="notice-request">
-                    <div class="status">
-                        設定済み
-                    </div>
-                    <button>
-                        通知の設定
-                    </button>
+                    <?php echo $notice_setting; ?>
                 </div>
             </div>
             <div class="content">
@@ -66,37 +58,10 @@
                 </div>
                 <div class="list">
                     <div class="item">
-                        <div class="column">
-                            <div class="menu">
-                                商品名
-                            </div>
-                            <div class="price">
-                                0
-                            </div>
-                            <div class="option">
-                                <div class="name">
-                                    サイズ
-                                </div>
-                                <div class="select">大盛り</div>
-                            </div>
-                        </div>
-                        <div class="column">
-                            <div class="menu">
-                                商品名
-                            </div>
-                            <div class="price">
-                                0
-                            </div>
-                            <div class="option">
-                                <div class="name">
-                                    サイズ
-                                </div>
-                                <div class="select">大盛り</div>
-                            </div>
-                        </div>
+                        <?php echo $order_items; ?>
                     </div>
                     <div class="total">
-                        合計: <span class="total">0</span>円
+                        合計: <span class="total"><?php echo $total; ?></span>円
                     </div>
                 </div>
             </div>
