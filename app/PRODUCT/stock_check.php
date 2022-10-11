@@ -9,7 +9,7 @@
         // DBへアクセス
         $DB = DB_Connect();
 
-        $getRequestDataList = array_keys($requestList);
+        $getRequestDataList = array_unique(array_column($requestList, 'product_id'));
 
         // 在庫取得する商品の取得
         $options_stock = getOptionData($getRequestDataList, 1);
@@ -28,16 +28,19 @@
                 }
             }
 
-            // 各オプションの確認
+            //各オプションの確認
             foreach($val['options'] as $option_name => $select) {
                 // オプションの情報を取得
-                $option_value_index = array_search($select, array_column($options_stock[$key][$option_name]['option_values'], 'value'));
-                $stock = $options_stock[$key][$option_name]['option_values'][$option_value_index]['stock'];
+                if (!isset($options_stock[$val['product_id']])) continue;
+                $option_value_index = array_search($select, array_column($options_stock[$val['product_id']][$option_name]['option_values'], 'value'));
+                $stock = $options_stock[$val['product_id']][$option_name]['option_values'][$option_value_index]['stock'];
 
                 if (($stock - $val['quantity']) < 0) {
                     // 一部オプションの在庫切れ
+                    $isAllCorrect = false;
+                    if (!isset($inventoryShortage[$key])) $inventoryShortage[$key] = '';
                     if (!is_array($inventoryShortage[$key])) $inventoryShortage[$key] = Array('msg' => 'option-limit', 'option' => Array());
-                    array_push($inventoryShortage[$key]['option'], $option_name);
+                    array_push($inventoryShortage[$key]['option'], Array('option_name' => $option_name, 'value' => $select));
                 }
             }
         }
