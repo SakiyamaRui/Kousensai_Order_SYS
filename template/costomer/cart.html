@@ -226,6 +226,7 @@
                         if (i == e.quantity) quantity_option.setAttribute('selected', '');
                         selector.appendChild(quantity_option);
                     }
+                    order_data[index].quantity = e.quantity;
                     quantity.appendChild(selector);
 
                     // 数量のイベントリスナ
