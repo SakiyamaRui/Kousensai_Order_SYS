@@ -212,6 +212,26 @@ body .modal .content.product-detail-modal .body .label {
   margin-top: 5px;
   font-size: 15px;
 }
+body .modal .content.request-time {
+  max-width: min(98%, 400px);
+  width: 100%;
+}
+body .modal .content.request-time .comment {
+  font-size: 15px;
+  text-align: center;
+}
+body .modal .content.request-time .comment.detail {
+  font-size: 14px;
+  text-align: left;
+}
+body .modal .content.request-time .selector {
+  text-align: center;
+  margin: 24px 0;
+  font-family: "Noto Sans JP", sans-serif;
+}
+body .modal .content.request-time .buttons {
+  margin-top: 18px;
+}
 body .modal.hidden {
   opacity: 0;
   top: 150%;
@@ -257,6 +277,7 @@ body .body.top-page .order-history .order-list .column {
   box-sizing: border-box;
   padding: 8px;
   border-radius: 3px;
+  margin-bottom: 15px;
 }
 body .body.top-page .order-history .order-list .column a {
   text-decoration: none;
@@ -390,6 +411,7 @@ body .func {
   padding: 8px 0;
   margin: 0 8px;
   margin-top: 12px;
+  margin-bottom: 21px;
 }
 body .func .quantity {
   display: flex;
@@ -679,7 +701,7 @@ body .order-detail .detail .content .time {
 span.btn {
   box-sizing: border-box;
   padding: 5px 10px;
-  background-color: rgb(0, 0, 0);
+  background-color: rgb(255, 64, 64);
   color: white;
   border-radius: 3px;
   margin: 5px 5px;
