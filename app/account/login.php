@@ -30,7 +30,9 @@
         }
 
         // 復元できない場合は転送
+        session::start();
         $URL = (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+        $_SESSION['return_to'] = $URL;
         header("Location: https://kousensai.apori.jp/order/manage/login/?return_to=${URL}");
     }
 

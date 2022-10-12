@@ -6,11 +6,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>高専祭店舗用ログイン</title>
-    <link rel="stylesheet" href="https://unpkg.com/ress/dist/ress.min.css">
-    <link rel="stylesheet" href="/css/login.css?123">
+    <link rel="stylesheet" href="/css/login.css">
+    <script src="/js/jsQR.js"></script>
+    <script src="/js/QRcode_reader.js"></script>
+    <!--Google Fonts-->
+    <?php include(ROOT_PATH.'\template\fonts.html'); ?>
 </head>
 
 <body>
+    <?php include(ROOT_PATH.'\template\loading.html'); ?>
     <header class="header">
         <h1 class="header__title">高専祭店舗用</h1>
     </header>
@@ -22,11 +26,11 @@
             <!-- 手入力でのログイン画面 -->
             <div class="login__box">
                 <form class="form">
-                    <input class="input__class" name="username" type="text" placeholder="クラス名">
+                    <input class="input__class" name="username" type="text" placeholder="クラス名" autocomplete="username">
 
                     <!-- inputと目のアイコンを覆うボックス -->
                     <div class="pass__wrapper">
-                        <input id="password" name="password" class="input__pass" type="password" placeholder="パスワード">
+                        <input id="password" name="password" class="input__pass" type="password" placeholder="パスワード" autocomplete="current-password">
                         <!-- パスワードの表示、非表示の切り替え -->
                         <div id="view" class="pass__view">
                             <svg width="25" height="25" viewBox="0 0 25 25" fill="none"
@@ -67,6 +71,7 @@
 
             <!-- QRコードでログインするホップアップ画面 -->
             <div id="QR__display" class="QR__display">
+                <video id="qrcode-display"></video>
                 <!-- 手入力でログインする画面に戻るボタン -->
                 <div id="QR__btn-back" class="btn QR__btn-back">手入力でログイン</div>
             </div>
