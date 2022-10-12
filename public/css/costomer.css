@@ -236,6 +236,10 @@ body .modal .content.request-time .selector {
 body .modal .content.request-time .buttons {
   margin-top: 18px;
 }
+body .modal .content.cart-appended {
+  width: 100%;
+  max-width: 440px;
+}
 body .modal .content.cart-appended .comment {
   font-size: 15px;
   text-align: center;

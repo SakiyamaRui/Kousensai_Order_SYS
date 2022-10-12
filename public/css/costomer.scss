@@ -277,6 +277,8 @@ body {
             }
 
             &.cart-appended {
+                width: 100%;
+                max-width: 440px;
                 .comment {
                     font-size: 15px;
                     text-align: center;
