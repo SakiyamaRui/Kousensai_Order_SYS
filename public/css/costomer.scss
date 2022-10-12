@@ -270,6 +270,26 @@ body {
                     margin-top: 18px;
                 }
             }
+
+            &.cart-appended {
+                .comment {
+                    font-size: 15px;
+                    text-align: center;
+                }
+
+                .buttons {
+                    margin-top: 18px;
+
+                    a {
+                        text-decoration: none;
+                    }
+
+                    span.btn {
+                        font-family: sans-serif;
+                        font-weight: 400;
+                    }
+                }
+            }
         }
 
         &.hidden {

@@ -232,6 +232,20 @@ body .modal .content.request-time .selector {
 body .modal .content.request-time .buttons {
   margin-top: 18px;
 }
+body .modal .content.cart-appended .comment {
+  font-size: 15px;
+  text-align: center;
+}
+body .modal .content.cart-appended .buttons {
+  margin-top: 18px;
+}
+body .modal .content.cart-appended .buttons a {
+  text-decoration: none;
+}
+body .modal .content.cart-appended .buttons span.btn {
+  font-family: sans-serif;
+  font-weight: 400;
+}
 body .modal.hidden {
   opacity: 0;
   top: 150%;
