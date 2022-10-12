@@ -1,4 +1,9 @@
 @charset "utf-8";
+// ブラウザのデフォルトスタイルをリセット
+
+body {
+    margin: 0;
+}
 
 // 変数
 :root {
@@ -23,24 +28,32 @@ input {
     display: block;
     border: 1px solid #000;
     max-width: 300px;
-    width: 100%;
-    border-radius: 10px;
-    padding: 10px 0 10px 20px;
+    width: 300px;
+    border-radius: 6px;
+    box-sizing: border-box;
+    padding: 10px 15px;
     background-color: #fff;
+    font-family: sans-serif;
+    font-size: 15px;
+
+    &:focus {
+        outline: none;
+    }
 }
 
 
 .header {
     width: 100%;
-    height: 55px;
-    border-top: solid 2px #000000;
+    // border-top: solid 2px #000000;
     border-bottom: solid 2px #000000;
+    padding: 3px 0;
 
     &__title {
-        font-size: 35px;
+        font-size: 30px;
         text-align: center;
-        line-height: 55px;
-        font-weight: bold;
+        font-weight: 700;
+        font-family: 'Noto Sans JP', sans-serif;
+        margin: 5px 0;
     }
 }
 
@@ -55,12 +68,18 @@ input {
 
     &__view {
         position: absolute;
-        width: 25px;
-        height: 25px;
+        width: 20px;
+        height: 20px;
         top: 50%;
         right: 0;
         cursor: pointer;
         transform: translate(-50%, -50%);
+        margin-right: 5px;
+
+        svg {
+            width: 100%;
+            height: auto;
+        }
     }
 }
 
@@ -82,17 +101,22 @@ input {
     &__submit {
         margin-top: 40px;
         text-align: center;
-        width: 250px;
-        height: 50px;
+        width: fit-content;
+        padding: 5px 12px;
     }
 
     &__QR {
         margin-top: 25px;
         max-width: 219px;
-        width: 100%;
-        font-size: 15px;
+        width: fit-content;
+        font-size: 13px;
         text-align: right;
-        height: 40px;
+        padding: 5px 12px;
+
+        svg {
+            width: 18px;
+            height: auto;
+        }
     }
 }
 
@@ -106,7 +130,6 @@ main {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 100%;
 }
 
 // 手入力でログインする画面のスタイル
@@ -118,8 +141,10 @@ main {
 
     &__title {
         font-size: 35px;
-        font-weight: bold;
+        font-weight: 700;
+        margin: 0;
         text-align: center;
+        font-family: 'Noto Sans JP', sans-serif;
     }
 
     &__box {
@@ -129,14 +154,12 @@ main {
         align-items: center;
         margin-top: 22px;
         max-width: 620px;
-        padding-top: 10%;
-        padding-bottom: 10%;
+        padding: 50px 40px;
         margin: 22px auto 0 auto;
-        width: 100%;
+        width: max-content;
         background-color: var(--bgc-login-box);
+        box-sizing: border-box;
     }
-
-
 }
 
 
@@ -155,7 +178,17 @@ main {
         left: 50%;
         transform: translate(-50%,-50%);
         background-color: #000;
+        overflow: hidden;
 
+        video {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
     }
 
 
@@ -163,7 +196,7 @@ main {
         position: absolute;
         left: 50%;
         transform: translateX(-50%);
-        bottom: 71px;
+        bottom: 30px;
         width: 142px;
         height: 41px;
         background-color: rgba(205, 205, 205, 0.25);
@@ -192,14 +225,14 @@ main {
 @media screen and (max-width: 680px) {
     .QR {
         &__display {
-            width: 300px;
-            height: 400px;
+            width: 98%;
+            aspect-ratio: 4/3;
         }
     }
 }
 
 // スマホ用のレスポンシブ
-@media screen and (max-width:400px) {
+@media screen and (max-width: 480px) {
     input {
         max-width: none;
         width: 90%;
@@ -207,12 +240,6 @@ main {
 
     .input__pass {
         width: 100%;
-    }
-
-    .header {
-        &__title {
-            font-size: 30px;
-        }
     }
 
     .pass {
@@ -224,14 +251,6 @@ main {
     }
 
     .btn {
-        &__submit {
-            max-width: 150px;
-            width: 100%;
-            font-size: 13px;
-            height: 40px;
-            margin-top: 35px;
-        }
-
         &__QR {
             max-width: 200px;
             font-size: 13px;
@@ -240,19 +259,20 @@ main {
 
     .login {
 
-        &__title {
-            font-size: 30px;
+        &__box {
+            width: 100%;
+            padding: 50px 12px;
         }
 
-        &__box {
+        .form {
             width: 100%;
         }
     }
 
     .QR {
         &__display {
-            width: 150px;
-            height: 200px;
+            width: 98%;
+            aspect-ratio: 3 / 4;
         }
     }
 }
