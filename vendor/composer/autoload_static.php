@@ -18,7 +18,6 @@ class ComposerStaticInit393f0ef5e02005da10c51911fc8eb708
         array (
             'Psr\\Http\\Message\\' => 17,
             'Psr\\Http\\Client\\' => 16,
-            'ParagonIE\\ConstantTime\\' => 23,
         ),
         'M' => 
         array (
@@ -67,10 +66,6 @@ class ComposerStaticInit393f0ef5e02005da10c51911fc8eb708
         'Psr\\Http\\Client\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/http-client/src',
-        ),
-        'ParagonIE\\ConstantTime\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/paragonie/constant_time_encoding/src',
         ),
         'Minishlink\\WebPush\\' => 
         array (
