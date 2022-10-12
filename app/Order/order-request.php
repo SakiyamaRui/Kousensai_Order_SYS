@@ -84,7 +84,7 @@
                 }
             }
 
-            $total += $sum;
+            $total += ($sum * $value['quantity']);
         }
 
         $sql = "UPDATE
