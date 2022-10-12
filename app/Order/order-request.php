@@ -46,7 +46,7 @@
         }
 
         $sql = "INSERT INTO
-                ORDER_SYS_DB.`T_ORDER_INFORMATION_DETAIL`
+                `T_ORDER_INFORMATION_DETAIL`
                 (
                     `order_id`,
                     `product_id`,
@@ -83,7 +83,7 @@
         }
 
         $sql = "UPDATE
-                    ORDER_SYS_DB.`T_ORDER_INFORMATION_MAIN`
+                    `T_ORDER_INFORMATION_MAIN`
                 SET
                     `order_total_price` = :total,
                     `session_token` = :session_token
@@ -124,7 +124,7 @@
             $newOrderId = generateRandomNumberID(5);
             $newToken = generateToken(20);
             $sql = "INSERT INTO
-                    ORDER_SYS_DB.`T_ORDER_INFORMATION_MAIN` (
+                    `T_ORDER_INFORMATION_MAIN` (
                         `token`,
                         `order_id`,
                         `pickup_now`,

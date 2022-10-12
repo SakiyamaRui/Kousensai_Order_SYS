@@ -58,7 +58,7 @@
                     $sql = "SELECT
                                 `session_token`
                             FROM
-                                ORDER_SYS_DB.`T_NOTICE_DATA`
+                                `T_NOTICE_DATA`
                             WHERE
                                 `fingerprint` = :fingerprint";
                     $sql = $DB -> prepare($sql);
@@ -86,7 +86,7 @@
             }
 
             $sql = "INSERT INTO
-                        ORDER_SYS_DB.`T_NOTICE_DATA` (
+                        `T_NOTICE_DATA` (
                             `session_token`,
                             `fingerprint`
                         )
@@ -95,7 +95,7 @@
                         :fingerprint
                     );
                     INSERT INTO
-                        ORDER_SYS_DB.`T_CART_DATA`(
+                        `T_CART_DATA`(
                             `session_token`,
                             `product_in_cart`
                         )
@@ -138,7 +138,7 @@
             }
 
             $sql = "UPDATE
-                        ORDER_SYS_DB.`T_NOTICE_DATA`
+                        `T_NOTICE_DATA`
                     SET
                         `fingerprint` = :fingerprint
                     WHERE
@@ -157,7 +157,7 @@
             while (1) {
                 $new_id = generateToken(50);
 
-                $sql = "SELECT * FROM ORDER_SYS_DB.`T_NOTICE_DATA` WHERE `session_token` = :session_token";
+                $sql = "SELECT * FROM `T_NOTICE_DATA` WHERE `session_token` = :session_token";
                 $sql = $DB -> prepare($sql);
 
                 $sql -> bindValue(':session_token', $new_id, PDO::PARAM_STR);

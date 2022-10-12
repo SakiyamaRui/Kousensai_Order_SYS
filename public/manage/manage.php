@@ -6,12 +6,12 @@
 
     switch ($request[0]) {
         case 'login':
-            require_once(ROOT_PATH .'\template\store\login.html');
+            require_once(ROOT_PATH .'/template/store/login.html');
             break;
 
         case 'item':
             $type = '登録';
-            require_once(ROOT_PATH.'\template\item\item-edit.html');
+            require_once(ROOT_PATH.'/template/item/item-edit.html');
             break;
 
         case '':

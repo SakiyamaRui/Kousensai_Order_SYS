@@ -17,23 +17,23 @@
     /**
      * configファイルの読み込み
      */
-    define('SERVER_CONFIG', parse_ini_file(ROOT_PATH.'\config\config.ini', false));
-    define('SESSION_CONFIG', parse_ini_file(ROOT_PATH.'\config\session.ini', false));
-    define('DB_CONFIG', parse_ini_file(ROOT_PATH.'\config\DB.ini', false));
+    define('SERVER_CONFIG', parse_ini_file(ROOT_PATH.'/config/config.ini', false));
+    define('SESSION_CONFIG', parse_ini_file(ROOT_PATH.'/config/session.ini', false));
+    define('DB_CONFIG', parse_ini_file(ROOT_PATH.'/config/DB.ini', false));
 
     // ファイルの読み込み
-    require_once(ROOT_PATH.'\vendor\autoload.php');
-    require_once(ROOT_PATH.'\app\DB\database.php');
-    require_once(ROOT_PATH.'\app\secure\token.php');
-    require_once(ROOT_PATH.'\app\secure\session.php');
-    require_once(ROOT_PATH.'\app\PRODUCT\getData.php');
-    require_once(ROOT_PATH.'\app\PRODUCT\getinformation.php');
-    require_once(ROOT_PATH.'\app\Order\Cart.php');
-    require_once(ROOT_PATH.'\app\Order\order-request.php');
-    require_once(ROOT_PATH.'\app\Order\pull-order.php');
-    require_once(ROOT_PATH.'\app\PRODUCT\stock_check.php');
-    require_once(ROOT_PATH.'\app\notice\notice-settings.php');
-    require_once(ROOT_PATH.'\app\notice\notice-subscribe.php');
-    require_once(ROOT_PATH.'\app\qr-code\qr-code.php');
-    // require_once(ROOT_PATH.'\app\server.php');
+    require_once(ROOT_PATH.'/vendor/autoload.php');
+    require_once(ROOT_PATH.'/app/DB/database.php');
+    require_once(ROOT_PATH.'/app/secure/token.php');
+    require_once(ROOT_PATH.'/app/secure/session.php');
+    require_once(ROOT_PATH.'/app/PRODUCT/getData.php');
+    require_once(ROOT_PATH.'/app/PRODUCT/getinformation.php');
+    require_once(ROOT_PATH.'/app/Order/Cart.php');
+    require_once(ROOT_PATH.'/app/Order/order-request.php');
+    require_once(ROOT_PATH.'/app/Order/pull-order.php');
+    require_once(ROOT_PATH.'/app/PRODUCT/stock_check.php');
+    require_once(ROOT_PATH.'/app/notice/notice-settings.php');
+    require_once(ROOT_PATH.'/app/notice/notice-subscribe.php');
+    require_once(ROOT_PATH.'/app/qr-code/qr-code.php');
+    // require_once(ROOT_PATH.'/app/server.php');
 

@@ -8,11 +8,12 @@
             $name = DB_CONFIG['DB_NAME'];
 
             return new PDO(
-                "mysql:host${host};dbname=${name};charset=utf8",
+                "mysql:host=${host};dbname=${name};charset=utf8",
                 DB_CONFIG['DB_USER'],
                 DB_CONFIG['DB_PASS']
             );
-        }catch (PDOExceptison $ex) {
+        }catch (PDOException $ex) {
             // DB接続のエラー処理
+            echo "Error: ".$ex->getMessage();
         }
     }

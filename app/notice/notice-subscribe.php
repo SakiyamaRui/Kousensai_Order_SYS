@@ -11,7 +11,7 @@
 
         // トークンをアップデート
         $sql = "UPDATE
-                    ORDER_SYS_DB.`T_ORDER_INFORMATION_MAIN`
+                    `T_ORDER_INFORMATION_MAIN`
                 SET
                     `session_token` = :session_token
                 WHERE
@@ -24,7 +24,7 @@
 
         // NOTICE_DATAをUPDATE
         $sql = "UPDATE
-                    ORDER_SYS_DB.`T_NOTICE_DATA`
+                    `T_NOTICE_DATA`
                 SET
                     `end_point` = :end_point,
                     `public_key` = :public_key,

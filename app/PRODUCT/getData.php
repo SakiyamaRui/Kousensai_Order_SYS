@@ -1,5 +1,5 @@
 <?php
-require_once(dirname(__DIR__).'\main.php');
+require_once(dirname(__DIR__).'/main.php');
 
 $return_template = Array(
     'store_name' => "",     // 店舗名
@@ -17,7 +17,17 @@ function getAllProductIndexList() {
 
     //DB接続
     $DB = DB_Connect();
-    $sql = "SELECT `product_id`,`store_id`, `product_name`, `product_price`, `product_image_url` FROM ORDER_SYS_DB.`T_PRODUCT_INFORMATION` WHERE `orderable_flag` = 1 ORDER BY `product_price` ASC";
+    $sql = "SELECT
+                `product_id`,
+                `store_id`,
+                `product_name`,
+                `product_price`,
+                `product_image_url`
+            FROM
+                `T_PRODUCT_INFORMATION`
+            WHERE
+                `orderable_flag` = 1
+            ORDER BY `product_price` ASC";
     $sql = $DB -> prepare($sql);
     $sql -> execute();
     $All_product_data = $sql -> fetchAll(PDO::FETCH_ASSOC);
@@ -45,7 +55,7 @@ function getAllProductIndexList() {
 
     // $store_id_listの中にあるidのストア名を取得
     $inClause = substr(str_repeat(',?', count($store_id_list)), 1);
-    $sql = "SELECT * FROM ORDER_SYS_DB.`T_STORE_INFORMATION` WHERE `store_id`IN(%s)";
+    $sql = "SELECT * FROM `T_STORE_INFORMATION` WHERE `store_id`IN(%s)";
     $sql = $DB -> prepare(sprintf($sql, $inClause));
     $sql -> execute($store_id_list);
 
@@ -77,7 +87,7 @@ function getOptionData($id_list, $type = 0) {
     if (!is_array($id_list)) {
         // 配列でない場合
         $sql = "SELECT * FROM
-                    ORDER_SYS_DB.`T_PRODUCT_OPTIONS`
+                    `T_PRODUCT_OPTIONS`
                 WHERE
                     `product_id` = :product_id
                 GROUP BY
@@ -96,7 +106,7 @@ function getOptionData($id_list, $type = 0) {
         $sql = "SELECT
                     *
                 FROM
-                    ORDER_SYS_DB.`T_PRODUCT_OPTIONS`
+                    `T_PRODUCT_OPTIONS`
                 WHERE
                     `product_id` IN(%s)
                 GROUP BY
@@ -178,7 +188,7 @@ function getProductData($id_list, $DB = false) {
                 `product_name`,
                 `product_price`
             FROM
-                ORDER_SYS_DB.`T_PRODUCT_INFORMATION`
+                `T_PRODUCT_INFORMATION`
             WHERE
                 `product_id` IN(%s)";
     $sql = $DB -> prepare(sprintf($sql, $inClause));
@@ -201,7 +211,7 @@ function getProductData($id_list, $DB = false) {
 
     // 店舗名
     $inClause = substr(str_repeat(',?', count($store_id_list)), 1);
-    $sql = "SELECT * FROM ORDER_SYS_DB.`T_STORE_INFORMATION` WHERE `store_id` IN(%s)";
+    $sql = "SELECT * FROM `T_STORE_INFORMATION` WHERE `store_id` IN(%s)";
     $sql = $DB -> prepare(sprintf($sql, $inClause));
     $sql -> execute($store_id_list);
     $store_name_list = array_column($sql -> fetchAll(PDO::FETCH_ASSOC), NULL, 'store_id');
@@ -224,7 +234,7 @@ function getProductData($id_list, $DB = false) {
 
 function getPriceList($DB, $id_list) {
     $inClause = substr(str_repeat(',?', count($id_list)), 1);
-    $sql = "SELECT `product_id`, `product_price` FROM ORDER_SYS_DB.`T_PRODUCT_INFORMATION` WHERE `product_id` IN(%s)";
+    $sql = "SELECT `product_id`, `product_price` FROM `T_PRODUCT_INFORMATION` WHERE `product_id` IN(%s)";
     $sql = $DB -> prepare(sprintf($sql, $inClause));
     $sql -> execute(array_values($id_list));
     return array_column($sql -> fetchAll(PDO::FETCH_ASSOC), NULL, 'product_id');

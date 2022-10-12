@@ -15,7 +15,7 @@
         if (isset($_COOKIE['store_login_session'])) {
             // データベースで検索して復元
             $DB = $DB = DB_Connect();
-            $sql ="SELECT * FROM ORDER_SYS_DB.`T_STORE_TERMINAL_SESSION` WHERE `login_session_id` = :login_session_id";
+            $sql ="SELECT * FROM `T_STORE_TERMINAL_SESSION` WHERE `login_session_id` = :login_session_id";
             $sql = $DB -> prepare($sql);
 
             $sql -> bindValue(':login_session_id', $_COOKIE['store_login_session'], PDO::PARAM_STR);
@@ -42,7 +42,7 @@
     function storeLogin($username, $password) {
         $DB = $DB = DB_Connect();
 
-        $sql = "SELECT * FROM ORDER_SYS_DB.`T_STORE_ACCOUNT` WHERE `account_name` = :account_name;";
+        $sql = "SELECT * FROM `T_STORE_ACCOUNT` WHERE `account_name` = :account_name;";
 
         $sql = $DB -> prepare($sql);
 

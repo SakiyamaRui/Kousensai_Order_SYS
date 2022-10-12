@@ -13,7 +13,7 @@
         $DB = DB_Connect();
 
         // ユーザー名がすでに使われているかを確認する
-        $sql = "SELECT `account_name` FROM ORDER_SYS_DB.`T_STORE_ACCOUNT` WHERE `account_name` = :account_name;";
+        $sql = "SELECT `account_name` FROM `T_STORE_ACCOUNT` WHERE `account_name` = :account_name;";
         
         $sql = $DB -> prepare($sql);
 
@@ -42,7 +42,7 @@
             $new_id = substr(bin2hex(random_bytes(10)), 0, 15);
 
             $sql = "INSERT INTO
-                ORDER_SYS_DB.`T_STORE_ACCOUNT`
+                `T_STORE_ACCOUNT`
                 SELECT
                 :account_id,
                 :account_name,
@@ -53,7 +53,7 @@
                     SELECT
                     `store_account_id`
                     FROM
-                    ORDER_SYS_DB.`T_STORE_ACCOUNT`
+                    `T_STORE_ACCOUNT`
                     WHERE
                     `store_account_id` = :account_id
                 );";
@@ -68,7 +68,7 @@
             $sql -> execute();
 
             // 追加できているか確認
-            $sql ="SELECT `store_account_id` FROM ORDER_SYS_DB.`T_STORE_ACCOUNT` WHERE `store_account_id` = :account_id AND `account_name` = :account_name;";
+            $sql ="SELECT `store_account_id` FROM `T_STORE_ACCOUNT` WHERE `store_account_id` = :account_id AND `account_name` = :account_name;";
             $sql = $DB -> prepare($sql);
 
             $sql -> bindValue(':account_id', $new_id, PDO::PARAM_STR);

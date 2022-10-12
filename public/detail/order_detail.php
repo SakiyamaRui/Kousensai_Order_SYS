@@ -18,7 +18,7 @@
                 `pickup_now`,
                 `pickup_time`
             FROM
-                ORDER_SYS_DB.`T_ORDER_INFORMATION_MAIN`
+                `T_ORDER_INFORMATION_MAIN`
             WHERE
                 `token` = :token";
     $sql = $DB -> prepare($sql);
