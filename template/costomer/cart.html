@@ -247,7 +247,8 @@
                         let i = e.currentTarget.parentElement.parentElement.getAttribute('index');
 
                         // すべての配列から削除
-                        order_data.splice(i, 1);
+                        order_data = [];
+                        console.log(order_data);
                         cartList.splice(i, 1);
                         option_prices.splice(i, 1);
 
@@ -381,7 +382,9 @@
             order_data.forEach(e => {
                 quantity += e.quantity;
                 price += e.total;
+                console.log(e);
             });
+            //console.log(quantity);
 
             // 画面へ描画
             document.querySelector('.order-head .info .quantity .num').innerText = quantity;
