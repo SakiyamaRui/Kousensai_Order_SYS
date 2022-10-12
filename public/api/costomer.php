@@ -37,6 +37,7 @@
 
             if ($result == false) {
                 // エラーを出力
+                echo 'false';
             }else{
                 echo 'true';
             }

@@ -364,10 +364,10 @@
 
         function itemTotalSum(i) {
             let select = order_data[i]['option_select'];
-            let sum = cartList[i]['product_data']['price'];
+            let sum = Number(cartList[i]['product_data']['price']);
 
             for (let key in select) {
-                sum += option_prices[i][key][select[key]];
+                sum += Number(option_prices[i][key][select[key]]);
             }
 
             sum = sum * order_data[i].quantity;
@@ -380,9 +380,8 @@
             let price = 0;
 
             order_data.forEach(e => {
-                quantity += e.quantity;
-                price += e.total;
-                console.log(e);
+                quantity += Number(e.quantity);
+                price += Number(e.total);
             });
             //console.log(quantity);
 

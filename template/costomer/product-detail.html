@@ -229,11 +229,11 @@
         }
 
         function getOptionTotalPrice() {
-            let sum = product_json.price;
+            let sum = Number(product_json.price);
             let quantity = Number(document.getElementById('quantity').value);
 
             for (let key in option_select) {
-                sum += option_prices[key][option_select[key]];
+                sum += Number(option_prices[key][option_select[key]]);
             }
 
             return sum * quantity;

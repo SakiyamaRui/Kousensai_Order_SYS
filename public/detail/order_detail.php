@@ -73,8 +73,8 @@
     //
 
     // 注文の詳細
-    $option_template = file_get_contents(ROOT_PATH.'\template\costomer\order-detail-item-column-option.html');
-    $column_template = file_get_contents(ROOT_PATH.'\template\costomer\order-detail-item-column.html');
+    $option_template = file_get_contents(ROOT_PATH.'/template/costomer/order-detail-item-column-option.html');
+    $column_template = file_get_contents(ROOT_PATH.'/template/costomer/order-detail-item-column.html');
 
     $order_item = orderItems($order_id, $DB);
     $item_list = Array();
@@ -107,4 +107,4 @@
     // 合計金額
     $total = $record['order_total_price'];
 
-    require_once(ROOT_PATH.'\template\costomer\order-detail.html');
+    require_once(ROOT_PATH.'/template/costomer/order-detail.html');
