@@ -89,12 +89,7 @@ function getOptionData($id_list, $type = 0) {
         $sql = "SELECT * FROM
                     `T_PRODUCT_OPTIONS`
                 WHERE
-                    `product_id` = :product_id
-                GROUP BY
-                    `product_id`,
-                    `option_name`,
-                    `option_value`
-                ";
+                    `product_id` = :product_id";
         $sql = $DB -> prepare($sql);
 
         $sql -> bindValue(':product_id', $id_list, PDO::PARAM_STR);
@@ -108,11 +103,7 @@ function getOptionData($id_list, $type = 0) {
                 FROM
                     `T_PRODUCT_OPTIONS`
                 WHERE
-                    `product_id` IN(%s)
-                GROUP BY
-                    `product_id`,
-                    `option_name`,
-                    `option_value`";
+                    `product_id` IN(%s)";
         $sql = $DB -> prepare(sprintf($sql, $inClause));
 
         $sql -> execute(array_values($id_list));
