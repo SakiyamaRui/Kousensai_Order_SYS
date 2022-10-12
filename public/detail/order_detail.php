@@ -18,7 +18,7 @@
                 `pickup_now`,
                 `pickup_time`
             FROM
-                ORDER_SYS_DB.`T_ORDER_INFORMATION_MAIN`
+                `T_ORDER_INFORMATION_MAIN`
             WHERE
                 `token` = :token";
     $sql = $DB -> prepare($sql);
@@ -68,13 +68,13 @@
     // 通知の受け取り設定
     $notice_bool = isNoticeSetting($record['session_token'], $DB);
     $notice_setting = ($notice_bool)?
-        '<div class="notice-request"><div class="status">設定済み</div></div>':
-        '<div class="notice-request"><div class="status">未設定</div><button>通知の設定</button></div>';
+        '<div class="notice-request"><div class="status">設定済み</div><button id="notice-request-button">端末の変更</button></div>':
+        '<div class="notice-request"><div class="status">未設定</div><button id="notice-request-button">通知の設定</button></div>';
     //
 
     // 注文の詳細
-    $option_template = file_get_contents(ROOT_PATH.'\template\costomer\order-detail-item-column-option.html');
-    $column_template = file_get_contents(ROOT_PATH.'\template\costomer\order-detail-item-column.html');
+    $option_template = file_get_contents(ROOT_PATH.'/template/costomer/order-detail-item-column-option.html');
+    $column_template = file_get_contents(ROOT_PATH.'/template/costomer/order-detail-item-column.html');
 
     $order_item = orderItems($order_id, $DB);
     $item_list = Array();
@@ -107,4 +107,4 @@
     // 合計金額
     $total = $record['order_total_price'];
 
-    require_once(ROOT_PATH.'\template\costomer\order-detail.html');
+    require_once(ROOT_PATH.'/template/costomer/order-detail.html');

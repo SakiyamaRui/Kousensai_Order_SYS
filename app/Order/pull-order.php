@@ -14,7 +14,7 @@
                     `confirmed_order_flag`,
                     `order_time`
                 FROM
-                    ORDER_SYS_DB.`T_ORDER_INFORMATION_MAIN`
+                    `T_ORDER_INFORMATION_MAIN`
                 WHERE
                     `session_token` = :session_token
                 ORDER BY
@@ -71,13 +71,13 @@
 
         // 注文の商品一覧を取得
         $sql = "SELECT
-                    `t_order_information_detail`.`product_id`,
+                    `T_ORDER_INFORMATION_DETAIL`.`product_id`,
                     `passed_flag`,
                     `made_flag`,
-                    `t_product_information`.`store_id`
+                    `T_PRODUCT_INFORMATION`.`store_id`
                 FROM
-                    ORDER_SYS_DB.`t_order_information_detail`
-                INNER JOIN ORDER_SYS_DB.`t_product_information` ON `t_order_information_detail`.`product_id` = `t_product_information`.`product_id`
+                    `T_ORDER_INFORMATION_DETAIL`
+                INNER JOIN `T_PRODUCT_INFORMATION` ON `T_ORDER_INFORMATION_DETAIL`.`product_id` = `T_ORDER_INFORMATION_DETAIL`.`product_id`
                 WHERE
                     `order_id` = :order_id";
         $sql = $DB -> prepare($sql);
@@ -93,11 +93,11 @@
                 $product_status[$val['product_id']] = true;
             }
 
-            if ($val['passed_flag'] === 0) {
+            if ($val['passed_flag'] == 0) {
                 $passed = false;
             }
 
-            if ($val['made_flag'] === 0) {
+            if ($val['made_flag'] == 0) {
                 $product_status[$val['product_id']] = false;
             }
         }
@@ -143,8 +143,8 @@
                     `T_PRODUCT_INFORMATION`.`product_name`,
                     `product_option`
                 FROM
-                    ORDER_SYS_DB.`T_ORDER_INFORMATION_DETAIL`
-                INNER JOIN ORDER_SYS_DB.`T_PRODUCT_INFORMATION` ON `T_ORDER_INFORMATION_DETAIL`.`product_id` = `T_PRODUCT_INFORMATION`.`product_id`
+                    `T_ORDER_INFORMATION_DETAIL`
+                INNER JOIN `T_PRODUCT_INFORMATION` ON `T_ORDER_INFORMATION_DETAIL`.`product_id` = `T_PRODUCT_INFORMATION`.`product_id`
                 WHERE
                     `order_id` = :order_id";
         $sql = $DB -> prepare($sql);

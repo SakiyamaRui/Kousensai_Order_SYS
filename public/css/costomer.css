@@ -20,6 +20,10 @@ body .head .title {
   font-weight: 700;
   flex-grow: 1;
 }
+body .head .title a {
+  text-decoration: none;
+  color: #000;
+}
 body .head .order-history a {
   font-size: 15px;
   text-decoration: none;
@@ -231,6 +235,24 @@ body .modal .content.request-time .selector {
 }
 body .modal .content.request-time .buttons {
   margin-top: 18px;
+}
+body .modal .content.cart-appended {
+  width: 100%;
+  max-width: 440px;
+}
+body .modal .content.cart-appended .comment {
+  font-size: 15px;
+  text-align: center;
+}
+body .modal .content.cart-appended .buttons {
+  margin-top: 18px;
+}
+body .modal .content.cart-appended .buttons a {
+  text-decoration: none;
+}
+body .modal .content.cart-appended .buttons span.btn {
+  font-family: sans-serif;
+  font-weight: 400;
 }
 body .modal.hidden {
   opacity: 0;

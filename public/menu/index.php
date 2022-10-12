@@ -4,7 +4,7 @@
     preg_match('/^\/menu\/([\w\/]*)\/?/', $_SERVER['REQUEST_URI'], $matches);
     $request = explode('/', $matches[1]);
 
-    $product_column_template = file_get_contents(ROOT_PATH.'\template\costomer\product_column.html');
+    $product_column_template = file_get_contents(ROOT_PATH.'/template/costomer/product_column.html');
 
     switch($request[0]) {
         // メニュー一覧
@@ -17,7 +17,7 @@
                 $menu_list_html .= productColumn($val).PHP_EOL;
             }
 
-            require_once(ROOT_PATH . '\template\costomer\menu.html');
+            require_once(ROOT_PATH . '/template/costomer/menu.html');
             break;
         case 'product':
             try {
@@ -34,7 +34,7 @@
                     'options' => $options
                 );
                 
-                require_once(ROOT_PATH . '\template\costomer\product-detail.html');
+                require_once(ROOT_PATH . '/template/costomer/product-detail.html');
             }catch (Exception $e) {
                 // 404
                 echo $e;

@@ -37,6 +37,7 @@
 
             if ($result == false) {
                 // エラーを出力
+                echo 'false';
             }else{
                 echo 'true';
             }
@@ -73,10 +74,35 @@
 
             break;
         case 'qr-code':
-            require_once(ROOT_PATH.'\public\api\0.gif');
+
+            // QRコード画像があるかチェック
+            $token = $_GET['token'];
+            $qr_value = "https://".DOMAIN."/detail/${token}/";
+            $path = ROOT_PATH . "/tmp/qr/${token}.png";
+            
+            if (!file_exists($path)) {
+                qrCodeGen($qr_value, $path);
+            }
+
+            // 出力
+            header('Content-Type: image/png');
+            readfile($path);
+            exit;
             break;
         // webPush通知の登録
         case 'notice-subscription':
+            if($_SERVER["REQUEST_METHOD"] != "POST") {
+                // 404
+            }
+
+            $result = noticeSubscribe($request);
+
+            if ($result == true) {
+                echo 'true';
+            }else{
+                echo 'false';
+            }
+
             break;
         
         // デバック

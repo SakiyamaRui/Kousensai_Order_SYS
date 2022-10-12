@@ -10,7 +10,7 @@
         $sql = "SELECT
                     COUNT(*)
                 FROM
-                    ORDER_SYS_DB.`T_NOTICE_DATA`
+                    `T_NOTICE_DATA`
                 WHERE
                     `session_token` = :session_token AND
                     `end_point` IS NOT NULL AND

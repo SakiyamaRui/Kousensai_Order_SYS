@@ -7,16 +7,18 @@
     <title>注文の詳細</title>
 
     <link rel="stylesheet" href="/css/costomer.css">
-
+    <script src="/js/push-request.js"></script>
+    <script src="/js/fingerPrint.js"></script>
     <!--Google Fonts-->
-    <?php include(ROOT_PATH.'\template\fonts.html'); ?>
+    <?php include(ROOT_PATH.'/template/fonts.html'); ?>
 </head>
 <body>
-    <?php include(ROOT_PATH.'\template\costomer\header.html'); ?>
+    <?php include(ROOT_PATH.'/template/costomer/header.html'); ?>
+    <?php include(ROOT_PATH.'/template/loading.html'); ?>
 
     <div class="order-detail">
         <div class="qr">
-            <img src="/api/costomer.php?mode=qr-code">
+            <img src="/api/costomer.php?mode=qr-code&token=<?php echo $token; ?>">
             <div class="order-id">
                 注文番号: <?php echo $order_id; ?>
             </div>
@@ -69,3 +71,98 @@
     </div>
 </body>
 </html>
+<script>
+    (function() {
+        window.addEventListener('DOMContentLoaded', () => {
+            try {
+                var btn = document.getElementById('notice-request-button');
+
+                var isSetting = false;
+                let notice_label = document.querySelector('.notice-request .status');
+                if (notice_label.textContent == '設定済み') {
+                    isSetting = true;
+                }
+
+                if (!('Notification' in window)) {
+                    notice_label.innerText = 'お使いの端末は非対応です';
+                }
+
+            }catch (e) {
+                console.log('Not Notice Request Button');
+            }
+
+            // ローディングの解除
+            var loading = document.getElementById('loading');
+            loading.classList.add('hidden');
+
+            btn.addEventListener('click', () => {
+                if (!('Notification' in window)) {
+                    alert('お使いの端末は対応していません。');
+                    return false;
+                }
+
+                // 通知設定の上書き
+                if (isSetting) {
+                    if (!confirm('通知を行う端末をこの端末に変更しますか？')) {
+                        return false;
+                    }
+                }else{
+                    if (!confirm('この端末にステータスが更新される度に通知を送信します。\nよろしいですか')) {
+                        return false;
+                    }
+                }
+
+                loading.classList.remove('hidden');
+
+                // サブスクの登録
+                noticeSettings().then(async (data) => {
+                    // fingerPrintを取得
+                    data['fingerprint'] = '';
+                    data['order_token'] = '<?php echo $token; ?>';
+                    try{
+                        let fp = await (await fpPromise).get();
+                        fingerPrint = fp.visitorId;
+                    }catch (e) {
+                        console.log('FingerPrint Error');
+                    }
+
+                    // APIリクエストの送信
+                    let xhr = new XMLHttpRequest();
+                    xhr.open('POST', '/api/costomer.php?mode=notice-subscription');
+                    xhr.setRequestHeader("Content-Type", "application/json");
+                    xhr.send(JSON.stringify(data));
+
+                    xhr.onreadystatechange = () => {
+                        if (xhr.readyState === XMLHttpRequest.DONE) {
+
+                            if (xhr.status >= 200 && xhr.status < 400) {
+                                // リクエストが正常に完了
+                                console.log(xhr.responseText);
+                                try {
+                                    let responceText = JSON.parse(xhr.responseText);
+
+                                    if (responceText == true) {
+                                        location.reload();
+                                        return true;
+                                    }
+                                }catch (e) {
+                                    console.log(xhr.responseText);
+                                }
+
+                            }
+                            // リクエストでエラーが発生
+                            loading.classList.add('hidden');
+                            alert('リクエストが正常に処理できませんでした。\nもう一度お試しください。');
+                            location.reload();
+                        }
+                    }
+
+                }).catch((err) => {
+                    if (err == 'denied') {
+                        alert('通知の受け取りが拒否になっています。\n通知の受信を許可してください。');
+                    }
+                });
+            });
+        });
+    }());
+</script>
