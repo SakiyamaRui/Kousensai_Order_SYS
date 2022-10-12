@@ -22,6 +22,11 @@ body {
             font-weight: 700;
 
             flex-grow: 1;
+
+            a {
+                text-decoration: none;
+                color: #000;
+            }
         }
 
         .order-history {
