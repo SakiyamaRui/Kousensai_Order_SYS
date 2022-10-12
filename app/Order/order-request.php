@@ -29,6 +29,11 @@
             return Array('result' => false, 'type' => 'stock', 'detail' => $result);
         }
 
+        // フィンガープリントのアップデート
+        if ($fingerPrint != '') {
+            session::fingerPrintUpdate($token_id, $fingerPrint, $DB);
+        }
+
         // テーブルに追加
         $order_request_list = $_SESSION['cart'];
 
@@ -94,11 +99,6 @@
         $sql -> bindValue(':session_token', $_SESSION['token'], PDO::PARAM_STR);
         $sql -> bindValue(':token', $id['token'], PDO::PARAM_STR);
         $result = $sql ->execute();
-
-        // フィンガープリントのアップデート
-        if ($fingerPrint != '') {
-            session::fingerPrintUpdate($token_id, $fingerPrint, $DB);
-        }
 
         unset($DB);
         if ($result == true) {
