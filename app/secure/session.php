@@ -142,7 +142,7 @@
                     SET
                         `fingerprint` = :fingerprint
                     WHERE
-                        `session_token` = :session_token";
+                        `T_NOTICE_DATA`.`session_token` = :session_token";
             $sql = $DB -> prepare($sql);
             $sql -> bindValue(':session_token', $token_id, PDO::PARAM_STR);
             $sql -> bindValue(':fingerprint', $fingerprint, PDO::PARAM_STR);
