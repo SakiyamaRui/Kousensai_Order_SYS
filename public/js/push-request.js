@@ -71,7 +71,6 @@ async function noticeSettings() {
                             userAuthToken: btoa(String.fromCharCode.apply(null, new Uint8Array(token)))
                         };
 
-                        console.log(request);
                         resolve(request);
                     });
                     break;

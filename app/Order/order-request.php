@@ -29,6 +29,11 @@
             return Array('result' => false, 'type' => 'stock', 'detail' => $result);
         }
 
+        // フィンガープリントのアップデート
+        if ($fingerPrint != '') {
+            session::fingerPrintUpdate($token_id, $fingerPrint, $DB);
+        }
+
         // テーブルに追加
         $order_request_list = $_SESSION['cart'];
 
@@ -46,7 +51,7 @@
         }
 
         $sql = "INSERT INTO
-                ORDER_SYS_DB.`T_ORDER_INFORMATION_DETAIL`
+                `T_ORDER_INFORMATION_DETAIL`
                 (
                     `order_id`,
                     `product_id`,
@@ -79,11 +84,11 @@
                 }
             }
 
-            $total += $sum;
+            $total += ($sum * $value['quantity']);
         }
 
         $sql = "UPDATE
-                    ORDER_SYS_DB.`T_ORDER_INFORMATION_MAIN`
+                    `T_ORDER_INFORMATION_MAIN`
                 SET
                     `order_total_price` = :total,
                     `session_token` = :session_token
@@ -94,11 +99,6 @@
         $sql -> bindValue(':session_token', $_SESSION['token'], PDO::PARAM_STR);
         $sql -> bindValue(':token', $id['token'], PDO::PARAM_STR);
         $result = $sql ->execute();
-
-        // フィンガープリントのアップデート
-        if ($fingerPrint != '') {
-            session::fingerPrintUpdate($token_id, $fingerPrint, $DB);
-        }
 
         unset($DB);
         if ($result == true) {
@@ -124,7 +124,7 @@
             $newOrderId = generateRandomNumberID(5);
             $newToken = generateToken(20);
             $sql = "INSERT INTO
-                    ORDER_SYS_DB.`T_ORDER_INFORMATION_MAIN` (
+                    `T_ORDER_INFORMATION_MAIN` (
                         `token`,
                         `order_id`,
                         `pickup_now`,

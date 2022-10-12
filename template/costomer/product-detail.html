@@ -8,10 +8,10 @@
 
     <link rel="stylesheet" href="/css/costomer.css">
     <!--Google Fonts-->
-    <?php include(ROOT_PATH.'\template\fonts.html'); ?>
+    <?php include(ROOT_PATH.'/template/fonts.html'); ?>
 </head>
 <body>
-    <?php include(ROOT_PATH.'\template\costomer\header.html'); ?>
+    <?php include(ROOT_PATH.'/template/costomer/header.html'); ?>
 
     <div class="product-detail">
         <div class="img">
@@ -63,6 +63,35 @@
             カートに追加
         </div>
     </div>
+
+    <div id="cart-appended-modal" class="modal hidden">
+        <div class="content cart-appended">
+            <div class="title">
+                カートに追加しました
+            </div>
+            <div class="comment">
+                商品をカートに追加しました。
+                <div>
+                    続けて注文を行うことができます。
+                </div>
+            </div>
+            <div class="buttons">
+                <span class="btn" id="cart-append-modal-close-trg" style="background-color: #1E90FF;">
+                    閉じる
+                </span>
+                <a href="/menu/">
+                    <span class="btn">
+                        商品一覧
+                    </span>
+                </a>
+                <a href="/cart/">
+                    <span class="btn"  style="background-color: #4db56a;">
+                        カート
+                    </span>
+                </a>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
 <script type="application/json" id="menu_info">
@@ -101,25 +130,37 @@
                 totalPriceDOM.innerText = getOptionTotalPrice();
             });
 
-        });
+            let appendedModalCloseTrg = document.getElementById('cart-append-modal-close-trg');
+            appendedModalCloseTrg.addEventListener('click', () => {
+                document.getElementById('cart-appended-modal').classList.add('hidden');
+            });
 
-        document.getElementById('append-cart').addEventListener('click', () => {
-            // ボタン
-            
-            let xhr = new XMLHttpRequest();
-            let json = formatData();
+            document.getElementById('append-cart').addEventListener('click', () => {
+                // ボタン
+                
+                let xhr = new XMLHttpRequest();
+                let json = formatData();
 
-            xhr.open('POST', '/api/costomer.php?mode=cartAppend');
-            xhr.setRequestHeader('Content-Type', 'application/json');
-            xhr.send(JSON.stringify(json));
+                xhr.open('POST', '/api/costomer.php?mode=cartAppend');
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.send(JSON.stringify(json));
 
-            xhr.onreadystatechange = () => {
-                if (xhr.readyState === 4) {
-                    if (xhr.status === 200) {
-                        console.log(xhr.responseText);
+                xhr.onreadystatechange = () => {
+                    if (xhr.readyState === 4) {
+                        if (xhr.status === 200) {
+                            console.log(xhr.responseText);
+                            if (xhr.responseText == 'true') {
+                                document.getElementById('cart-appended-modal').classList.remove('hidden');
+                                return true;
+                            }
+
+                            alert('商品の追加時にエラーが発生しました');
+                            return false;
+                        }
                     }
                 }
-            }
+            });
+
         });
 
         function formatData() {
@@ -188,11 +229,11 @@
         }
 
         function getOptionTotalPrice() {
-            let sum = product_json.price;
+            let sum = Number(product_json.price);
             let quantity = Number(document.getElementById('quantity').value);
 
             for (let key in option_select) {
-                sum += option_prices[key][option_select[key]];
+                sum += Number(option_prices[key][option_select[key]]);
             }
 
             return sum * quantity;

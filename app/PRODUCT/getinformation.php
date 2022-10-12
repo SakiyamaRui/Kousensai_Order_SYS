@@ -1,5 +1,5 @@
 <?php
-require_once(dirname(__DIR__).'\main.php');
+require_once(dirname(__DIR__).'/main.php');
 
 $return_template = Array(
     'store_name' => "",     // 店舗名
@@ -17,7 +17,16 @@ function getProductDetail($id) {
 
     //DB接続
     $DB = DB_Connect();
-    $sql = "SELECT `product_id`, `store_id`, `product_name`, `product_detail`, `product_price`, `product_image_url` FROM ORDER_SYS_DB.`T_PRODUCT_INFORMATION` WHERE `product_id` = :product_id";
+    $sql = "SELECT
+                `product_id`,
+                `store_id`,
+                `product_name`,
+                `product_detail`,
+                `product_price`,
+                `product_image_url`
+            FROM
+                `T_PRODUCT_INFORMATION`
+            WHERE `product_id` = :product_id";
     $sql = $DB -> prepare($sql);
     $sql -> bindValue(':product_id', $id, PDO::PARAM_STR);
     $sql -> execute();
@@ -33,7 +42,7 @@ function getProductDetail($id) {
     $return_data['price'] = $product_data['product_price'];
     $return_data['img'] = $product_data['product_image_url'];
 
-    $sql = "SELECT * FROM ORDER_SYS_DB.`T_STORE_INFORMATION` WHERE `store_id` = :store_id";
+    $sql = "SELECT * FROM `T_STORE_INFORMATION` WHERE `store_id` = :store_id";
     $sql = $DB -> prepare($sql);
     $sql -> bindValue(':store_id', $product_data['store_id'], PDO::PARAM_STR);
     $sql -> execute();
