@@ -57,7 +57,7 @@ function getAllProductIndexList() {
     $inClause = substr(str_repeat(',?', count($store_id_list)), 1);
     $sql = "SELECT * FROM `T_STORE_INFORMATION` WHERE `store_id`IN(%s)";
     $sql = $DB -> prepare(sprintf($sql, $inClause));
-    $sql -> execute($store_id_list);
+    $sql -> execute(array_values($store_id_list));
 
     //store_idでデータを取得できるようにした
     $store_name_list = $sql -> fetchAll(PDO::FETCH_ASSOC);

@@ -93,11 +93,11 @@
                 $product_status[$val['product_id']] = true;
             }
 
-            if ($val['passed_flag'] === 0) {
+            if ($val['passed_flag'] == 0) {
                 $passed = false;
             }
 
-            if ($val['made_flag'] === 0) {
+            if ($val['made_flag'] == 0) {
                 $product_status[$val['product_id']] = false;
             }
         }
