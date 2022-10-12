@@ -37,8 +37,6 @@
 
                     if (code) {
                         // コードを読み取れた場合
-                        console.log(`QR: ${code.location}`);
-
                         resolve(code.data, camera_stream);
                         return 0;
                     }

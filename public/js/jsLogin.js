@@ -18,6 +18,9 @@ ViewIcon.addEventListener('click', () => {
 let qr_proccessing = false;
 let display = document.getElementById('qrcode-display');
 
+const user = document.querySelector('.input__class[name="username"]');
+const pass = document.getElementById('password');
+
 // ここから下　QRコード読み取り画面の表示・非表示の切り替え処理
 
 const btn__QR = document.getElementById('btn__QR');
@@ -36,9 +39,24 @@ const View_QR = () => {
     mask.style.opacity = '0.2';
 
     // QRコードリーダーの起動
-    QRCodeReader(display).then((data, stream) => {
-        console.log(data);
+    QRCodeReader(display).then((data) => {
         proccesing = false;
+
+        try {
+            let value = JSON.parse(data);
+
+            let username = value.user;
+            let password = value.password;
+
+            user.value = username;
+            pass.value = password;
+
+        }catch(e) {
+            console.log(e);
+
+            alert("このQRコードはログインに使用できません");
+        }
+
         Close_QR();
     }).catch((err) => {
         alert('エラーが発生しました');
