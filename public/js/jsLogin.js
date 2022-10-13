@@ -20,6 +20,7 @@ let display = document.getElementById('qrcode-display');
 
 const user = document.querySelector('.input__class[name="username"]');
 const pass = document.getElementById('password');
+const submit_trg = document.getElementById('login-button');
 
 // ここから下　QRコード読み取り画面の表示・非表示の切り替え処理
 
@@ -55,9 +56,14 @@ const View_QR = () => {
             console.log(e);
 
             alert("このQRコードはログインに使用できません");
+            Close_QR();
+            return false;
         }
 
         Close_QR();
+
+        // ログイン処理をする
+        login_proccess();
     }).catch((err) => {
         alert('エラーが発生しました');
         Close_QR();
@@ -80,4 +86,67 @@ mask.addEventListener('click', () => {
 
 QR__btn_back.addEventListener('click', () => {
     Close_QR();
+});
+
+let login_proccess = () => {
+    //ボタンを押せないようにする
+    submit_trg.style.pointerEvents = 'none';
+
+    if (user.value == '' || pass.value == '') {
+        alert('入力してください');
+        submit_trg.style.pointerEvents = 'auto';
+        return false;
+    }
+
+    // JSONデータの作成
+    let submit_data = {
+        'user': user.value,
+        'password': pass.value
+    };
+
+    // ローディングの表示
+    document.getElementById('loading').classList.remove('hidden');
+
+    let xhr = new XMLHttpRequest();
+    xhr.open('POST', '/api/store.php?mode=login-request');
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.send(JSON.stringify(submit_data));
+
+    xhr.onreadystatechange = () => {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+
+            if (xhr.status >= 200 && xhr.status < 400) {
+                // リクエストが正常に完了
+                try {
+                    var responceText = JSON.parse(xhr.responseText);
+
+                    if (responceText == false) {
+                        alert("ユーザーが見つからないもしくは、\nパスワードが違います。");
+                    }else{
+                        if ('redirect' in responceText) {
+                            window.location.href = responceText['redirect'];
+                        }else{
+                            alert("ログインに失敗しました。\n担当者へ連絡してください。");
+                        }
+                    }
+                } catch (e) {
+                    console.log(e);
+                }
+
+                submit_trg.style.pointerEvents = 'auto';
+                document.getElementById('loading').classList.add('hidden');
+            }else{
+                // リクエストでエラーが発生
+                document.getElementById('loading').classList.add('hidden');
+                alert('リクエストが正常に処理できませんでした。\nもう一度お試しください。');
+                location.reload();
+            }
+        }
+    }
+}
+
+submit_trg.addEventListener('click', login_proccess);
+
+window.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('loading').classList.add('hidden');
 });
