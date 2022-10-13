@@ -47,6 +47,25 @@
         <div class="append-option">
             オプションの追加
         </div>
+
+        <div class="basic-data">
+            <div class="label">
+                詳細
+            </div>
+            <div class="content">
+                <div class="stock">
+                    全体の在庫数:
+                    <input type="tel" placeholder="全体の在庫数" id="">
+                </div>
+                <div class="shop">
+                    販売店:
+                    <select>
+                        <option value="" selected disabled>ショップを選択</option>
+                        <?php echo $shop_options; ?>
+                    </select>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="func">
         <span class="btn" onclick="exportProductData()">

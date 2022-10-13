@@ -241,6 +241,29 @@
             opacity: .5;
         }
     }
+
+    .basic-data {
+        grid-column: 1/4;
+        margin-bottom: 12px;
+
+        .label {
+            font-size: 19px;
+            font-family: 'Noto Sans JP', sans-serif;
+            margin-bottom: 5px;
+        }
+
+        .content {
+            margin-top: 8px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+
+            input {
+                &:focus {
+                    outline: none;
+                }
+            }
+        }
+    }
 }
 
 .func {
