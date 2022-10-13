@@ -13,6 +13,15 @@ ViewIcon.addEventListener('click', () => {
         ViewIcon.innerHTML = '<svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3.43239 16.3639C3.83925 16.7707 4.49874 16.7706 4.90546 16.3637C5.31217 15.9568 5.31207 15.2973 4.90521 14.8905L2.51506 12.5011L6.12819 8.88774C8.30913 6.70669 11.4052 5.81802 14.3681 6.44233C14.931 6.56094 15.4834 6.20073 15.602 5.63779C15.7206 5.07485 15.3604 4.52236 14.7975 4.40376C11.1527 3.63579 7.33921 4.73032 4.65508 7.4146L0.305318 11.7646C-0.101496 12.1714 -0.101447 12.8311 0.305464 13.2378L3.43239 16.3639Z" fill="#311111"/><path d="M24.6949 11.7635L21.568 8.63751C21.1611 8.23077 20.5016 8.23087 20.0949 8.63775C19.6882 9.04464 19.6883 9.70416 20.0952 10.1109L22.4853 12.5004L18.8722 16.1137C16.6912 18.2948 13.5952 19.1834 10.6323 18.5591C10.0694 18.4405 9.51692 18.8007 9.39832 19.3636C9.27972 19.9266 9.63991 20.4791 10.2028 20.5977C13.8476 21.3656 17.6612 20.2711 20.3453 17.5868L24.6951 13.2368C25.1019 12.8299 25.1018 12.1703 24.6949 11.7635Z" fill="#311111"/><path d="M7.29224 12.5008C7.29224 13.0761 7.75857 13.5424 8.33383 13.5424C8.90909 13.5424 9.37542 13.0761 9.37542 12.5008C9.37542 10.7751 10.7746 9.37578 12.5003 9.37578C13.0755 9.37578 13.5418 8.90942 13.5418 8.33413C13.5418 7.75884 13.0755 7.29248 12.5003 7.29248C9.62409 7.29243 7.29224 9.62442 7.29224 12.5008Z" fill="#311111"/><path d="M15.6249 12.5009C15.6249 14.2267 14.2257 15.6259 12.5001 15.6259C11.9248 15.6259 11.4585 16.0923 11.4585 16.6676C11.4585 17.2429 11.9248 17.7092 12.5001 17.7092C15.3763 17.7092 17.7082 15.3772 17.7082 12.5009C17.7082 11.9256 17.2418 11.4592 16.6666 11.4592C16.0913 11.4592 15.6249 11.9256 15.6249 12.5009Z" fill="#311111"/><path d="M24.6935 0.305091C24.2868 -0.101697 23.6272 -0.101697 23.2205 0.305091L0.305074 23.2218C-0.101691 23.6286 -0.101691 24.2881 0.305074 24.6949C0.711838 25.1017 1.37137 25.1017 1.77814 24.6949L24.6935 1.77824C25.1003 1.37145 25.1003 0.711878 24.6935 0.305091Z" fill="#311111"/></svg>';
     }
 });
+
+// QRコードリーダー関連
+let qr_proccessing = false;
+let display = document.getElementById('qrcode-display');
+
+const user = document.querySelector('.input__class[name="username"]');
+const pass = document.getElementById('password');
+const submit_trg = document.getElementById('login-button');
+
 // ここから下　QRコード読み取り画面の表示・非表示の切り替え処理
 
 const btn__QR = document.getElementById('btn__QR');
@@ -29,6 +38,36 @@ const View_QR = () => {
     QR__display.style.top = '55%';
     mask.style.pointerEvents = 'auto';
     mask.style.opacity = '0.2';
+
+    // QRコードリーダーの起動
+    QRCodeReader(display).then((data) => {
+        proccesing = false;
+
+        try {
+            let value = JSON.parse(data);
+
+            let username = value.user;
+            let password = value.password;
+
+            user.value = username;
+            pass.value = password;
+
+        }catch(e) {
+            console.log(e);
+
+            alert("このQRコードはログインに使用できません");
+            Close_QR();
+            return false;
+        }
+
+        Close_QR();
+
+        // ログイン処理をする
+        login_proccess();
+    }).catch((err) => {
+        alert('エラーが発生しました');
+        Close_QR();
+    });
 }
 
 // QRコード読み取り画面を閉じる関数
@@ -36,9 +75,78 @@ const Close_QR = () => {
     body.removeAttribute('style');
     QR__display.removeAttribute('style');
     mask.removeAttribute('style');
+
 }
 
 // それぞれのボタンがクリックされたらする動作
 btn__QR.addEventListener('click', View_QR);
-mask.addEventListener('click', Close_QR);
-QR__btn_back.addEventListener('click', Close_QR);
+mask.addEventListener('click', () => {
+    Close_QR();
+});
+
+QR__btn_back.addEventListener('click', () => {
+    Close_QR();
+});
+
+let login_proccess = () => {
+    //ボタンを押せないようにする
+    submit_trg.style.pointerEvents = 'none';
+
+    if (user.value == '' || pass.value == '') {
+        alert('入力してください');
+        submit_trg.style.pointerEvents = 'auto';
+        return false;
+    }
+
+    // JSONデータの作成
+    let submit_data = {
+        'user': user.value,
+        'password': pass.value
+    };
+
+    // ローディングの表示
+    document.getElementById('loading').classList.remove('hidden');
+
+    let xhr = new XMLHttpRequest();
+    xhr.open('POST', '/api/store.php?mode=login-request');
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.send(JSON.stringify(submit_data));
+
+    xhr.onreadystatechange = () => {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+
+            if (xhr.status >= 200 && xhr.status < 400) {
+                // リクエストが正常に完了
+                try {
+                    var responceText = JSON.parse(xhr.responseText);
+
+                    if (responceText == false) {
+                        alert("ユーザーが見つからないもしくは、\nパスワードが違います。");
+                    }else{
+                        if ('redirect' in responceText) {
+                            window.location.href = responceText['redirect'];
+                        }else{
+                            alert("ログインに失敗しました。\n担当者へ連絡してください。");
+                        }
+                    }
+                } catch (e) {
+                    console.log(e);
+                }
+
+                submit_trg.style.pointerEvents = 'auto';
+                document.getElementById('loading').classList.add('hidden');
+            }else{
+                // リクエストでエラーが発生
+                document.getElementById('loading').classList.add('hidden');
+                alert('リクエストが正常に処理できませんでした。\nもう一度お試しください。');
+                location.reload();
+            }
+        }
+    }
+}
+
+submit_trg.addEventListener('click', login_proccess);
+
+window.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('loading').classList.add('hidden');
+});

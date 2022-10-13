@@ -1,7 +1,7 @@
 (function() {
     QRCodeReader = (video, canvas = document.createElement('canvas')) => {
         return new Promise((resolve, reject) => {
-            let ctx = canvas.getContext('2d');
+            let ctx = canvas.getContext('2d', {willReadFrequently: true});
             let img;
             
             // JSQRがあるか確認
@@ -14,11 +14,13 @@
                 const userMedia = {video: {facingMode: "environment"}};
                 navigator.mediaDevices.getUserMedia(userMedia).then((stream) => {
                     video.srcObject = stream;
+                    camera_stream = stream;
                     video.setAttribute("playsinline", true);
                     video.play();
                     loop();
                 }).catch((err) => {
                     console.error(err);
+                    reject(err);
                 });
             }
 
@@ -35,18 +37,13 @@
 
                     if (code) {
                         // コードを読み取れた場合
-                        console.log(`QR: ${code.location}`);
-
-                        // キャンバスのリセット
-                        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-                        resolve(code.data);
+                        resolve(code.data, camera_stream);
                         return 0;
                     }
                 }
 
-                setTimeout(loop, 500);
+                setTimeout(loop, 800);
             }
-        })
+        });
     }
 }());
