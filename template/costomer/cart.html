@@ -9,12 +9,12 @@
     <link rel="stylesheet" href="/css/costomer.css">
 
     <!--Google Fonts-->
-    <?php include(ROOT_PATH.'\template\fonts.html'); ?>
+    <?php include(ROOT_PATH.'/template/fonts.html'); ?>
     <script src="/js/fingerPrint.js"></script>
 </head>
 <body>
-    <?php include(ROOT_PATH.'\template\costomer\header.html'); ?>
-    <?php include(ROOT_PATH.'\template\loading.html'); ?>
+    <?php include(ROOT_PATH.'/template/costomer/header.html'); ?>
+    <?php include(ROOT_PATH.'/template/loading.html'); ?>
 
     <div class="cart-body">
         <div class="order-head">
@@ -226,6 +226,7 @@
                         if (i == e.quantity) quantity_option.setAttribute('selected', '');
                         selector.appendChild(quantity_option);
                     }
+                    order_data[index].quantity = e.quantity;
                     quantity.appendChild(selector);
 
                     // 数量のイベントリスナ
@@ -246,7 +247,8 @@
                         let i = e.currentTarget.parentElement.parentElement.getAttribute('index');
 
                         // すべての配列から削除
-                        order_data.splice(i, 1);
+                        order_data = [];
+                        console.log(order_data);
                         cartList.splice(i, 1);
                         option_prices.splice(i, 1);
 
@@ -362,10 +364,10 @@
 
         function itemTotalSum(i) {
             let select = order_data[i]['option_select'];
-            let sum = cartList[i]['product_data']['price'];
+            let sum = Number(cartList[i]['product_data']['price']);
 
             for (let key in select) {
-                sum += option_prices[i][key][select[key]];
+                sum += Number(option_prices[i][key][select[key]]);
             }
 
             sum = sum * order_data[i].quantity;
@@ -378,9 +380,10 @@
             let price = 0;
 
             order_data.forEach(e => {
-                quantity += e.quantity;
-                price += e.total;
+                quantity += Number(e.quantity);
+                price += Number(e.total);
             });
+            //console.log(quantity);
 
             // 画面へ描画
             document.querySelector('.order-head .info .quantity .num').innerText = quantity;

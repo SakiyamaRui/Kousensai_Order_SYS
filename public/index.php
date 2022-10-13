@@ -1,5 +1,5 @@
 <?php
-    require_once(dirname(__DIR__).'\public\path.php');
+    require_once(dirname(__DIR__).'/public/path.php');
 
     // DBへ接続
     $DB = DB_Connect();
@@ -14,7 +14,7 @@
         //
         $DOM = '注文はありません';
     }else{
-        $template = file_get_contents(ROOT_PATH.'\template\costomer\top-order-list-temp.html');
+        $template = file_get_contents(ROOT_PATH.'/template/costomer/top-order-list-temp.html');
         $list_columns = Array();
 
         foreach ($order_list as $val) {
@@ -28,4 +28,4 @@
         $DOM = implode(PHP_EOL, $list_columns);
     }
 
-    require_once(ROOT_PATH . '\template\costomer\top.html');
+    require_once(ROOT_PATH . '/template/costomer/top.html');

@@ -1,5 +1,5 @@
 <?php
-    require_once(dirname(__DIR__).'\main.php');
+    require_once(dirname(__DIR__).'/main.php');
 
     function stockCheck($requestList, $isLock = false) {
         // 在庫不足している商品を記録
