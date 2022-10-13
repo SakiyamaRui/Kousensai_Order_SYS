@@ -43,6 +43,11 @@
                 $id = $_GET['token'];
             }
 
+            if (isset($_GET['order_id'])) {
+                $type = 'order_id';
+                $id = $_GET['order_id'];
+            }
+
             $order_items = orderDetailShop($type, $id);
 
             echo json_encode($order_items, JSON_UNESCAPED_UNICODE);

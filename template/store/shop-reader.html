@@ -46,7 +46,7 @@
                 <span class="btn" id="order-id-search-modal-close-trg">
                     戻る
                 </span>
-                <span class="btn">
+                <span class="btn" id="order-id-search-req-trg">
                     検索
                 </span>
             </div>
@@ -175,6 +175,19 @@
             });
             let orderId_close_trg = document.getElementById('order-id-search-modal-close-trg');
             orderId_close_trg.addEventListener('click', () => {
+                orderIdSearchModal.close();
+            });
+            let orderId_search_trg = document.getElementById('order-id-search-req-trg');
+            orderId_search_trg.addEventListener('click', () => {
+                let val = orderIdSearchModal.orderIdInput.value;
+
+                if (val == '') {
+                    alert('入力してください');
+                    return false;
+                }
+
+                document.getElementById('loading').classList.remove('hidden');
+                searchOrder(val, 'order_id');
                 orderIdSearchModal.close();
             });
             let order_detail_back_trg = document.getElementById('order-detail-modal-back');
