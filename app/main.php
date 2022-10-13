@@ -25,6 +25,7 @@
     require_once(ROOT_PATH.'/vendor/autoload.php');
     require_once(ROOT_PATH.'/app/DB/database.php');
     require_once(ROOT_PATH.'/app/account/shop.php');
+    require_once(ROOT_PATH.'/app/account/login.php');
     require_once(ROOT_PATH.'/app/secure/token.php');
     require_once(ROOT_PATH.'/app/secure/session.php');
     require_once(ROOT_PATH.'/app/PRODUCT/getData.php');
