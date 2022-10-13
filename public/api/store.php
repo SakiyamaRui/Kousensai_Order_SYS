@@ -37,6 +37,27 @@
 
         // 注文情報の編集
         case 'getProductDetail':
+            // 注文情報の取得
+            if (isset($_GET['token'])) {
+                $type = 'token';
+                $id = $_GET['token'];
+            }
+
+            $order_items = orderDetailShop($type, $id);
+
+            echo json_encode($order_items, JSON_UNESCAPED_UNICODE);
+            exit;
+            break;
+        case 'passed':
+            if($_SERVER["REQUEST_METHOD"] != "POST"){
+                // 404
+                exit;
+            }
+            if(itemPassedFlag($request)) {
+                echo 'true';
+            }else{
+                echo 'false';
+            }
             break;
         // webPush通知の登録
         case 'notice-subscription':

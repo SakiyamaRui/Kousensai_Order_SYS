@@ -38,6 +38,9 @@
             }
             break;
 
-        case '':
+        case 'reader':
+            // ログイン確認
+
+            require_once(ROOT_PATH.'/template/store/shop-reader.html');
             break;
     }
