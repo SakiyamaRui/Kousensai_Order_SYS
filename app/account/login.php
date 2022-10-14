@@ -1,6 +1,4 @@
 <?php
-    require_once('C:\Users\ic211216\Desktop\創造研究\Kousensai_Order_SYS\app\main.php');
-
     /**
      * autoLogin
      */
@@ -33,7 +31,7 @@
         session::start();
         $URL = (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
         $_SESSION['return_to'] = $URL;
-        header("Location: https://kousensai.apori.jp/order/manage/login/?return_to=${URL}");
+        header("Location: ".(empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST']."/manage/login/?return_to=${URL}");
     }
 
     /**
@@ -75,7 +73,8 @@
         unset($DB);
 
         return Array(
-            'store_id' => $result['store_account_id'],
+            'store_id' => $result['store_id'],
+            'account_id' => $result['store_account_id'],
             'account_name' => $result['account_name'],
         );
     }
