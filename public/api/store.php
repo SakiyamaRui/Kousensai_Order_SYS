@@ -48,7 +48,7 @@
                 $id = $_GET['order_id'];
             }
 
-            $order_items = orderDetailShop($type, $id);
+            $order_items = orderDetailShop($type, $id, null, false, true);
 
             echo json_encode($order_items, JSON_UNESCAPED_UNICODE);
             exit;

@@ -164,7 +164,7 @@
         return $record;
     }
 
-    function orderDetailShop($type, $id, $DB = null, $product_id_list = false) {
+    function orderDetailShop($type, $id, $DB = null, $product_id_list = false, $sort = false) {
         //
         $DB_flag = false;
 
@@ -216,11 +216,18 @@
                     `T_ORDER_INFORMATION_DETAIL`
                 INNER JOIN `T_PRODUCT_INFORMATION` ON `T_ORDER_INFORMATION_DETAIL`.`product_id` = `T_PRODUCT_INFORMATION`.`product_id`
                 WHERE
-                    `order_id` = :order_id AND
-                    `T_PRODUCT_INFORMATION`.`store_id` = :store_id";
+                    `order_id` = :order_id";
+        if ($sort) {
+            $sql .= " AND
+            `T_PRODUCT_INFORMATION`.`store_id` = :store_id";
+
+        }
         $sql = $DB -> prepare($sql);
         $sql -> bindValue(':order_id', $order_id, PDO::PARAM_STR);
-        $sql -> bindValue(':store_id', '1234567890', PDO::PARAM_STR);
+        if ($sort) {
+            session::start();
+            $sql -> bindValue(':store_id', $_SESSION['store_id'], PDO::PARAM_STR);
+        }
         $sql -> execute();
         $record = $sql -> fetchAll(PDO::FETCH_ASSOC);
         

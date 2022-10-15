@@ -185,10 +185,13 @@
                 }catch(e) {
                     console.log(e);
                     alert("このQRコードは不正です");
+                    document.getElementById('loading').classList.add('hidden');
                     return false;
                 }
+                document.getElementById('loading').classList.add('hidden');
             }).catch((err) => {
                 alert('エラーが発生しました');
+                document.getElementById('loading').classList.add('hidden');
                 location.reload();
                 return false;
             });

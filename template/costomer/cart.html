@@ -198,13 +198,12 @@
                 item_head.appendChild(product_name);
                 item_head.appendChild(delete_btn);
                 //
-                let option;
+                let option = document.createElement('div');
+                option.setAttribute('class', 'option');
                 if (e.product_data.options.length > 0) {
-                    option = document.createElement('div');
-                    option.setAttribute('class', 'option');
-                        let label = document.createElement('div');
-                        label.setAttribute('class', 'label');
-                        label.appendChild(document.createTextNode('オプション'));
+                    let label = document.createElement('div');
+                    label.setAttribute('class', 'label');
+                    label.appendChild(document.createTextNode('オプション'));
                     option.appendChild(label);
                 }else{
                     option.appendChild(document.createTextNode('オプションなし'));
