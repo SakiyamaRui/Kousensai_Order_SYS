@@ -31,6 +31,7 @@
         session::start();
         $URL = (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
         $_SESSION['return_to'] = $URL;
+        $URL = urlencode($URL);
         header("Location: ".(empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST']."/manage/login/?return_to=${URL}");
     }
 

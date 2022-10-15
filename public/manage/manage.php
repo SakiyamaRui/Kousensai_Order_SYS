@@ -40,7 +40,20 @@
 
         case 'reader':
             // ログイン確認
-
-            require_once(ROOT_PATH.'/template/store/shop-reader.html');
+            autoLogin();
+            if (!isset($_SESSION['store_id'])) {
+                // 404
+                exit;
+            }
+            switch ($_SESSION['store_id']) {
+                case '会計局':
+                case 'root':
+                    // 会計局側
+                    require_once(ROOT_PATH.'/template/store/payment-reader.html');
+                    break;
+                default:
+                    require_once(ROOT_PATH.'/template/store/shop-reader.html');
+                    break;
+            }
             break;
     }

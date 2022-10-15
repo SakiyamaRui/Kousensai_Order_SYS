@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>注文読み取り (店舗側)</title>
+    <title>注文読み取り (会計側)</title>
     <link rel="stylesheet" href="/css/store.css">
     <link rel="stylesheet" href="/css/costomer.css">
     <script src="/js/jsQR.js"></script>
@@ -16,7 +16,7 @@
     <!--共通ヘッダー-->
 
     <div class="title">
-        注文情報の取得(店舗側)
+        注文の会計処理
     </div>
     <div class="qr-display">
         <video id="qrcode-display"></video>
@@ -57,11 +57,8 @@
             <div class="title">
                 注文詳細
             </div>
-            <div class="order_lists">
+            <div class="order_lists pay">
                 <div class="list-header">
-                    <div class="">
-                        選択
-                    </div>
                     <div class="">
                         商品名
                     </div>
@@ -69,7 +66,7 @@
                         個数
                     </div>
                     <div class="">
-                        状態
+                        小計
                     </div>
                 </div>
                 <div class="contents">
@@ -79,8 +76,11 @@
                 <span class="btn" id="order-detail-modal-back">
                     戻る
                 </span>
+                <div class="total">
+                    <spna class="total-price" id="order-total-price">0</spna>円
+                </div>
                 <span class="btn" id="order-detail-modal-passed">
-                    受け渡し済み
+                    会計済み
                 </span>
             </div>
         </div>
@@ -153,7 +153,7 @@
             });
             let item_passed_trg = document.getElementById('order-detail-modal-passed');
             item_passed_trg.addEventListener('click', () => {
-                passedSend();
+                paidSend();
             });
 
             // QRコードリーダーの読み取り開始
@@ -202,7 +202,7 @@
         function searchOrder(id, type) {
             return new Promise((resolve, reject) => {
                 let xhr = new XMLHttpRequest();
-                xhr.open('GET', `/api/store.php?mode=getProductDetail&${type}=${id}`);
+                xhr.open('GET', `/api/store.php?mode=getPaymentOrder&${type}=${id}`);
                 xhr.send();
 
                 xhr.onreadystatechange = () => {
@@ -212,8 +212,18 @@
                             try {
                                 let responceText = JSON.parse(xhr.responseText);
                                 if (typeof responceText == 'object') {
+                                    if (responceText['payment'] == true) {
+                                        alert('すでに支払いが完了しています。');
+                                        document.getElementById('loading').classList.add('hidden');
+                                        Start();
+                                        return true;
+                                    }
+
                                     // DOMの作成
-                                    appendOrderItems(responceText);
+                                    product_Data = responceText['product_data'];
+                                    order_id = responceText['order_id'];
+                                    appendOrderItems(responceText['order_data']);
+
                                     // モーダルの表示
                                     document.getElementById('loading').classList.add('hidden');
                                     orderDetailModal.open();
@@ -225,6 +235,7 @@
                             } catch(e) {
                                 console.log(e);
                                 alert('エラーが発生しました。');
+                                document.getElementById('loading').classList.add('hidden');
                                 Start();
                             }
                         }
@@ -241,16 +252,10 @@
                 index++;
                 let column = orderDetailItem(element, index);
                 orderDetailModal.itemAppnedPlace.appendChild(column);
-
-                column.querySelector('input[type="checkbox"]').addEventListener('click', () => {
-                    event.stopPropagation();
-                });
-
-                column.addEventListener('click', (e) => {
-                    let checkBox = e.currentTarget.querySelector('input.order-item-select');
-                    checkBox.checked = !checkBox.checked;
-                });
             });
+
+            // 合計の値段を計算
+            totalPrice();
         }
 
         function orderDetailItem(column, index) {
@@ -258,18 +263,7 @@
             parent.setAttribute('class', 'column');
             parent.setAttribute('index', index);
             parent.setAttribute('unique_id', column['id']);
-
-            if (column['passed']) {
-                parent.classList.add('hide');
-            }
-
-            // checkBox
-            let checkBox = document.createElement('div');
-            checkBox.setAttribute('class', 'checkbox');
-            let check_input = document.createElement('input');
-            check_input.setAttribute('type', 'checkbox');
-            check_input.setAttribute('class', 'order-item-select');
-            checkBox.appendChild(check_input);
+            parent.setAttribute('price', column['unit_price']);
 
             // product name
             let productName = document.createElement('div');
@@ -281,16 +275,43 @@
             quantity.setAttribute('class', 'quantity');
             quantity.appendChild(document.createTextNode(column['quantity']));
 
-            // status
-            let status = document.createElement('div');
-            status.setAttribute('class', 'status');
-            status.appendChild(document.createTextNode(column['status']));
+            // sub_total
+            let sub_total = document.createElement('div');
+            sub_total.setAttribute('class', 'sub-total');
+            sub_total.appendChild(document.createTextNode(0));
 
             // options
             let options = document.createElement('div');
             options.setAttribute('class', 'options');
-            for (let key in column['product_option']) {
-                options.appendChild(optionsAppned(key, column['product_option'][key]));
+            // オプションの情報を元に作成する
+            try {
+                product_Data[column['product_id']]['options'].forEach(e => {
+                    if (!column['product_option'].hasOwnProperty(e.name)) {
+                        return false;
+                    }
+
+                    let i = product_Data[column['product_id']]['options'].findIndex(row => row.name == e.name);
+                    let option_values = (product_Data[column['product_id']].hasOwnProperty('options'))? product_Data[column['product_id']]['options'][i]: [];
+                    
+                    // 値段の取得
+                    let priceIndex = option_values['option_values'].findIndex(row => row.value == column['product_option'][e.name]);
+                    let price = option_values['option_values'][priceIndex]['price'];
+
+                    // ソート
+                    option_values['option_values'].sort((a, b) => a.index - b.index);
+                    options.appendChild(
+                        optionsAppned(
+                            e.name,
+                            column['product_option'][e.name],
+                            price,
+                            !e['isPublic'],
+                            option_values,
+                            index
+                        )
+                    );
+                });
+            }catch (e) {
+                console.log(e);
             }
 
             if (Object.keys(column['product_option']).length == 0) {
@@ -301,16 +322,48 @@
             }
 
             // append
-            parent.appendChild(checkBox);
             parent.appendChild(productName);
             parent.appendChild(quantity);
-            parent.appendChild(status);
+            parent.appendChild(sub_total);
             parent.appendChild(options);
 
             return parent;
         }
 
-        function optionsAppned(key, value) {
+        // 商品の値段を計算
+        function itemPrice(index) {
+            let ope_item = document.querySelector(`.order_lists.pay .contents .column[index="${index}"]`);
+            let item_price = ope_item.getAttribute('price');
+            let sum = Number(item_price);
+
+            let option_doms = ope_item.querySelectorAll('.options .option_column .option_value');
+            option_doms.forEach(e => {
+                sum += Number(e.getAttribute('price'));
+            });
+
+            ope_item.querySelector('.sub-total').innerText = sum;
+
+            return sum;
+        }
+
+        // 合計の値段を計算
+        function totalPrice() {
+            let total = 0;
+
+            let column_all = document.querySelectorAll(`.order_lists.pay .contents .column`);
+            let max = column_all.length;
+            for (let i = 1; i <= max ; i++) {
+                total += itemPrice(i);
+            }
+
+            // DOMに描画
+            document.getElementById('order-total-price').innerText = total;
+
+            return total;
+        }
+
+        // オプションのDOM作成
+        function optionsAppned(key, value, price, bool = false, options = [], index = 0) {
             let column = document.createElement('div');
             column.setAttribute('class', 'option_column');
 
@@ -320,7 +373,47 @@
             
             let option_value = document.createElement('div');
             option_value.setAttribute('class', 'option_value');
-            option_value.appendChild(document.createTextNode(value));
+            option_value.setAttribute('price', price);
+            // 非公開の場合は編集を行えるように変更
+            if (bool) {
+                // 情報を取得
+                let selector = document.createElement('select');
+                selector.setAttribute('class', 'option-selector');
+                selector.setAttribute('item-index', index);
+
+                options['option_values'].forEach(option_v => {
+                    let option_dom = document.createElement('option');
+                    option_dom.setAttribute('value', option_v.value);
+                    option_dom.setAttribute('price', option_v.price);
+                    option_dom.appendChild(document.createTextNode(option_v.value));
+
+                    if (option_v.value == value) {
+                        option_dom.setAttribute('selected', option_v.name);
+                    }
+
+                    selector.appendChild(option_dom);
+                });
+
+                // イベントの設定
+                selector.addEventListener('change', (e) => {
+                    let select = e.target;
+                    let price = select.selectedOptions[0].getAttribute('price');
+
+                    // 変更をリクエスト
+                    let item_index = select.getAttribute('item-index');
+                    let parent = document.querySelector(`.contents .column[index="${item_index}"]`);
+                    changeOptionValue(parent.getAttribute('unique_id')).then(e => {
+                        select.parentElement.setAttribute('price', price);
+                        totalPrice();
+                    }).catch((err) => {
+                        alert('エラーが発生しました');
+                    });
+                });
+
+                option_value.appendChild(selector);
+            }else{
+                option_value.appendChild(document.createTextNode(value));
+            }
 
             column.appendChild(option_name);
             column.appendChild(option_value);
@@ -328,32 +421,36 @@
             return column;
         }
 
-        function passedSend() {
-            // 選択している商品を取得
-            let selectors = orderDetailModal.itemAppnedPlace.querySelectorAll('input.order-item-select');
+        function changeOptionValue(unique_id) {
+            let option_doms = document.querySelectorAll(`.column[unique_id="${unique_id}"] .options .option_column`);
 
-            let select = [];
-            selectors.forEach(e => {
-                if (e.checked) {
-                    let id = e.parentElement.parentElement.getAttribute('unique_id');
-                    if (id != null) {
-                        select.push(id);
-                    }
+            options = {};
+
+            option_doms.forEach(e => {
+                let key = e.querySelector('.option_name').textContent;
+                let value = e.querySelector('.option_value').textContent;
+
+                let select = e.querySelector('.option-selector');
+                if (select != null) {
+                    value = select.value;
                 }
+
+                options[key] = value;
             });
 
-            if (select.length == 0) {
-                alert('1品以上を選択してください');
-                return false;
-            }
+            // 送信処理
+            let data = {
+                'unique_id': unique_id,
+                'options': JSON.stringify(options)
+            };
 
             document.getElementById('loading').classList.remove('hidden');
 
             return new Promise((resolve, reject) => {
                 let xhr = new XMLHttpRequest();
-                xhr.open('POST', `/api/store.php?mode=passed`);
+                xhr.open('POST', `/api/store.php?mode=changeOption`);
                 xhr.setRequestHeader("Content-Type", "application/json");
-                xhr.send(JSON.stringify(select));
+                xhr.send(JSON.stringify(data));
 
                 xhr.onreadystatechange = () => {
                     if (xhr.readyState === XMLHttpRequest.DONE) {
@@ -364,11 +461,90 @@
                             if (responceText == 'true') {
                                 // モーダルを閉じる
                                 document.getElementById('loading').classList.add('hidden');
-                                orderDetailModal.close();
-                                Start();
-                                return true;
+                                resolve(responceText);
+                            }
+                        }else{
+                            reject('HTTP Responce Error');
+                        }
+                    }
+                }
+
+            })
+        }
+
+        // 支払い済み送信
+        function paidSend() {
+            if (!confirm('会計処理を完了して注文を確定しますか?')) {
+                return false;
+            }
+
+            document.getElementById('loading').classList.remove('hidden');
+
+            let data = {
+                'price': 0,
+                'order_id': order_id
+            };
+
+            return new Promise((resolve, reject) => {
+                let xhr = new XMLHttpRequest();
+                xhr.open('POST', `/api/store.php?mode=paid`);
+                xhr.setRequestHeader("Content-Type", "application/json");
+                xhr.send(JSON.stringify(data));
+
+                xhr.onreadystatechange = () => {
+                    if (xhr.readyState === XMLHttpRequest.DONE) {
+                        if (xhr.status >= 200 && xhr.status < 400) {
+                            // リクエストが正常に完了
+                            try{
+                                let responceText = JSON.parse(xhr.responseText);
+
+                                if (responceText['result'] == true) {
+                                    document.getElementById('loading').classList.add('hidden');
+                                    orderDetailModal.close();
+                                    alert('正常に完了しました。');
+                                    Start();
+                                    return true;
+                                }else{
+                                    switch (responceText['type']) {
+                                        case 'get_item':
+                                            alert('商品情報の取得に失敗して注文を確定できませんでした。');
+                                            break;
+                                        case 'stock_error':
+                                            alert('一部商品の在庫がありませんでした。\n次のアラートより確認できます。');
+                                            
+                                            // ない商品の情報をアラートで表示
+                                            let alert_str = [];
+                                            responceText['data'].forEach(e => {
+                                                let type = '';
+                                                switch (e.msg) {
+                                                    case 'Sales-limit':
+                                                        type = '商品の在庫切れ';
+                                                        alert_str.push(`${type}: ${e.product_name}`);
+                                                        break;
+                                                    case 'option-limit':
+                                                        type = 'オプションの在庫切れ';
+                                                        let options = [];
+                                                        e.option.forEach(val => {
+                                                            options.push(`${val.option_name}(${val.value})`);
+                                                        });
+                                                        alert_str.push(`${type}: ${options.join(', ')}`);
+                                                        break;
+                                                }
+                                            });
+
+                                            alert(alert_str.join('\n'));
+                                            break;
+                                    }
+                                    document.getElementById('loading').classList.add('hidden');
+                                    return true;
+                                }
+                            }catch(e){
+                                console.log(e);
                             }
                         }
+
+                        // エラー処理
+                        alert('注文を確定できませんでした。');
                     }
                 }
             });

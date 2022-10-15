@@ -164,7 +164,7 @@
         return $record;
     }
 
-    function orderDetailShop($type, $id, $DB = null) {
+    function orderDetailShop($type, $id, $DB = null, $product_id_list = false) {
         //
         $DB_flag = false;
 
@@ -191,6 +191,10 @@
         $sql -> execute();
         $order_data = $sql -> fetch(PDO::FETCH_ASSOC);
 
+        if ($order_data == false) {
+            return false;
+        }
+
         try {
             $pay = ($order_data['confirmed_order_flag'] == 1)? true: false;
             $order_id = $order_data['order_id'];
@@ -201,12 +205,13 @@
         // 注文した商品の一覧を取得
         $sql = "SELECT
                     `order_item_id`,
-                    `T_PRODUCT_INFORMATION`.`product_name`,
                     `T_ORDER_INFORMATION_DETAIL`.`product_id`,
                     `quantity`,
                     `passed_flag`,
                     `made_flag`,
-                    `product_option`
+                    `product_option`,
+                    `unit_price`,
+                    `T_PRODUCT_INFORMATION`.`product_name`
                 FROM
                     `T_ORDER_INFORMATION_DETAIL`
                 INNER JOIN `T_PRODUCT_INFORMATION` ON `T_ORDER_INFORMATION_DETAIL`.`product_id` = `T_PRODUCT_INFORMATION`.`product_id`
@@ -220,6 +225,7 @@
         $record = $sql -> fetchAll(PDO::FETCH_ASSOC);
         
         $return_data = Array();
+        $product_id_u_list = Array();
         foreach ($record as &$val) {
             // 受け渡し済み
             if ($val['passed_flag'] == 1) {
@@ -240,6 +246,8 @@
                 $status = '未払い';
             }
 
+            array_push($product_id_u_list, $val['product_id']);
+
             array_push($return_data, Array(
                 'id' => $val['order_item_id'],
                 'status' => $status,
@@ -248,11 +256,20 @@
                 'quantity' => $val['quantity'],
                 'product_option' => json_decode($val['product_option'], true),
                 'passed' => ($val['passed_flag'] == 1)? true: false,
+                'unit_price' => $val['unit_price']
             ));
         }
 
         if ($DB_flag) {
             unset($DB);
+        }
+
+        if ($product_id_list) {
+            array_unique($product_id_u_list);
+            return Array(
+                'orders' => $return_data,
+                'order_id_list' => $product_id_u_list
+            );
         }
 
         return $return_data;

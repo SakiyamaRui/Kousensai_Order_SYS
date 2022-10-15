@@ -118,6 +118,23 @@
         $DB = DB_Connect();
     }
 
+    // オプションのアップデート
+    function updateOption($unique_id, $option_json) {
+        $DB = DB_Connect();
+
+        $sql = "UPDATE
+                    `T_ORDER_INFORMATION_DETAIL`
+                SET
+                    `product_option` = :product_option
+                WHERE
+                    `order_item_id` = :order_item_id";
+        $sql = $DB -> prepare($sql);
+        $sql -> bindValue(':order_item_id', $unique_id, PDO::PARAM_STR);
+        $sql -> bindValue(':product_option', $option_json, PDO::PARAM_STR);
+
+        return $sql -> execute();
+    }
+
     function newOrderId($DB, $option) {
         // 注文番号の生成
         while (1) {
@@ -147,4 +164,66 @@
                 return Array('token' => $newToken, 'order_id' => $newOrderId);
             }
         }
+    }
+
+    function orderConfirm($order_id, $DB = null) {
+        $DB_Flag = false;
+        if ($DB == null) {
+            $DB = DB_Connect();
+            $DB_Flag = true;
+        }
+
+        // 注文した商品一覧を取得
+        $sql = "SELECT
+                    `order_item_id`,
+                    `product_id`,
+                    `quantity`,
+                    `product_option`,
+                    `unit_price`
+                FROM
+                    `T_ORDER_INFORMATION_DETAIL`
+                WHERE
+                    `order_id` = :order_id";
+        $sql = $DB -> prepare($sql);
+
+        $sql -> bindValue(':order_id', $order_id, PDO::PARAM_STR);
+        $sql -> execute();
+        $order_items = $sql -> fetchAll();
+
+        if ($order_items == false) {
+            return Array('result' => false, 'type' => 'get_item');
+        }
+
+        // カートと同じ形式に治す
+        $order_item_f_cart = Array();
+        foreach($order_items as $val) {
+            $column = Array(
+                'product_id' => $val['product_id'],
+                'quantity' => $val['quantity'],
+                'options' => json_decode($val['product_option'], true)
+            );
+            array_push($order_item_f_cart, $column);
+        }
+
+        // 在庫確認
+        $stock_result = stockCheck($order_item_f_cart);
+
+        if ($stock_result !== true) {
+            return Array('result' => false, 'type' => 'stock_error', 'data' => $stock_result);
+        }
+
+        // 予約の確定処理
+        $sql = "UPDATE
+                    `T_ORDER_INFORMATION_MAIN`
+                SET
+                    `confirmed_order_flag` = 1
+                WHERE
+                    `order_id` = :order_id";
+        $sql = $DB -> prepare($sql);
+        $sql -> bindValue(':order_id', $order_id, PDO::PARAM_STR);
+        $sql -> execute();
+        
+        // 店舗側へ通知の送信
+
+        return Array('result' => true);
     }
