@@ -206,10 +206,15 @@
                         label.setAttribute('class', 'label');
                         label.appendChild(document.createTextNode('オプション'));
                     option.appendChild(label);
+                }else{
+                    option.appendChild(document.createTextNode('オプションなし'));
                 }
                 // オプション
                 e.product_data.options.forEach(elm => {
-                    option.appendChild(optionDOMCreate(elm, e.options, index));
+                    let dom = optionDOMCreate(elm, e.options, index);
+                    if (elm.isPublic) {
+                        option.appendChild(dom);
+                    }
                 });
 
                 let item_total = document.createElement('div');

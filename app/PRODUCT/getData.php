@@ -98,6 +98,9 @@ function getOptionData($id_list, $type = 0) {
     }else{
         // 配列の場合
         $inClause = substr(str_repeat(',?', count($id_list)), 1);
+        if (count($id_list) == 0) {
+            return Array();
+        }
         $sql = "SELECT
                     *
                 FROM
@@ -221,6 +224,27 @@ function getProductData($id_list, $DB = false) {
     }
 
     return $list;
+}
+
+function getProductName($id_list, $DB) {
+    $inClause = substr(str_repeat(',?', count($id_list)), 1);
+    $sql = "SELECT
+                `product_id`,
+                `product_name`
+            FROM
+                `T_PRODUCT_INFORMATION`
+            WHERE
+                `product_id` IN(%s)";
+    $sql = $DB -> prepare(sprintf($sql, $inClause));
+    $sql -> execute(array_values($id_list));
+    $record = $sql -> fetchAll(PDO::FETCH_ASSOC);
+
+    $return_array = Array();
+    foreach ($record as $val) {
+        $return_array[$val['product_id']] = $val['product_name'];
+    }
+
+    return $return_array;
 }
 
 function getPriceList($DB, $id_list) {

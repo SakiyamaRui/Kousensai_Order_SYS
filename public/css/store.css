@@ -1,0 +1,44 @@
+body {
+  margin: 0;
+}
+body.qr-reader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+body.qr-reader .title {
+  font-family: "Noto Sans JP", sans-serif;
+  font-weight: 700;
+  font-size: 24px;
+  margin: 12px 0;
+}
+body.qr-reader .qr-display {
+  width: calc(100% - 10px);
+  max-width: 640px;
+  height: -webkit-max-content;
+  height: -moz-max-content;
+  height: max-content;
+  background-color: rgb(218, 218, 218);
+  position: relative;
+  box-sizing: border-box;
+  aspect-ratio: 4/3;
+  border-radius: 3px;
+  overflow: hidden;
+}
+body.qr-reader .qr-display video {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+  position: relative;
+  z-index: 10;
+}
+body.qr-reader .qr-display .label {
+  width: 100%;
+  text-align: center;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+  z-index: 1;
+}/*# sourceMappingURL=store.css.map */
