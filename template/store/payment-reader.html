@@ -528,9 +528,9 @@
                                                         type = 'オプションの在庫切れ';
                                                         let options = [];
                                                         e.option.forEach(val => {
-                                                            options.push(`${val.option_name}(${val.value})`);
+                                                            options.push(`(${val.option_name} : ${val.value})`);
                                                         });
-                                                        alert_str.push(`${type}: ${options.join(', ')}`);
+                                                        alert_str.push(`${type}: ${e.product_name}${options.join(', ')}`);
                                                         break;
                                                 }
                                             });

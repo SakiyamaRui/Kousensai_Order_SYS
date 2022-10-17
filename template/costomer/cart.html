@@ -145,7 +145,28 @@
                                 switch (responceText['type']) {
                                     case 'stock':
                                         // 在庫切れ
-                                        alert('一部商品が在庫切れです。\n在庫状況については、在庫状況のページを確認してください。');
+
+                                        //文字列を生成
+                                        let alert_str = [];
+                                        responceText['detail'].forEach(e => {
+                                            let type = '';
+                                            switch (e.msg) {
+                                                case 'Sales-limit':
+                                                    type = '商品の在庫切れ';
+                                                    alert_str.push(`${type}: ${e.product_name}`);
+                                                    break;
+                                                case 'option-limit':
+                                                    type = 'オプションの在庫切れ';
+                                                    let options = [];
+                                                    e.option.forEach(val => {
+                                                        options.push(`(${val.option_name} : ${val.value})`);
+                                                    });
+                                                    alert_str.push(`${type}: ${e.product_name}${options.join(', ')}`);
+                                                    break;
+                                            }
+                                        });
+
+                                        alert(`一部商品が在庫切れです。\n${alert_str.join('\n')}`);
                                         document.getElementById('loading').classList.add('hidden');
                                         break;
                                     default:

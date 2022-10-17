@@ -69,7 +69,8 @@
                 if (($product_stock - $val['quantity']) < 0) {
                     // 在庫切れ
                     $isAllCorrect = false;
-                    if (!is_array($inventoryShortage[$key])) $inventoryShortage[$key] = Array('msg' => 'Sales-limit', 'product_name' => $product_name);
+                    if (!isset($inventoryShortage[$product_name])) $inventoryShortage[$product_name] = '';
+                    if (!is_array($inventoryShortage[$product_name])) $inventoryShortage[$product_name] = Array('msg' => 'Sales-limit', 'product_name' => $product_name);
                     continue;
                 }else{
                     if ($isLock == true && $DB_Flag == false) {
@@ -91,9 +92,9 @@
                     if (($option_stock - $val['quantity']) < 0) {
                         $isAllCorrect = false;
 
-                        if (!isset($inventoryShortage[$key])) $inventoryShortage[$key] = '';
-                        if (!is_array($inventoryShortage[$key])) $inventoryShortage[$key] = Array('msg' => 'option-limit', 'product_name' => $product_name,'option' => Array());
-                        array_push($inventoryShortage[$key]['option'], Array('option_name' => $option_name, 'value' => $select));
+                        if (!isset($inventoryShortage[$product_name])) $inventoryShortage[$product_name] = '';
+                        if (!is_array($inventoryShortage[$product_name])) $inventoryShortage[$product_name] = Array('msg' => 'option-limit', 'product_name' => $product_name,'option' => Array());
+                        array_push($inventoryShortage[$product_name]['option'], Array('option_name' => $option_name, 'value' => $select));
                     }else{
                         if ($isLock == true && $DB_Flag == false) {
                             $options[$option_id] = ($option_stock - $val['quantity'] == INF)? -1: $option_stock - $val['quantity'];
@@ -102,6 +103,7 @@
                 }
             }
         }
+        $inventoryShortage = array_values($inventoryShortage);
 
         if ($DB_Flag) {
             unset($DB);
@@ -113,18 +115,23 @@
 
             // Product
             foreach($product as $key => $val) {
-                $sql .= "UPDATE `T_STOCKS` SET `current_stock` = ${val} WHERE `product_id` = '${key}'".PHP_EOL;
+                $sql .= "UPDATE `T_STOCKS` SET `current_stock` = ${val} WHERE `product_id` = '${key}';".PHP_EOL;
             }
             
             // Option
             foreach($options as $key => $val) {
-                $sql .= "UPDATE `T_STOCKS_OPTION` SET `current_stock` = ${val} WHERE `option_id` = ${key}".PHP_EOL;
+                $sql .= "UPDATE `T_STOCKS_OPTION` SET `current_stock` = ${val} WHERE `option_id` = ${key};".PHP_EOL;
             }
 
-            $sql = $DB -> prepare($sql);
-            $sql -> execute();
+            try {
+                $sql = $DB -> prepare($sql);
+                $sql -> execute();
+                $sql -> closeCursor();
 
-            $DB -> commit();
+                $DB -> commit();
+            }catch (PDOException $e) {
+                $DB -> rollback();
+            }
         }
 
         if ($isAllCorrect) {
