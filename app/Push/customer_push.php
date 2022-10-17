@@ -43,13 +43,11 @@
         $sql = "SELECT
                     `store_id`
                 FROM
-                    `T_STORE_INFORMATION`
+                    `T_PRODUCT_INFORMATION`
                 INNER JOIN
-                    `T_PRODUCT_INFORMATION` ON `T_STORE_INFORMATION`.`store_id` = `T_PRODUCT_INFORMATION`.`store_id`
-                INNER JOIN
-                    `T_ORDER_INFORMATION_DETAIL` ON `T_PRODUCT_INFORMATION`.`product_id` = `T_ORDER_INFORMATION_DETAIL`.`order_id`
+                    `T_ORDER_INFORMATION_DETAIL` ON `T_PRODUCT_INFORMATION`.`product_id` = `T_ORDER_INFORMATION_DETAIL`.`product_id`
                 WHERE
-                    `order_id` = :order_id";
+                    `T_ORDER_INFORMATION_DETAIL`.`order_id` = :order_id";
         $sql = $DB -> prepare($sql);
         $sql -> bindValue(':order_id', $order_id, PDO::PARAM_STR);
         $sql -> execute();

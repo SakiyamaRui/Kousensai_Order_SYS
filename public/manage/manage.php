@@ -40,12 +40,12 @@
         case 'orders':
             // ログインの確認
             autoLogin();
+            session::start();
 
             $DB = DB_Connect();
 
             // 注文一覧を取得
             $orders = getOrders($_SESSION['store_id'], $DB);
-
 
             require_once(ROOT_PATH.'/template/store/order_list.html');
             break;
