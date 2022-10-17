@@ -170,6 +170,14 @@
             // 在庫の確認
             $result = orderConfirm($request['order_id'], $DB);
 
+            //
+            if ($result['result'] ==  false) {
+                echo json_encode($result);
+                exit;
+            }
+
+            // 店舗端末へ通知
+            pushOrder($request['order_id'], $DB);
             echo json_encode($result);
             exit;
         // 注文のアップデート

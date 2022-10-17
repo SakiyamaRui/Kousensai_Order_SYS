@@ -8,8 +8,26 @@
     }
 
     function pushSet($data, $DB) {
+        if ($_COOKIE['LOGIN_SESS']) {
+            // データのアップデート
+            setcookie('LOGIN_SESS', $_COOKIE['LOGIN_SESS'], time() + 60*60*7, '/', 'kousensai.apori.jp', true, true);
+
+            $sql = "UPDATE
+                        `T_NOTICE_DATA`
+                    SET
+                        `end_point`,
+                        `public_key`,
+                        `auth_token`
+                    WHERE
+                        `session_token` = :session_token";
+            $sql = $DB -> prepare($sql);
+            $sql -> bindValue(':session_token', $_COOKIE['LOGIN_SESS'], PDO::PARAM_STR);
+            $sql -> execute();
+            return true;
+        }
         // 新しいセッションの作成
         $new_id = session::newToken($DB);
+        setcookie('LOGIN_SESS', $new_id, time() + 60*60*7, '/', 'kousensai.apori.jp', true, true);
 
         $sql = "INSERT INTO `T_NOTICE_DATA` (
                     `session_token`,

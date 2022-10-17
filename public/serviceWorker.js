@@ -25,7 +25,8 @@ self.addEventListener('push', function(e) {
         order_id = json['order_id'];
     }else if (json['type'] == 'shop') {
         // 店舗側の処理
-        body = '新しい注文が入りました。注文番号(00000)';
+        order_id = json['order_id'];
+        body = `新しい注文が入りました。注文番号(${order_id})`;
         title = '新しい注文が入りました';
     }else{
         return false;
@@ -45,7 +46,7 @@ self.addEventListener('notificationclick', function (e) {
     if (type == 'costomer') {
         e.waitUntil(
             // push通知がクリックされたら開くページ
-            clients.openWindow(`/order/${order_id}/`)
+            clients.openWindow(`/detail/${order_id}/`)
         );
     }else if (type == 'shop') {
         e.waitUntil(
