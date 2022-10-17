@@ -331,7 +331,10 @@
 
             let price = document.createElement('div');
             price.setAttribute('class', 'price');
-            price.appendChild(document.createTextNode(data["option_values"].find(e => e.value == selected[data.name])?.price));
+            price.appendChild(document.createTextNode(data["option_values"].find(e => {
+                let result = e.value == selected[data.name];
+                return result;
+            })?.price));
 
             column.appendChild(option_name);
             column.appendChild(select_parent);

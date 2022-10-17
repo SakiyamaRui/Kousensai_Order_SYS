@@ -23,7 +23,7 @@
         $product_list = array_unique(array_column($_SESSION['cart'], 'product_id'));
 
         // 予約確認
-        $result = stockCheck($_SESSION['cart']);
+        $result = stockCheck($_SESSION['cart'], false, $DB);
 
         if ($result !== true) {
             return Array('result' => false, 'type' => 'stock', 'detail' => $result);
@@ -206,9 +206,10 @@
         }
 
         // 在庫確認
-        $stock_result = stockCheck($order_item_f_cart);
+        $stock_result = stockCheck($order_item_f_cart, true, $DB);
 
         if ($stock_result !== true) {
+            $DB -> rollback();
             return Array('result' => false, 'type' => 'stock_error', 'data' => $stock_result);
         }
 
