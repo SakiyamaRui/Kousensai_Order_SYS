@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{店舗名} 注文受付リスト</title>
+    <link rel="stylesheet" href="/css/store.css">
+    <link rel="stylesheet" href="/css/costomer.css">
+    <?php include(ROOT_PATH.'/template/fonts.html'); ?>
+    <script src="/js/push-request.js"></script>
+</head>
+<body class="order-list">
+    <!--ヘッダー-->
+
+    <div class="title">
+        注文一覧
+    </div>
+    <div class="time_tb" id="time_tb_list">
+    </div>
+</body>
+</html>
+<script type="application/json" id="orders">
+    <?php echo json_encode($orders); ?>
+</script>
+<script>
+    (function() {
+        //
+        let t_tb = null;
+
+        let update_items = {};
+        let submit_timer;
+        window.addEventListener('DOMContentLoaded', function() {
+            t_tb = document.getElementById('time_tb_list');
+            //
+            let orders = JSON.parse(document.getElementById('orders').textContent);
+            orderListGenerate(orders);
+            deleteNullDOM();
+
+
+            // 通知のリクエスト
+            noticeSettings().then(async (data) => {
+                console.log(data);
+                // APIリクエストの送信
+                let xhr = new XMLHttpRequest();
+                xhr.open('POST', '/api/store.php?mode=notice-subscription');
+                xhr.setRequestHeader("Content-Type", "application/json");
+                xhr.send(JSON.stringify(data));
+
+                xhr.onreadystatechange = () => {
+                    if (xhr.readyState === XMLHttpRequest.DONE) {
+
+                        if (xhr.status >= 200 && xhr.status < 400) {
+                            // リクエストが正常に完了
+                            console.log(xhr.responseText);
+                            try {
+                                if (xhr.responseText == 'true') {
+                                    return true;
+                                }
+                            }catch (e) {
+                                console.log(xhr.responseText);
+                            }
+                        }
+                        // リクエストでエラーが発生
+                        alert('Push通知の登録ができませんでした。\n担当者へ連絡してください。');
+                    }
+                }
+
+            }).catch((err) => {
+                if (err == 'denied') {
+                    alert('通知の受け取りが拒否になっています。\n通知の受信を許可してください。');
+                }
+            });
+        });
+
+        // Push通知の受け取り
+
+        let orders = {};
+
+        // 注文一覧を作成
+        function orderListGenerate(orders) {
+            let keySort = Object.keys(orders);
+
+            let time_columns = [];
+
+            // 構築
+            keySort.forEach(key => {
+                let time_data = orders[key];
+
+                // タイムカラム
+                let t_col = document.createElement('div');
+                t_col.setAttribute('class', 'column');
+                // t_col.setAttribute('time', '');
+                t_col.setAttribute('label', key);
+
+                //　ラベル
+                let col_label = document.createElement('div');
+                col_label.setAttribute('class', 'label');
+                col_label.appendChild(document.createTextNode(key));
+
+                // 注文カラム
+                let order_col = document.createElement('div');
+                order_col.setAttribute('class', 'orders');
+
+                for (let order_id in time_data) {
+                    order_col.appendChild(createOrderColumn(order_id, time_data[order_id]));
+                }
+
+                // 追加
+                t_col.appendChild(col_label);
+                t_col.appendChild(order_col);
+
+                time_columns.push(t_col);
+            });
+
+            // 画面に表示
+            t_tb.innerHTML = '';
+            
+            time_columns.forEach(e => {
+                t_tb.appendChild(e);
+            });
+        }
+
+        // 注文のカラムを作成
+        function createOrderColumn(order_id, order_data) {
+            let order_col = document.createElement('div');
+            order_col.setAttribute('class', 'order_column');
+
+            // ヘッダー
+            let o_header = document.createElement('div');
+            o_header.setAttribute('class', 'o_header');
+            o_header.appendChild(document.createTextNode('注文番号: '));
+            
+            let span_order_id = document.createElement('span');
+            span_order_id.setAttribute('class', 'order_id');
+            span_order_id.appendChild(document.createTextNode(order_id));
+            
+            o_header.appendChild(span_order_id);
+
+            order_col.appendChild(o_header);
+
+            // リストラベル
+            order_col.appendChild(list_index());
+
+            // 商品リスト
+            let o_list = document.createElement('div');
+            o_list.setAttribute('class', 'o_list');
+
+            order_data['items'].forEach(elm => {
+                o_list.appendChild(item_column(elm));
+            });
+
+            order_col.appendChild(o_list);
+
+            return order_col;
+
+
+            //
+            function list_index() {
+                let list_index = document.createElement('div');
+                list_index.setAttribute('class', 'o_list_index');
+
+                let index_val = ['済', '商品名', '個数'];
+
+                index_val.forEach(e => {
+                    let column = document.createElement('div');
+                    column.appendChild(document.createTextNode(e));
+                    list_index.appendChild(column);
+                });
+
+                return list_index;
+            }
+
+            //
+            function item_column(data) {
+                let item_col = document.createElement('div');
+                item_col.setAttribute('class', 'item_col');
+                item_col.setAttribute('order_item_id', data['order_item_id']);
+                if (data['passed_flag']) item_col.classList.add('passed');
+
+                // checkbox
+                let checkbox = document.createElement('div');
+                checkbox.setAttribute('class', 'checkbox');
+
+                let check_input = document.createElement('input');
+                check_input.setAttribute('type', 'checkbox');
+                check_input.setAttribute('class', 'itemisorrect');
+                if (data['created']) check_input.setAttribute('checked', '');
+
+                checkbox.appendChild(check_input);
+
+
+                // product_name
+                let product_name = document.createElement('div');
+                product_name.setAttribute('class', 'product_name');
+                product_name.appendChild(document.createTextNode(data['product_name']));
+
+
+                // quantity
+                let quantity = document.createElement('div');
+                quantity.setAttribute('class', 'quantity');
+                quantity.appendChild(document.createTextNode(data['quantity']));
+
+                // option
+                let options = document.createElement('div');
+                options.setAttribute('class', 'option');
+
+                for (let opt_n in data['product_option']) {
+                    let option_col = document.createElement('div');
+                    option_col.setAttribute('class', 'option_col');
+
+                    // name
+                    let opt_name = document.createElement('div');
+                    opt_name.setAttribute('class', 'option_name');
+                    opt_name.appendChild(document.createTextNode(opt_n));
+
+                    // value
+                    let opt_val = document.createElement('div');
+                    opt_val.setAttribute('class', 'value');
+                    opt_val.appendChild(document.createTextNode(data['product_option'][opt_n]));
+
+                    option_col.appendChild(opt_name);
+                    option_col.appendChild(opt_val);
+
+                    options.appendChild(option_col);
+                }
+
+                // all appned
+                item_col.appendChild(checkbox);
+                item_col.appendChild(product_name);
+                item_col.appendChild(quantity);
+                item_col.appendChild(options);
+
+                // イベント
+                item_col.addEventListener('click', (e) => {
+                    let c_box = e.currentTarget.querySelector('input[type="checkbox"]');
+                    c_box.checked = !c_box.checked;
+
+                    // 変更を送信
+                    let item_id = e.currentTarget.getAttribute('order_item_id');
+                    updateItemStatus(item_id, c_box.checked);
+                });
+
+                check_input.addEventListener('click', (e) => {
+                    event.stopPropagation();
+                    
+                    let item_id = e.currentTarget.parentElement.parentElement.getAttribute('order_item_id');
+                    updateItemStatus(item_id, e.currentTarget.checked);
+                });
+
+                return item_col;
+            }
+        }
+
+
+        function updateItemStatus(item_id, bool) {
+            // タイマーのリセット
+            clearTimeout(submit_timer);
+
+            // 変更を追加
+            update_items[item_id] = bool;
+
+            // タイマーのセット
+            submit_timer = setTimeout(() => {
+                // 変更を送信
+                changeSubmit();
+            }, 5000);
+        }
+
+        // 空のDOMは削除
+        function deleteNullDOM() {
+            let col = t_tb.querySelectorAll('.column .orders');
+
+            col.forEach(e => {
+                if (e.children.length == 0) {
+                    e.parentElement.remove();
+                }
+            });
+        }
+
+        function changeSubmit() {
+            let data_copy = update_items;
+            update_items = {};
+
+            // 全てtrueになっているオーダーは非表示
+            for (let key in data_copy) {
+                let chenge_item_dom = t_tb.querySelector(`.item_col[order_item_id="${key}"]`);
+
+                if (chenge_item_dom == null) {
+                    continue;
+                }
+
+                let bool = true;
+                let parent_child = chenge_item_dom.parentElement.querySelectorAll('.item_col');
+                parent_child.forEach(dom => {
+                    let checked = dom.querySelector('input[type="checkbox"]').checked;
+                    if (!checked) {
+                        bool = false;
+                        return true;
+                    }
+
+                    return false;
+                });
+
+                if (bool) {
+                    chenge_item_dom.parentElement.parentElement.remove();
+                }
+            }
+
+            deleteNullDOM();
+
+            return new Promise((resolve, reject) => {
+                let xhr = new XMLHttpRequest();
+                xhr.open('POST', '/api/store.php?mode=orderItemStatusUpdate');
+                xhr.setRequestHeader("Content-Type", "application/json");
+                xhr.send(JSON.stringify(data_copy));
+
+                xhr.onreadystatechange = () => {
+                    if (xhr.readyState === XMLHttpRequest.DONE) {
+                        if (xhr.status >= 200 && xhr.status < 400) {
+                            console.log(xhr.responseText);
+                            if (xhr.responseText != 'true') {
+                                alert('エラーが発生しました。\n担当者へ連絡してください。');
+                                reject();
+                            }else{
+                                resolve();
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    }());
+</script>

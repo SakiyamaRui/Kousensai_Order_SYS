@@ -172,10 +172,83 @@
 
             echo json_encode($result);
             exit;
+        // 注文のアップデート
+        case 'orderItemStatusUpdate':
+            if($_SERVER["REQUEST_METHOD"] != "POST") {
+                exit;
+            }
 
+            $DB = DB_Connect();
+            try {
+                // 注文をUPDATE
+                updateOrderItemCreated($request, $DB);
+                
+                // UPDATEした商品の注文がすべて完了しているか確認
+                $correct_list = array_keys($request, true);
+                if (count($correct_list) < 1) {
+                    echo 'true';
+                    exit;
+                }
+
+                $inClause = substr(str_repeat(',?', count($correct_list)), 1);
+                $sql = "SELECT
+                            `order_id`,
+                            `made_flag`
+                        FROM
+                            `T_ORDER_INFORMATION_DETAIL`
+                        WHERE
+                            `order_id` IN (
+                                SELECT `order_id`
+                                FROM `T_ORDER_INFORMATION_DETAIL`
+                                WHERE `order_item_id` IN(%s)
+                            )";
+                $sql = $DB -> prepare(sprintf($sql, $inClause));
+                $sql -> execute($correct_list);
+                $record = $sql -> fetchAll(PDO::FETCH_ASSOC);
+
+                // 全件trueか確認
+                $order_list = Array();
+                foreach($record as $val) {
+                    if (!isset($order_list[$val['order_id']])) {
+                        $order_list[$val['order_id']] = true;
+                    }
+
+                    if ($val['made_flag'] == false) {
+                        $order_list[$val['order_id']] = false;
+                    }
+                }
+                
+
+                // trueになっているオーダーは通知を送信
+                $pushRequest_list = array_keys($order_list, true);
+                if (count($pushRequest_list) == 0) {
+                    echo 'true';
+                    exit;
+                }
+
+                $result = pushAllCorrect($pushRequest_list, $DB);
+
+                echo 'true';
+            }catch(Exception $e) {
+                echo 'false';
+            }
             break;
         // webPush通知の登録
         case 'notice-subscription':
+            if($_SERVER["REQUEST_METHOD"] != "POST") {
+                exit;
+            }
+
+            autoLogin();
+
+            $DB = DB_Connect();
+            $result = pushSet($request, $DB);
+            if ($result) {
+                echo 'true';
+            }else{
+                echo 'false';
+            }
+            exit;
             break;
         case 'practice':
             echo 'Hello World!';

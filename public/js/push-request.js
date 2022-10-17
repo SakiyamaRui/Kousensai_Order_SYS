@@ -32,7 +32,7 @@ async function noticeSettings() {
 
         (await navigator.serviceWorker.ready).pushManager.permissionState({
             userVisibleOnly: true
-        }).then((state) => {
+        }).then(async (state) => {
             switch (state) {
                 // 未選択
                 case 'prompt':
@@ -61,8 +61,8 @@ async function noticeSettings() {
                     break;
                 // 承諾済み
                 case 'granted':
-                    // すでに登録されているサブスクリプションを取得
-                    window.sw.pushManager.getSubscription().then((subscription) => {
+                    // すでに登録されているサブスクリプションを取得]
+                    (await navigator.serviceWorker.ready).pushManager.getSubscription().then((subscription) => {
                         const key = subscription.getKey('p256dh');
                         const token = subscription.getKey('auth');
                         const request = {

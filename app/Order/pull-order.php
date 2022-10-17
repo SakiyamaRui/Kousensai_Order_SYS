@@ -290,7 +290,8 @@
         $sql = "UPDATE
                     `T_ORDER_INFORMATION_DETAIL`
                 SET
-                    `passed_flag` = 1
+                    `passed_flag` = 1,
+                    `made_flag` = 1
                 WHERE
                     `order_item_id` IN (%s)";
         $sql = $DB -> prepare(sprintf($sql, $inClause));

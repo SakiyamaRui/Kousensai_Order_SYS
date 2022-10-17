@@ -33,9 +33,12 @@
     require_once(ROOT_PATH.'/app/Order/Cart.php');
     require_once(ROOT_PATH.'/app/Order/order-request.php');
     require_once(ROOT_PATH.'/app/Order/pull-order.php');
+    require_once(ROOT_PATH.'/app/Order/shop_order.php');
     require_once(ROOT_PATH.'/app/PRODUCT/stock_check.php');
     require_once(ROOT_PATH.'/app/notice/notice-settings.php');
     require_once(ROOT_PATH.'/app/notice/notice-subscribe.php');
     require_once(ROOT_PATH.'/app/qr-code/qr-code.php');
+    require_once(ROOT_PATH.'/app/Push/web-push.php');
+    require_once(ROOT_PATH.'/app/Push/customer_push.php');
     // require_once(ROOT_PATH.'/app/server.php');
 

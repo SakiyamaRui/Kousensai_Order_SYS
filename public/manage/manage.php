@@ -37,6 +37,17 @@
                 require_once(ROOT_PATH.'/template/item/item-edit.html');
             }
             break;
+        case 'orders':
+            // ログインの確認
+
+            $DB = DB_Connect();
+
+            // 注文一覧を取得
+            $orders = getOrders('', $DB);
+
+
+            require_once(ROOT_PATH.'/template/store/order_list.html');
+            break;
 
         case 'reader':
             // ログイン確認
