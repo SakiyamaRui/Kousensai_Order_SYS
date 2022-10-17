@@ -184,8 +184,3 @@
 
         return $record;
     }
-
-    $DB = DB_Connect();
-    $cart = '[{"product_id":"12345","quantity":1,"options":{"\u30b5\u30a4\u30ba":"\u5c0f","\u7d05\u751f\u59dc":"\u3042\u308a","\u9752\u306e\u308a":"\u3042\u308a","\u5b66\u5272":"\u306a\u3057"}},{"product_id":"12346","quantity":1,"options":{"\u30b1\u30c1\u30e3\u30c3\u30d7":"\u3042\u308a"}}]';
-    $data = json_decode($cart, true);
-    stockCheck($data, false, $DB);
