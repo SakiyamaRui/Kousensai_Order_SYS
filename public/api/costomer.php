@@ -104,6 +104,10 @@
             }
 
             break;
+        // セッションのリセット
+        case 'session':
+            $_SESSION = Array();
+            setcookie('SESS_TOKEN', '', time() - 1000, '/', DOMAIN, true, true);
         
         // デバック
         case 'debug':
