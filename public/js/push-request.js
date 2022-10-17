@@ -37,7 +37,7 @@ async function noticeSettings() {
                 // 未選択
                 case 'prompt':
                     // 新しくサブスクリプション登録
-                    window.sw.pushManager.subscribe({
+                    (await navigator.serviceWorker.ready).pushManager.subscribe({
                         userVisibleOnly: true,
                         applicationServerKey
                     }).then((subscription) => {
