@@ -19,10 +19,11 @@
                 INNER JOIN
                     `T_PRODUCT_INFORMATION` as Product ON Detail.`product_id` = Product.`product_id`
                 WHERE
-                    Main.`confirmed_order_flag` = 1
+                    Main.`confirmed_order_flag` = 1 AND
+                    Product.`store_id` = :store_id
                 ORDER BY Main.`order_time` ASC"; // 今は全件取得だけど店舗ごとに取得に最終的に変更
         $sql = $DB -> prepare($sql);
-        // $sql -> bindValue(':store_id', $store_id, PDO::PARAM_STR);
+        $sql -> bindValue(':store_id', $store_id, PDO::PARAM_STR);
         $sql -> execute();
         $record = $sql -> fetchAll(PDO::FETCH_ASSOC);
 

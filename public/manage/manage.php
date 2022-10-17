@@ -39,11 +39,12 @@
             break;
         case 'orders':
             // ログインの確認
+            autoLogin();
 
             $DB = DB_Connect();
 
             // 注文一覧を取得
-            $orders = getOrders('', $DB);
+            $orders = getOrders($_SESSION['store_id'], $DB);
 
 
             require_once(ROOT_PATH.'/template/store/order_list.html');
