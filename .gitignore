@@ -1,2 +1,4 @@
 config/DB.ini
 config/config.ini
+tmp/
+public/order/

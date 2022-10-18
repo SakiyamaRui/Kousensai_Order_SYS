@@ -8,10 +8,10 @@
 
     <link rel="stylesheet" href="/css/costomer.css">
     <link rel="stylesheet" href="/css/item.css">
-    <?php include(ROOT_PATH.'\template\fonts.html'); ?>
+    <?php include(ROOT_PATH.'/template/fonts.html'); ?>
 </head>
 <body>
-    <?php include(ROOT_PATH.'\template\costomer\header.html'); ?>
+    <?php include(ROOT_PATH.'/template/costomer/header.html'); ?>
 
     <div class="product-edit">
         <div class="img">
@@ -46,6 +46,25 @@
 
         <div class="append-option">
             オプションの追加
+        </div>
+
+        <div class="basic-data">
+            <div class="label">
+                詳細
+            </div>
+            <div class="content">
+                <div class="stock">
+                    全体の在庫数:
+                    <input type="tel" placeholder="全体の在庫数" id="">
+                </div>
+                <div class="shop">
+                    販売店:
+                    <select>
+                        <option value="" selected disabled>ショップを選択</option>
+                        <?php echo $shop_options; ?>
+                    </select>
+                </div>
+            </div>
         </div>
     </div>
     <div class="func">

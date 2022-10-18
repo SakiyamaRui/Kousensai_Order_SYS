@@ -1,5 +1,5 @@
 <?php
-require_once(dirname(__DIR__).'\main.php');
+require_once(dirname(__DIR__).'/main.php');
 
 $return_template = Array(
     'store_name' => "",     // 店舗名
@@ -17,7 +17,17 @@ function getAllProductIndexList() {
 
     //DB接続
     $DB = DB_Connect();
-    $sql = "SELECT `product_id`,`store_id`, `product_name`, `product_price`, `product_image_url` FROM ORDER_SYS_DB.`T_PRODUCT_INFORMATION` WHERE `orderable_flag` = 1 ORDER BY `product_price` ASC";
+    $sql = "SELECT
+                `product_id`,
+                `store_id`,
+                `product_name`,
+                `product_price`,
+                `product_image_url`
+            FROM
+                `T_PRODUCT_INFORMATION`
+            WHERE
+                `orderable_flag` = 1
+            ORDER BY `product_price` ASC";
     $sql = $DB -> prepare($sql);
     $sql -> execute();
     $All_product_data = $sql -> fetchAll(PDO::FETCH_ASSOC);
@@ -45,9 +55,9 @@ function getAllProductIndexList() {
 
     // $store_id_listの中にあるidのストア名を取得
     $inClause = substr(str_repeat(',?', count($store_id_list)), 1);
-    $sql = "SELECT * FROM ORDER_SYS_DB.`T_STORE_INFORMATION` WHERE `store_id`IN(%s)";
+    $sql = "SELECT `store_id`, `store_name` FROM `T_STORE_INFORMATION` WHERE `store_id` IN(%s)";
     $sql = $DB -> prepare(sprintf($sql, $inClause));
-    $sql -> execute($store_id_list);
+    $sql -> execute(array_values($store_id_list));
 
     //store_idでデータを取得できるようにした
     $store_name_list = $sql -> fetchAll(PDO::FETCH_ASSOC);
@@ -65,94 +75,97 @@ function getAllProductIndexList() {
 
 
 // Optionデータの取得
-function getOptionData($id_list, $type = 0) {
+function getOptionData($id_list, $type = 0, $DB = null) {
     /**
      * $type = 0: 在庫状況なし
      * $type = 1: 在庫状況も取得
      */
     // DBへ接続
-    $DB = DB_Connect();
+    $DB_Flag = false;
+    if ($DB == null) {
+        $DB = DB_Connect();
+        $DB_Flag = true;
+    }
 
     // 配列ではない場合と配列の場合でsql実行を変える
     if (!is_array($id_list)) {
         // 配列でない場合
         $sql = "SELECT * FROM
-                    ORDER_SYS_DB.`T_PRODUCT_OPTIONS`
+                    `T_PRODUCT_OPTIONS`
                 WHERE
-                    `product_id` = :product_id
-                GROUP BY
-                    `product_id`,
-                    `option_name`,
-                    `option_value`
-                ";
+                    `product_id` = :product_id";
         $sql = $DB -> prepare($sql);
 
         $sql -> bindValue(':product_id', $id_list, PDO::PARAM_STR);
         $sql -> execute();
-        $data = $sql -> fetchAll(PDO::FETCH_ASSOC|PDO::FETCH_GROUP);
+        $data = $sql -> fetchAll(PDO::FETCH_ASSOC);
     }else{
         // 配列の場合
         $inClause = substr(str_repeat(',?', count($id_list)), 1);
+        if (count($id_list) == 0) {
+            return Array();
+        }
         $sql = "SELECT
                     *
                 FROM
-                    ORDER_SYS_DB.`T_PRODUCT_OPTIONS`
+                    `T_PRODUCT_OPTIONS`
                 WHERE
-                    `product_id` IN(%s)
-                GROUP BY
-                    `product_id`,
-                    `option_name`,
-                    `option_value`";
+                    `product_id` IN(%s)";
         $sql = $DB -> prepare(sprintf($sql, $inClause));
 
-        $sql -> execute($id_list);
-        $data = $sql -> fetchAll(PDO::FETCH_ASSOC|PDO::FETCH_GROUP);
+        $sql -> execute(array_values($id_list));
+        $data = $sql -> fetchAll(PDO::FETCH_ASSOC);
     }
 
     // フォーマットに変換する
     $return_array = Array();
-    foreach($data as $key => $val) {
-        $return_array[$key] = Array();
+    foreach($data as $val) {
+        if (!isset($val['product_id'])) {
+            $key = $val[0]['product_id'];
+            $val = $val[0];
+        }else{
+            $key = $val['product_id'];
+        }
+
+        if (!isset($return_array[$key])) {
+            $return_array[$key] = Array();
+        }
         $column = &$return_array[$key];
 
-        foreach($val as $option_select) {
-            if ($option_select['option_name'] == '全体の在庫') {
-                if ($type == 1) {
-                    $column[$option_select['option_name']] = ($option_select['option_remaining_stock'] == -1)? INF: $option_select['option_remaining_stock'];
-                }
-                continue;
-            }
+        if (!isset($column[$val['option_name']])) $column[$val['option_name']] = Array(
+            'name' => $val['option_name'],
+            'isPublic' => ($val['user_display_flag'] == 1)? true: false,
+            'option_values' => Array(),
+            'default' => ''
+        );
 
-            if (!isset($column[$option_select['option_name']])) $column[$option_select['option_name']] = Array('name' => '', 'isPublic' => '', 'option_values' => Array(), 'default' => '');
+        $append = Array(
+            'value' => $val['option_value'],
+            'price' => $val['add_option_price'],
+            'index' => $val['option_index'],
+            'option_id' => $val['option_id']
+        );
 
-            $append = Array(
-                'value' => $option_select['option_value'],
-                'price' => $option_select['add_option_price'],
-                'index' => $option_select['option_index']
-            );
-            if ($type == 1) {
-                $append['stock'] = ($option_select['option_remaining_stock'] == -1)? INF: $option_select['option_remaining_stock'];
-            }
+        array_push($column[$val['option_name']]['option_values'], $append);
 
-            array_push($column[$option_select['option_name']]['option_values'], $append);
+        if ($column[$val['option_name']]['name'] == '') {
+            $column[$val['option_name']]['name'] == $val['option_name'];
+        }
 
-            if ($column[$option_select['option_name']]['name'] == '') {
-                $column[$option_select['option_name']]['name'] = $option_select['option_name'];
-            }
+        if ($column[$val['option_name']]['isPublic'] == '') {
+            $column[$val['option_name']]['isPublic'] == ($val['user_display_flag'] == 1)? true: false;
+        }
 
-            if ($column[$option_select['option_name']]['isPublic'] == '') {
-                $column[$option_select['option_name']]['isPublic'] = ($option_select['user_display_flag'] == 1)? true: false;
-            }
-
-            if ($option_select['default_value'] == 1) {
-                $column[$option_select['option_name']]['default'] = $option_select['option_value'];
-            }
-
+        if ($val['default_value'] == 1) {
+            $column[$val['option_name']]['default'] = $val['option_value'];
         }
 
         unset($column);
     }
 
+    if ($DB_Flag) {
+        unset($DB);
+    }
     return $return_array;
 }
 
@@ -166,22 +179,23 @@ function getOptionDataRelease($id) {
     }
 }
 
-function getProductData($id_list) {
-    $DB = DB_Connect();
+function getProductData($id_list, $DB = false) {
+    if ($DB == false) {
+        $DB = DB_Connect();
+    }
 
+    $inClause = substr(str_repeat(',?', count($id_list)), 1);
     $sql = "SELECT
                 `product_id`,
                 `store_id`,
                 `product_name`,
                 `product_price`
             FROM
-                ORDER_SYS_DB.`T_PRODUCT_INFORMATION`
+                `T_PRODUCT_INFORMATION`
             WHERE
-                `product_id` IN(%s);";
-    $inClause = substr(str_repeat(',?', count($id_list)), 1);
-
+                `product_id` IN(%s)";
     $sql = $DB -> prepare(sprintf($sql, $inClause));
-    $sql -> execute($id_list);
+    $sql -> execute(array_values($id_list));
     $record = $sql -> fetchAll(PDO::FETCH_ASSOC);
 
     //
@@ -200,7 +214,7 @@ function getProductData($id_list) {
 
     // 店舗名
     $inClause = substr(str_repeat(',?', count($store_id_list)), 1);
-    $sql = "SELECT * FROM ORDER_SYS_DB.`T_STORE_INFORMATION` WHERE `store_id`IN(%s)";
+    $sql = "SELECT * FROM `T_STORE_INFORMATION` WHERE `store_id` IN(%s)";
     $sql = $DB -> prepare(sprintf($sql, $inClause));
     $sql -> execute($store_id_list);
     $store_name_list = array_column($sql -> fetchAll(PDO::FETCH_ASSOC), NULL, 'store_id');
@@ -219,5 +233,34 @@ function getProductData($id_list) {
     }
 
     return $list;
+}
+
+function getProductName($id_list, $DB) {
+    $inClause = substr(str_repeat(',?', count($id_list)), 1);
+    $sql = "SELECT
+                `product_id`,
+                `product_name`
+            FROM
+                `T_PRODUCT_INFORMATION`
+            WHERE
+                `product_id` IN(%s)";
+    $sql = $DB -> prepare(sprintf($sql, $inClause));
+    $sql -> execute(array_values($id_list));
+    $record = $sql -> fetchAll(PDO::FETCH_ASSOC);
+
+    $return_array = Array();
+    foreach ($record as $val) {
+        $return_array[$val['product_id']] = $val['product_name'];
+    }
+
+    return $return_array;
+}
+
+function getPriceList($DB, $id_list) {
+    $inClause = substr(str_repeat(',?', count($id_list)), 1);
+    $sql = "SELECT `product_id`, `product_price` FROM `T_PRODUCT_INFORMATION` WHERE `product_id` IN(%s)";
+    $sql = $DB -> prepare(sprintf($sql, $inClause));
+    $sql -> execute(array_values($id_list));
+    return array_column($sql -> fetchAll(PDO::FETCH_ASSOC), NULL, 'product_id');
 }
 

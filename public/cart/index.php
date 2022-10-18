@@ -14,11 +14,15 @@
         }
 
         // カートの中にある商品IDをリスト化
-        $product_id_list = array_unique(array_column($_SESSION['cart'], 'product_id'));
+        if (isset($_SESSION['cart'])) {
+            $product_id_list = array_unique(array_column($_SESSION['cart'], 'product_id'));
+        }else{
+            $product_id_list = Array();
+        }
 
         if (count($product_id_list) != 0) {
             // 商品情報を取得する
-            $product_list = getProductData($product_id_list);
+            $product_list = getProductData($product_id_list, $DB);
 
             // フォーマット化
             $cart_data = $_SESSION['cart'];
@@ -30,4 +34,4 @@
         }
     }
 
-    require_once(ROOT_PATH.'\template\costomer\cart.html');
+    require_once(ROOT_PATH.'/template/costomer/cart.html');

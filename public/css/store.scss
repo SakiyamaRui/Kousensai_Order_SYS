@@ -1,0 +1,209 @@
+body {
+    margin: 0;
+
+    &.qr-reader,
+    &.order-list {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .title {
+            font-family: 'Noto Sans JP', sans-serif;
+            font-weight: 700;
+            font-size: 24px;
+            margin: 12px 0;
+        }
+    }
+
+    &.qr-reader {
+        .qr-display {
+            width: calc(100% - 10px);
+            max-width: 640px;
+            height: max-content;
+            background-color: rgb(218, 218, 218);
+            position: relative;
+            box-sizing: border-box;
+            aspect-ratio: 4/3;
+            border-radius: 3px;
+            overflow: hidden;
+    
+            video {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                position: relative;
+                z-index: 10;
+            }
+
+            .label {
+                width: 100%;
+                text-align: center;
+                position: absolute;
+                transform: translate(-50%, -50%);
+                top: 50%;
+                left: 50%;
+                z-index: 1;
+            }
+        }
+    }
+
+    &.order-list {
+
+        .time_tb {
+            width: calc(100% - 20px);
+            margin: 10px;
+            box-sizing: border-box;
+
+            .column {
+                display: flex;
+                box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+                border-radius: 3px;
+                padding: 5px 10px;
+                padding-bottom: 10px;
+                flex-direction: column;
+                box-sizing: border-box;
+                margin-bottom: 20px;
+
+                .label {
+                    font-family: 'Noto Sans JP', sans-serif;
+                    font-size: 20px;
+                    margin-left: 15px;
+                    padding: 6px 0;
+                    width: calc(100% - 15px);
+                }
+
+                .orders {
+                    width: 100%;
+                    box-sizing: border-box;
+                    padding: 10px 10px;
+                    box-shadow: inset 0px 0px 3px 0px rgba(0, 0, 0, 0.3);
+                    border-radius: 3px;
+                    overflow-x: auto;
+                    display: flex;
+                    align-items: stretch;
+                    flex-shrink: 0;
+
+                    .order_column {
+                        width: 250px;
+                        box-shadow: rgba(0, 0, 0, 0.095) 0px 1px 3px 0px, rgb(205, 209, 212) 0px 0px 0px 1px;
+                        box-sizing: border-box;
+                        margin-right: 10px;
+                        flex-shrink: 0;
+
+                        .o_header {
+                            font-size: 15px;
+                            font-family: 'Noto Sans JP', sans-serif;
+                            padding: 5px 15px;
+                            border-bottom: 1px solid rgb(210, 210, 210);
+                            box-sizing: border-box;
+                        }
+
+                        .o_list_index,
+                        .o_list .item_col {
+                            display: grid;
+                            grid-template-columns: 30px 1fr 40px;
+                        }
+
+                        .o_list_index {
+                            font-size: 13px;
+                            text-align: center;
+                            border-bottom: 1px solid rgb(210, 210, 210);
+
+                            >div {
+                                border-right: 1px solid rgb(210, 210, 210);
+                                box-sizing: border-box;
+                                padding: 5px 0;
+                                padding-bottom: 2px;
+
+                                &:last-of-type {
+                                    border-right: 0;
+                                }
+                            }
+                        }
+
+                        .o_list {
+                            display: flex;
+                            flex-direction: column;
+
+                            .item_col {
+                                grid-template-rows: 30px auto;
+                                border-bottom: 1px solid rgb(210, 210, 210);
+                                cursor: pointer;
+
+                                &.passed {
+                                    opacity: .5;
+                                    pointer-events: none;
+                                }
+
+                                &:last-of-type {
+                                    border-bottom: 0;
+                                }
+
+                                .checkbox,
+                                .product_name,
+                                .quantity {
+                                    display: flex;
+                                    align-items: center;
+                                    flex-wrap: nowrap;
+                                }
+
+                                .checkbox {
+                                    justify-content: center;
+                                }
+
+                                .product_name {
+                                    font-size: 14.5px;
+                                    padding-left: 5px;
+                                    box-sizing: border-box;
+                                    overflow: hidden;
+                                    text-overflow: ellipsis;
+                                    white-space: nowrap;
+                                }
+
+                                .quantity {
+                                    justify-content: center;
+                                    font-size: 14px;
+                                }
+
+                                .option {
+                                    //border-top: 1px solid rgb(236, 236, 236);
+                                    grid-column: 1/3;
+                                    display: flex;
+                                    flex-direction: column;
+                                    align-items: flex-end;
+
+                                    .option_col {
+                                        width: calc(100% - 5px);
+                                        display: grid;
+                                        grid-template-columns: 80px 1fr;
+                                        align-items: center;
+                                        box-sizing: border-box;
+                                        margin-left: 5px;
+                                    }
+
+                                    .option_name,
+                                    .value {
+                                        font-size: 13px;
+                                        text-overflow: ellipsis;
+                                        overflow: hidden;
+                                        white-space: nowrap;
+                                        box-sizing: border-box;
+                                    }
+
+                                    .value {
+                                        padding-left: 5px;
+                                        text-align: right;
+                                    }
+                                }
+
+                                &.checked {
+                                    opacity: .5;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

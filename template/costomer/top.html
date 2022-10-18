@@ -6,11 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>沖縄高専祭2022 屋台予約</title>
     <link rel="stylesheet" href="/css/costomer.css">
-    <?php include(ROOT_PATH.'\template\fonts.html'); ?>
+    <?php include(ROOT_PATH.'/template/fonts.html'); ?>
 
 </head>
 <body>
-    <?php include(ROOT_PATH.'\template\costomer\header.html'); ?>
+    <?php include(ROOT_PATH.'/template/costomer/header.html'); ?>
     <div class="body top-page">
         <div class="new-order">
             <a href="/menu/">
@@ -22,21 +22,7 @@
                 注文履歴
             </div>
             <div class="order-list">
-                <div class="column">
-                    <a href="">
-                        <div class="content order-title">
-                            <span class="time">12:00</span>にした注文
-                        </div>
-                        <div class="content status-label">
-                            <div class="label">
-                                ステータス
-                            </div>
-                            <div class="value">
-                                一部受取可能
-                            </div>
-                        </div>
-                    </a>
-                </div>
+                <?php echo $DOM; ?>
             </div>
         </div>
     </div>

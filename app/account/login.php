@@ -1,6 +1,4 @@
 <?php
-    require_once('C:\Users\ic211216\Desktop\創造研究\Kousensai_Order_SYS\app\main.php');
-
     /**
      * autoLogin
      */
@@ -15,7 +13,7 @@
         if (isset($_COOKIE['store_login_session'])) {
             // データベースで検索して復元
             $DB = $DB = DB_Connect();
-            $sql ="SELECT * FROM ORDER_SYS_DB.`T_STORE_TERMINAL_SESSION` WHERE `login_session_id` = :login_session_id";
+            $sql ="SELECT * FROM `T_STORE_TERMINAL_SESSION` WHERE `login_session_id` = :login_session_id";
             $sql = $DB -> prepare($sql);
 
             $sql -> bindValue(':login_session_id', $_COOKIE['store_login_session'], PDO::PARAM_STR);
@@ -30,8 +28,11 @@
         }
 
         // 復元できない場合は転送
+        session::start();
         $URL = (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-        header("Location: https://kousensai.apori.jp/order/manage/login/?return_to=${URL}");
+        $_SESSION['return_to'] = $URL;
+        $URL = urlencode($URL);
+        header("Location: ".(empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST']."/manage/login/?return_to=${URL}");
     }
 
     /**
@@ -42,7 +43,7 @@
     function storeLogin($username, $password) {
         $DB = $DB = DB_Connect();
 
-        $sql = "SELECT * FROM ORDER_SYS_DB.`T_STORE_ACCOUNT` WHERE `account_name` = :account_name;";
+        $sql = "SELECT * FROM `T_STORE_ACCOUNT` WHERE `account_name` = :account_name;";
 
         $sql = $DB -> prepare($sql);
 
@@ -73,7 +74,8 @@
         unset($DB);
 
         return Array(
-            'store_id' => $result['store_account_id'],
+            'store_id' => $result['store_id'],
+            'account_id' => $result['store_account_id'],
             'account_name' => $result['account_name'],
         );
     }

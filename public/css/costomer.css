@@ -20,6 +20,10 @@ body .head .title {
   font-weight: 700;
   flex-grow: 1;
 }
+body .head .title a {
+  text-decoration: none;
+  color: #000;
+}
 body .head .order-history a {
   font-size: 15px;
   text-decoration: none;
@@ -121,6 +125,7 @@ body .modal {
   width: 100vw;
   height: 110vh;
   background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9000;
 }
 body .modal .content {
   position: absolute;
@@ -212,6 +217,227 @@ body .modal .content.product-detail-modal .body .label {
   margin-top: 5px;
   font-size: 15px;
 }
+body .modal .content.request-time {
+  max-width: min(98%, 400px);
+  width: 100%;
+}
+body .modal .content.request-time .comment {
+  font-size: 15px;
+  text-align: center;
+}
+body .modal .content.request-time .comment.detail {
+  font-size: 14px;
+  text-align: left;
+}
+body .modal .content.request-time .selector {
+  text-align: center;
+  margin: 24px 0;
+  font-family: "Noto Sans JP", sans-serif;
+}
+body .modal .content.request-time .buttons {
+  margin-top: 18px;
+}
+body .modal .content.cart-appended {
+  width: 100%;
+  max-width: 440px;
+}
+body .modal .content.cart-appended .comment {
+  font-size: 15px;
+  text-align: center;
+}
+body .modal .content.cart-appended .buttons {
+  margin-top: 18px;
+}
+body .modal .content.cart-appended .buttons a {
+  text-decoration: none;
+}
+body .modal .content.cart-appended .buttons span.btn {
+  font-family: sans-serif;
+  font-weight: 400;
+}
+body .modal .content.order-id, body .modal .content.order_list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: calc(100% - 10px);
+  max-width: 450px;
+}
+body .modal .content.order-id .comment, body .modal .content.order_list .comment {
+  font-size: 15px;
+}
+body .modal .content.order-id .input, body .modal .content.order_list .input {
+  text-align: center;
+  margin: 12px 0;
+}
+body .modal .content.order-id .input input, body .modal .content.order_list .input input {
+  box-sizing: border-box;
+  padding: 4px 5px;
+  text-align: center;
+  font-size: 18px;
+  width: 200px;
+  border: 2px solid #000;
+  border-radius: 3px;
+}
+body .modal .content.order-id .input input:focus, body .modal .content.order_list .input input:focus {
+  outline: none;
+}
+body .modal .content.order-id .buttons, body .modal .content.order_list .buttons {
+  width: 100%;
+  margin-top: 10px;
+  max-width: 250px;
+}
+body .modal .content.order_list {
+  max-height: 90vh;
+}
+body .modal .content.order_list .order_lists {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+body .modal .content.order_list .order_lists.pay .column,
+body .modal .content.order_list .order_lists.pay .list-header {
+  grid-template-columns: 1fr 50px 60px;
+}
+body .modal .content.order_list .order_lists.pay .column .quantity,
+body .modal .content.order_list .order_lists.pay .list-header .quantity {
+  border-right: 0;
+}
+body .modal .content.order_list .order_lists.pay .column .options,
+body .modal .content.order_list .order_lists.pay .list-header .options {
+  grid-column: 1/3;
+}
+body .modal .content.order_list .order_lists.pay .column .options .option_column,
+body .modal .content.order_list .order_lists.pay .list-header .options .option_column {
+  grid-template-columns: 2fr 1fr;
+}
+body .modal .content.order_list .order_lists.pay .column .options .option_value,
+body .modal .content.order_list .order_lists.pay .list-header .options .option_value {
+  text-align: center;
+}
+body .modal .content.order_list .order_lists .column,
+body .modal .content.order_list .order_lists .list-header {
+  display: grid;
+  grid-template-columns: 40px 1fr 50px 55px;
+  grid-template-rows: 30px auto;
+  align-items: center;
+}
+body .modal .content.order_list .order_lists .list-header {
+  font-size: 13px;
+  text-align: center;
+  border: 1px solid rgb(122, 122, 122);
+  margin-bottom: 3px;
+  width: calc(100% - 10px);
+}
+body .modal .content.order_list .order_lists .list-header > div {
+  border-right: 1px solid rgb(122, 122, 122);
+  box-sizing: border-box;
+  padding: 2px 4px;
+}
+body .modal .content.order_list .order_lists .list-header > div:last-child {
+  border-right: 0;
+}
+body .modal .content.order_list .order_lists .contents {
+  max-height: 60vh;
+  overflow-y: scroll;
+  overflow-x: auto;
+  box-sizing: border-box;
+}
+body .modal .content.order_list .order_lists .contents::-webkit-scrollbar {
+  width: 5px;
+  height: 0;
+  position: absolute;
+}
+body .modal .content.order_list .order_lists .contents::-webkit-scrollbar-track {
+  width: 5px;
+  height: 5px;
+  background-color: rgba(134, 134, 134, 0.3);
+  border-radius: 3px;
+}
+body .modal .content.order_list .order_lists .contents::-webkit-scrollbar-thumb {
+  width: 5px;
+  height: 5px;
+  background-color: rgba(255, 64, 64, 0.6);
+  border-radius: 3px;
+}
+body .modal .content.order_list .order_lists .column {
+  border: 1px solid rgb(122, 122, 122);
+  margin-bottom: 3px;
+  width: calc(100% - 5px);
+  cursor: pointer;
+}
+body .modal .content.order_list .order_lists .column.hide {
+  pointer-events: none;
+  opacity: 0.5;
+}
+body .modal .content.order_list .order_lists .column > div {
+  padding: 2px 4px;
+  border-right: 1px solid rgb(122, 122, 122);
+  box-sizing: border-box;
+}
+body .modal .content.order_list .order_lists .column > div:last-child {
+  border-right: 0;
+}
+body .modal .content.order_list .order_lists .column .checkbox,
+body .modal .content.order_list .order_lists .column .product_name,
+body .modal .content.order_list .order_lists .column .quantity,
+body .modal .content.order_list .order_lists .column .status,
+body .modal .content.order_list .order_lists .column .sub-total {
+  grid-row: 1/2;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid rgb(122, 122, 122);
+}
+body .modal .content.order_list .order_lists .column .sub-total {
+  grid-row: 1/3;
+  border-bottom: 0;
+  flex-direction: column;
+  justify-content: flex-end;
+  border-left: 1px solid rgb(122, 122, 122);
+}
+body .modal .content.order_list .order_lists .column .checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+body .modal .content.order_list .order_lists .column .product_name {
+  justify-content: flex-start;
+  font-size: 15px;
+  padding-left: 10px;
+}
+body .modal .content.order_list .order_lists .column .quantity {
+  text-align: center;
+}
+body .modal .content.order_list .order_lists .column .status,
+body .modal .content.order_list .order_lists .column .sub-total {
+  border-right: 0;
+  font-size: 14px;
+}
+body .modal .content.order_list .order_lists .column .status {
+  font-size: 13px;
+  text-align: center;
+}
+body .modal .content.order_list .order_lists .column .options {
+  display: flex;
+  flex-direction: column;
+  row-gap: 5px;
+  grid-column: 1/5;
+}
+body .modal .content.order_list .order_lists .column .options .null {
+  font-size: 14px;
+  text-align: center;
+}
+body .modal .content.order_list .order_lists .column .options .option_column {
+  display: grid;
+  grid-template-columns: 2fr 1fr 50px;
+  font-size: 14px;
+  padding-left: 12px;
+}
+body .modal .content.order_list .order_lists .column .options .option_column .option_name {
+  display: flex;
+  align-items: center;
+}
 body .modal.hidden {
   opacity: 0;
   top: 150%;
@@ -257,6 +483,7 @@ body .body.top-page .order-history .order-list .column {
   box-sizing: border-box;
   padding: 8px;
   border-radius: 3px;
+  margin-bottom: 15px;
 }
 body .body.top-page .order-history .order-list .column a {
   text-decoration: none;
@@ -390,6 +617,8 @@ body .func {
   padding: 8px 0;
   margin: 0 8px;
   margin-top: 12px;
+  margin-bottom: 21px;
+  border-radius: 3px;
 }
 body .func .quantity {
   display: flex;
@@ -679,7 +908,7 @@ body .order-detail .detail .content .time {
 span.btn {
   box-sizing: border-box;
   padding: 5px 10px;
-  background-color: rgb(0, 0, 0);
+  background-color: rgb(255, 64, 64);
   color: white;
   border-radius: 3px;
   margin: 5px 5px;

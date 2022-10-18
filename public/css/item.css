@@ -221,6 +221,23 @@
 .product-edit .append-option:hover {
   opacity: 0.5;
 }
+.product-edit .basic-data {
+  grid-column: 1/4;
+  margin-bottom: 12px;
+}
+.product-edit .basic-data .label {
+  font-size: 19px;
+  font-family: "Noto Sans JP", sans-serif;
+  margin-bottom: 5px;
+}
+.product-edit .basic-data .content {
+  margin-top: 8px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.product-edit .basic-data .content input:focus {
+  outline: none;
+}
 
 .func {
   display: flex;

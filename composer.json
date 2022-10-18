@@ -1,0 +1,11 @@
+{
+    "require": {
+        "minishlink/web-push": "^7.0",
+        "endroid/qr-code": "^4.6"
+    },
+    "config": {
+        "platform": {
+            "php": "8.0.18"
+        }
+    }
+}

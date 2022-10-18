@@ -37,6 +37,7 @@
 
             if ($result == false) {
                 // エラーを出力
+                echo 'false';
             }else{
                 echo 'true';
             }
@@ -54,10 +55,67 @@
                 echo 'true';
             }
             break;
+        case 'orderRequest':
+            if($_SERVER["REQUEST_METHOD"] != "POST") {
+                // 404
+            }
+
+            // 在庫確認・予約処理
+            $result = orderReserve(
+                Array(
+                    'pickup_now' => $request['pickup_now'],
+                    'pickup_time' => (isset($request['pickup_time']))? $request['pickup_time']: '00:00'
+                ),
+                $request['fingerPrint']
+            );
+
+            echo json_encode($result, JSON_UNESCAPED_UNICODE);
+            exit;
+
+            break;
         case 'qr-code':
-            require_once(ROOT_PATH.'\public\api\0.gif');
+
+            // QRコード画像があるかチェック
+            $token = $_GET['token'];
+            $qr_value = "https://".DOMAIN."/detail/${token}/";
+            $path = ROOT_PATH . "/tmp/qr/${token}.png";
+            
+            if (!file_exists($path)) {
+                qrCodeGen($qr_value, $path);
+            }
+
+            // 出力
+            header('Content-Type: image/png');
+            readfile($path);
+            exit;
             break;
         // webPush通知の登録
         case 'notice-subscription':
+            if($_SERVER["REQUEST_METHOD"] != "POST") {
+                // 404
+            }
+
+            $result = noticeSubscribe($request);
+
+            if ($result == true) {
+                echo 'true';
+            }else{
+                echo 'false';
+            }
+
+            break;
+        // セッションのリセット
+        case 'session':
+            $_SESSION = Array();
+            setcookie('SESS_TOKEN', '', time() - 1000, '/', DOMAIN, true, true);
+            break;
+        // デバック
+        case 'debug':
+            var_dump(orderReserve(Array('pickup_now' => true)));
+            //
+            break;
+
+        default:
+            // 404
             break;
     }
