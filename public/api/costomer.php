@@ -108,7 +108,7 @@
         case 'session':
             $_SESSION = Array();
             setcookie('SESS_TOKEN', '', time() - 1000, '/', DOMAIN, true, true);
-        
+            break;
         // デバック
         case 'debug':
             var_dump(orderReserve(Array('pickup_now' => true)));

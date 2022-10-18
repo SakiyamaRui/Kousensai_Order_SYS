@@ -135,6 +135,7 @@
                         if (xhr.status >= 200 && xhr.status < 400) {
                             // リクエストが正常に完了
                             let responceText = JSON.parse(xhr.responseText);
+                            console.log(responceText);
 
                             // 在庫不足の確認
                             if (responceText['result'] == true) {

@@ -69,8 +69,12 @@
             $sql -> bindValue(":unit_price${key}", $price[$val['product_id']]['product_price'], PDO::PARAM_INT);
         }
 
-        $sql -> execute();
-
+        try {
+            $sql -> execute();
+        }catch (PDOException $e) {
+            echo $e;
+            $DB -> rollback();
+        }
         // 合計の値段を取得
         $total = 0;
         foreach ($order_request_list as $value) {
@@ -98,7 +102,16 @@
         $sql -> bindValue(':total', $total, PDO::PARAM_INT);
         $sql -> bindValue(':session_token', $_SESSION['token'], PDO::PARAM_STR);
         $sql -> bindValue(':token', $id['token'], PDO::PARAM_STR);
-        $result = $sql ->execute();
+        try {
+            $result = $sql ->execute();
+        }catch (PDOException $e) {
+            echo $e;
+            $DB -> rollback();
+
+            return false;
+        }
+
+        $DB -> commit();
 
         unset($DB);
         if ($result == true) {

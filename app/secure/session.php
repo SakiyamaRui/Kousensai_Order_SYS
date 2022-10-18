@@ -36,10 +36,6 @@
             self::start();
             $request = json_decode(file_get_contents('php://input'), 1);
 
-            if (isset($_SESSION['token'])) {
-                return $_SESSION['token'];
-            }
-
             // Cookieの中から取得
             if (isset($_COOKIE['SESS_TOKEN'])) {
                 $_SESSION['token'] = $_COOKIE['SESS_TOKEN'];
@@ -47,37 +43,37 @@
             }
 
             // 転送してフィンガープリントから値を取得
-            if ($request != null) {
-                if (!isset($request['fingerprint'])) return null;
-                if ($request['fingerprint'] != '') {
-                    if ($DB == null) {
-                        $DB = DB_Connect();
-                        $DB_flag = true;
-                    }
+            // if ($request != null) {
+            //     if (!isset($request['fingerprint'])) return null;
+            //     if ($request['fingerprint'] != '') {
+            //         if ($DB == null) {
+            //             $DB = DB_Connect();
+            //             $DB_flag = true;
+            //         }
 
-                    $sql = "SELECT
-                                `session_token`
-                            FROM
-                                `T_NOTICE_DATA`
-                            WHERE
-                                `fingerprint` = :fingerprint";
-                    $sql = $DB -> prepare($sql);
-                    $sql -> bindValue(':fingerprint', $request['fingerprint'], PDO::PARAM_STR);
+            //         $sql = "SELECT
+            //                     `session_token`
+            //                 FROM
+            //                     `T_NOTICE_DATA`
+            //                 WHERE
+            //                     `fingerprint` = :fingerprint";
+            //         $sql = $DB -> prepare($sql);
+            //         $sql -> bindValue(':fingerprint', $request['fingerprint'], PDO::PARAM_STR);
 
-                    $sql -> execute();
-                    $result = $sql -> fetch(PDO::FETCH_ASSOC);
-                    if ($result != false) {
-                        $_SESSION['token'] = $result['session_token'];
-                        setcookie('SESS_TOKEN', $_SESSION['token'], time() + 60 * 60 * 48, '/', DOMAIN, true, true);
+            //         $sql -> execute();
+            //         $result = $sql -> fetch(PDO::FETCH_ASSOC);
+            //         if ($result != false) {
+            //             $_SESSION['token'] = $result['session_token'];
+            //             setcookie('SESS_TOKEN', $_SESSION['token'], time() + 60 * 60 * 48, '/', DOMAIN, true, true);
                         
-                        if ($DB_flag) {
-                            unset($DB);
-                        }
+            //             if ($DB_flag) {
+            //                 unset($DB);
+            //             }
 
-                        return $_SESSION['token'];
-                    }
-                }
-            }
+            //             return $_SESSION['token'];
+            //         }
+            //     }
+            // }
 
             // 新しいセッションの開始
             if ($DB == null) {

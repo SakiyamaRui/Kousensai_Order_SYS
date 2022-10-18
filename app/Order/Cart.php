@@ -4,10 +4,10 @@
 
     // 関数定義
     function add_cart($data){                       //カートに商品を追加する関数
-        $token_id = session::token_start();
         $DB = DB_Connect();                         //DBと接続
+        $token_id = session::token_start($DB);
 
-        if ($token_id == false) return false; 
+        if ($token_id == false) return false;
 
         // セッション内にカート情報があるか確認
         if (!isset($_SESSION['cart'])) 

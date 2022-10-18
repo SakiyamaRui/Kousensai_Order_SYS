@@ -15,12 +15,15 @@
             $sql = "UPDATE
                         `T_NOTICE_DATA`
                     SET
-                        `end_point`,
-                        `public_key`,
-                        `auth_token`
+                        `end_point` = :end_point,
+                        `public_key` = :public_key,
+                        `auth_token` = :auth_token
                     WHERE
                         `session_token` = :session_token";
             $sql = $DB -> prepare($sql);
+            $sql -> bindValue(':end_point', $data['endpoint'], PDO::PARAM_STR);
+            $sql -> bindValue(':public_key', $data['userPublicKey'], PDO::PARAM_STR);
+            $sql -> bindValue(':auth_token', $data['userAuthToken'], PDO::PARAM_STR);
             $sql -> bindValue(':session_token', $_COOKIE['LOGIN_SESS'], PDO::PARAM_STR);
             $sql -> execute();
             return true;

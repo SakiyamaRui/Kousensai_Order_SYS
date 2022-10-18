@@ -21,6 +21,10 @@
         $order_id_list = Array();
         $option_key_id = Array();
         foreach($requestList as $item) {
+            if (!isset($options_list[$item['product_id']])) {
+                continue;
+            }
+
             $product_info = $options_list[$item['product_id']];
 
             foreach($product_info as $option_name => $value) {
@@ -39,9 +43,7 @@
             }
         }
 
-        if ($isLock == true && $DB_Flag == false) {
-            $DB -> beginTransaction();
-        }
+        $DB -> beginTransaction();
 
         try{
             $stock_p = getStock_data_product($getRequestDataList, ($isLock == true && $DB_Flag == false)? true: false, $DB);
@@ -49,6 +51,7 @@
             $product_name_list = getProductName($getRequestDataList, $DB);
         }catch (PDOException $e) {
             $DB -> rollback();
+            throw $e;
         }
 
         // 在庫数の確認
@@ -147,6 +150,10 @@
     }
 
     function getStock_data_option($option_id_list, $isLock, $DB) {
+        if (count($option_id_list) == 0) {
+            return Array();
+        }
+
         $inClause = substr(str_repeat(',?', count($option_id_list)), 1);
         $sql = "SELECT
                     `option_id`,
@@ -170,6 +177,10 @@
     }
 
     function getStock_data_product($product_id_list, $isLock, $DB) {
+        if (count($product_id_list) == 0) {
+            return Array();
+        }
+
         $inClause = substr(str_repeat(',?', count($product_id_list)), 1);
         $sql = "SELECT
                     `product_id`,
