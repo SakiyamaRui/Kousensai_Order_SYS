@@ -258,6 +258,153 @@
             }
             exit;
             break;
+        // 在庫状況の取得
+        case 'stock':
+            // 在庫一覧を取得する
+            session::start();
+            $DB = DB_Connect();
+
+            if (isset($_SESSION['store_id'])) {
+                // 商品一覧を取得する
+                switch ($_SESSION['store_id']) {
+                    case '会計局':
+                    case '会計':
+                    case 'root':
+                    case '管理':
+                    case '管理者':
+                        $sql = "SELECT
+                                    `product_id`,
+                                    `product_name`
+                                FROM
+                                    `T_PRODUCT_INFORMATION`
+                                WHERE
+                                    `orderable_flag` = 1";
+                        $sql = $DB -> prepare($sql);
+                        $sql -> execute();
+                        $record = $sql -> fetchAll(PDO::FETCH_ASSOC);
+                        
+                        $product_id_list = array_column($record, 'product_id');
+                        break;
+                    default:
+                        $sql = "SELECT
+                                    `product_id`,
+                                    `product_name`
+                                FROM
+                                    `T_PRODUCT_INFORMATION`
+                                WHERE
+                                    `orderable_flag` = 1 AND
+                                    `store_id` = :store_id";
+                        $sql = $DB -> prepare($sql);
+                        $sql -> bindValue(':store_id', $_SESSION['store_id'], PDO::PARAM_STR);
+                        $sql -> execute();
+                        $record = $sql -> fetchAll(PDO::FETCH_ASSOC);
+
+                        $product_id_list = array_column($record, 'product_id');
+                        break;
+                }
+            }else{
+                $sql = "SELECT
+                            `product_id`
+                        FROM
+                            `T_PRODUCT_INFORMATION`,
+                            `product_name`
+                        WHERE
+                            `orderable_flag` = 1";
+                $sql = $DB -> prepare($sql);
+                $sql -> execute();
+                $record = $sql -> fetchAll(PDO::FETCH_ASSOC);
+                
+                $product_id_list = array_column($record, 'product_id');
+            }
+
+            // IDリストから在庫を取得
+            $products_stock = getStock_data_product($product_id_list, false, $DB);
+            $product_options = getOptionData($product_id_list);
+            
+            //オプションの情報
+            $option_id_list = Array();
+            $option_data_link = Array();
+            // var_dump($product_options);
+
+            // IDと参照データのフォーマット
+            foreach ($product_options as $product_id => $val) {
+                $option_data_link[$product_id] = Array();
+
+                foreach ($val as $option_name => $opt_val) {
+                    if (!isset($_SESSION['store_id']) && $opt_val['public'] == false) {
+                        continue;
+                    }
+                    $option_data_link[$product_id][$option_name] = Array();
+
+                    foreach ($opt_val['option_values'] as $value) {
+                        $option_data_link[$product_id][$option_name][$value['value']] = $value['option_id'];
+                        array_push($option_id_list, $value['option_id']);
+                    }
+                }
+            }
+
+            $options_stock = getStock_data_option($option_id_list, false, $DB);
+            // データの作成
+            $return_data = Array();
+
+            foreach($product_id_list as $product_id) {
+                $return_data[$product_id] = Array();
+                $p_data = &$return_data[$product_id];
+
+                // 商品名の検索
+                $product_index = array_search($product_id, $product_id_list);
+                $p_data['product_name'] = $record[$product_index]['product_name'];
+
+                // 商品の検索
+                $p_i = array_search($product_id, array_column($products_stock, 'product_id'));
+                if ($p_i != false) {
+                    $p_stock = $products_stock[$p_i]['current_stock'];
+
+                    $p_data['stock'] = $p_stock;
+                }
+
+                // オプション
+                if (!array_key_exists($product_id, $option_data_link)) {
+                    unset($p_data);
+                    continue;
+                }
+
+                $p_data['option'] = Array();
+                $sum = 0;
+                
+                // オプションのデータを取得
+                foreach($option_data_link[$product_id] as $option_name => $option_v) {
+                    $p_data['option'][$option_name] = Array();
+
+                    foreach($option_v as $option_value => $option_id) {
+                        $opt_i = array_search($option_id, array_column($options_stock, 'option_id'));
+                        if ($opt_i == false) {
+                            $p_data['option'][$option_name][$option_value] = Array('stock' => '--');
+                            continue;
+                        }
+
+                        $p_data['option'][$option_name][$option_value] = Array(
+                            'stock' => $options_stock[$opt_i]['current_stock'],
+                            'option_id' => $option_id
+                        );
+                        $sum += ($options_stock[$opt_i]['current_stock'] == -1)? 0: $options_stock[$opt_i]['current_stock'];
+                    }
+                }
+
+                if (array_key_exists('stock', $p_data)) {
+                    if ($p_data['stock'] == -1) {
+                        $p_data['stock'] = $sum;
+                    }
+                }else{
+                    $p_data['stock'] = $sum;
+                }
+
+                unset($p_data);
+            }
+
+            echo json_encode($return_data);
+            exit;
+            break;
         case 'practice':
             echo 'Hello World!';
             break;

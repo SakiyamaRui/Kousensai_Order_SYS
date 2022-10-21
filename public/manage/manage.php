@@ -65,7 +65,13 @@
 
             require_once(ROOT_PATH.'/template/store/order_list.html');
             break;
+        case 'stock':
+            // ログインの確認
+            autoLogin();
+            session::start();
 
+            require_once(ROOT_PATH.'/template/store/stock_list.html');
+            break;
         case 'reader':
             // ログイン確認
             autoLogin();
