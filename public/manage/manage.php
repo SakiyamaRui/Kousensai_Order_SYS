@@ -5,6 +5,22 @@
     $request = explode('/', $matches[1]);
 
     switch ($request[0]) {
+        case '':
+            autoLogin();
+            session::start();
+
+            switch ($_SESSION['store_id']) {
+                case '会計局':
+                    require_once(ROOT_PATH.'/template/store/menu-payment.html');
+                    break;
+
+                //
+                default:
+                    require_once(ROOT_PATH.'/template/store/menu-store.html');
+                    break;
+            }
+            exit;
+            break;
         case 'login':
             require_once(ROOT_PATH .'/template/store/login.html');
             break;

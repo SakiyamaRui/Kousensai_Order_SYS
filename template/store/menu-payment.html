@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>会計 | メニュー</title>
+    <link rel="stylesheet" href="/css/store.css">
+
+    <?php include(ROOT_PATH.'/template/fonts.html'); ?>
+
+</head>
+<body class="menu-page">
+    <!-- ヘッダー -->
+    <?php include(ROOT_PATH.'/template/store/header.html'); ?>
+
+    <!-- メニュー一覧 -->
+    <div class="main-menu">
+        <div class="label">
+            メニュー一覧
+        </div>
+        <div class="list">
+            <div class="column">
+                <a href="/manage/reader/">
+                    会計処理
+                </a>
+            </div>
+            <div class="column">
+                <a href="/manage/stock/">
+                    在庫確認
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
