@@ -41,5 +41,5 @@
     require_once(ROOT_PATH.'/app/qr-code/qr-code.php');
     require_once(ROOT_PATH.'/app/Push/web-push.php');
     require_once(ROOT_PATH.'/app/Push/customer_push.php');
-    // require_once(ROOT_PATH.'/app/server.php');
+    require_once(ROOT_PATH.'/app/server.php');
 

@@ -10,13 +10,13 @@
         }
 
         // cookie内にトークンがあるかを確認する
-        if (isset($_COOKIE['store_login_session'])) {
+        if (isset($_COOKIE['LOGIN_SESS'])) {
             // データベースで検索して復元
             $DB = $DB = DB_Connect();
             $sql ="SELECT * FROM `T_STORE_TERMINAL_SESSION` WHERE `login_session_id` = :login_session_id";
             $sql = $DB -> prepare($sql);
 
-            $sql -> bindValue(':login_session_id', $_COOKIE['store_login_session'], PDO::PARAM_STR);
+            $sql -> bindValue(':login_session_id', $_COOKIE['LOGIN_SESS'], PDO::PARAM_STR);
             $sql -> execute();
 
             $result = $sql -> fetch();
@@ -72,6 +72,8 @@
         }
 
         unset($DB);
+
+        unset($_SESSION['return_to']);
 
         return Array(
             'store_id' => $result['store_id'],
