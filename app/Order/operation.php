@@ -77,8 +77,6 @@
             }
         }
 
-        var_dump($id_list);
-
         // 演算
         $total_by_product = Array();
         $total_by_store = Array();
@@ -115,8 +113,6 @@
 
             $price *= $order_item['quantity'];
 
-            echo "商品名: ".$order_item['product_name']." 個数: ".$order_item['quantity']." 値段: ".$price.PHP_EOL;
-
             $total += $price;
             $total_by_product[$order_item['product_name']] += $price;
             $total_by_store[$store_n] += $price;
@@ -127,7 +123,7 @@
             $report['isTotalMatch'] = false;
             $report['2ndTotalData'] = $total;
         }else{
-            $report['isTotalMatch'] = false;
+            $report['isTotalMatch'] = true;
         }
         
         // レポートにデータの追加

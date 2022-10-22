@@ -357,10 +357,10 @@
 
                 // 商品の検索
                 $p_i = array_search($product_id, array_column($products_stock, 'product_id'));
-                if ($p_i != false) {
+                if ($p_i !== false) {
                     $p_stock = $products_stock[$p_i]['current_stock'];
 
-                    $p_data['stock'] = $p_stock;
+                    $p_data['stock'] = (int)$p_stock;
                 }
 
                 // オプション
@@ -410,7 +410,9 @@
             break;
         // 
         case 'sales':
+            $DB = DB_Connect();
             $data = salesCalculation($DB);
+            header('Content-Type: application/json');
             echo json_encode($data, JSON_UNESCAPED_UNICODE);
             break;
     }
