@@ -79,6 +79,8 @@
                     if ($isLock == true && $DB_Flag == false) {
                         $product[$val['product_id']] = $product_stock - $val['quantity'];
                     }
+
+                    $stock_p[$index]['current_stock'] = $product_stock - $val['quantity'];
                 }
             }
 
@@ -102,6 +104,7 @@
                         if ($isLock == true && $DB_Flag == false) {
                             $options[$option_id] = ($option_stock - $val['quantity'] == INF)? -1: $option_stock - $val['quantity'];
                         }
+                        $stock_o[$index]['current_stock'] = ($option_stock - $val['quantity'] == INF)? -1: $option_stock - $val['quantity'];
                     }
                 }
             }
@@ -110,6 +113,10 @@
 
         if ($DB_Flag) {
             unset($DB);
+        }
+
+        if ($isAllCorrect == false) {
+            return $inventoryShortage;
         }
 
         // ロックされている場合は、在庫を減らす
