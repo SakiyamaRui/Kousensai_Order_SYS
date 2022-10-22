@@ -67,7 +67,7 @@
             // 全体の在庫があるかを確認
             $index = array_search($val['product_id'], array_column($stock_p, 'product_id'));
             if ($index !== false) {
-                $product_stock = $stock_p[$index]['current_stock'];
+                $product_stock = ($stock_p[$index]['current_stock'] == -1)? INF: $stock_p[$index]['current_stock'];
 
                 if (($product_stock - $val['quantity']) < 0) {
                     // 在庫切れ
@@ -77,10 +77,10 @@
                     continue;
                 }else{
                     if ($isLock == true && $DB_Flag == false) {
-                        $product[$val['product_id']] = $product_stock - $val['quantity'];
+                        $product[$val['product_id']] = ($product_stock == INF)? -1: $product_stock - $val['quantity'];
                     }
 
-                    $stock_p[$index]['current_stock'] = $product_stock - $val['quantity'];
+                    $stock_p[$index]['current_stock'] = ($product_stock == INF)? -1: $product_stock - $val['quantity'];
                 }
             }
 
