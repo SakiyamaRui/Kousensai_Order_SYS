@@ -73,6 +73,18 @@ function getAllProductIndexList() {
     return $return_data;
 }
 
+function getStoreName($store_id_list, $DB) {
+    $inClause = substr(str_repeat(',?', count($store_id_list)), 1);
+    $sql = "SELECT `store_id`, `store_name` FROM `T_STORE_INFORMATION` WHERE `store_id` IN(%s)";
+    $sql = $DB -> prepare(sprintf($sql, $inClause));
+    $sql -> execute(array_values($store_id_list));
+
+    //store_idでデータを取得できるようにした
+    $store_name_list = $sql -> fetchAll(PDO::FETCH_ASSOC);
+    $store_name_list = array_column($store_name_list, NULL, 'store_id');
+
+    return $store_name_list;
+}
 
 // Optionデータの取得
 function getOptionData($id_list, $type = 0, $DB = null) {

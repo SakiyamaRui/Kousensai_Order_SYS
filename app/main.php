@@ -34,6 +34,7 @@
     require_once(ROOT_PATH.'/app/Order/order-request.php');
     require_once(ROOT_PATH.'/app/Order/pull-order.php');
     require_once(ROOT_PATH.'/app/Order/shop_order.php');
+    require_once(ROOT_PATH.'/app/Order/operation.php');
     require_once(ROOT_PATH.'/app/PRODUCT/stock_check.php');
     require_once(ROOT_PATH.'/app/notice/notice-settings.php');
     require_once(ROOT_PATH.'/app/notice/notice-subscribe.php');

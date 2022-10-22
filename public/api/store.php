@@ -408,4 +408,9 @@
         case 'practice':
             echo 'Hello World!';
             break;
+        // 
+        case 'sales':
+            $data = salesCalculation($DB);
+            echo json_encode($data, JSON_UNESCAPED_UNICODE);
+            break;
     }
