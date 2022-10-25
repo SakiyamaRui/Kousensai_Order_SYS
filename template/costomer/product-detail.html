@@ -36,6 +36,12 @@
                 </div>
             </div>
         </div>
+        <div class="stock">
+            <div class="label">
+                在庫状況
+            </div>
+            <div class="list"></div>
+        </div>
         <div class="option">
             <div class="label">
                 オプション
@@ -102,6 +108,35 @@
         //
         let option_prices = {};
         let option_select = {};
+
+        // 在庫状況の取得
+        let matchs = location.href.match(/\/menu\/product\/([0-9]{5})/);
+        if (matchs != null) {
+            let product_id = matchs[1];
+            
+            // 在庫状況をリクエスト
+            let xhr = new XMLHttpRequest();
+            xhr.open('GET', `/api/store.php?mode=stock&product_id=${product_id}`);
+            xhr.send();
+
+            xhr.onreadystatechange = () => {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status >= 200 && xhr.status < 400) {
+                        try {
+                            let stock = JSON.parse(xhr.responseText);
+
+                            // DOMを生成
+                            let column_dom = columnDOM(stock, product_id);
+                            let appned_plc = document.querySelector('.stock .list');
+                            appned_plc.appendChild(column_dom);
+                        }catch (e) {
+                            console.log(e);
+                            alert('在庫状況の取得に失敗しました');
+                        }
+                    }
+                }
+            }
+        }
 
         window.addEventListener('DOMContentLoaded', () => {
             // 商品情報を取得
@@ -237,6 +272,73 @@
             }
 
             return sum * quantity;
+        }
+
+        function columnDOM(data, product_id) {
+            let parent = document.createElement('div');
+            parent.setAttribute('class', 'column');
+            parent.setAttribute('product_id', product_id);
+
+            let product_name = document.createElement('div');
+            product_name.setAttribute('class', 'product_name');
+            product_name.appendChild(document.createTextNode(data[product_id]['product_name']));
+
+            let stock = document.createElement('div');
+            stock.setAttribute('class', 'stock');
+            stock.appendChild(document.createTextNode(data[product_id]['stock']));
+
+            parent.appendChild(product_name);
+            parent.appendChild(stock);
+
+            if ('option' in data[product_id]) {
+                let option = document.createElement('div');
+                option.setAttribute('class', 'option');
+
+                for (let option_name in data[product_id]['option']) {
+                    let op_column = document.createElement('div');
+                    op_column.setAttribute('class', 'op-column');
+
+                    let opt_name = document.createElement('div');
+                    opt_name.setAttribute('class', 'option_name');
+                    opt_name.appendChild(document.createTextNode(option_name));
+
+                    let option_values = document.createElement('div');
+                    option_values.setAttribute('class', 'values');
+                    
+                    for (let value in data[product_id]['option'][option_name]) {
+                        if (data[product_id]['option'][option_name][value]['stock'] == -1 || data[product_id]['option'][option_name][value]['stock'] == '--') {
+                            continue;
+                        }
+
+                        let opv_col = document.createElement('div');
+                        opv_col.setAttribute('class', 'opv-column');
+                        opv_col.setAttribute('option_id', data[product_id]['option'][option_name][value]['option_id']);
+
+                        let option_value = document.createElement('div');
+                        option_value.setAttribute('class', 'option_value');
+                        option_value.appendChild(document.createTextNode(value));
+
+                        let op_stock = document.createElement('div');
+                        op_stock.setAttribute('class', 'op-stock');
+                        op_stock.appendChild(document.createTextNode(data[product_id]['option'][option_name][value]['stock']));
+                        
+                        opv_col.appendChild(option_value);
+                        opv_col.appendChild(op_stock);
+                        option_values.appendChild(opv_col);
+                    }
+
+                    op_column.appendChild(opt_name);
+                    op_column.appendChild(option_values);
+
+                    if (option_values.children.length > 0) {
+                        option.appendChild(op_column);
+                    }
+                }
+
+                parent.appendChild(option);
+            }
+
+            return parent;
         }
     }());
 </script>

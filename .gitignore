@@ -1,4 +1,6 @@
 config/DB.ini
 config/config.ini
+config/push.ini
+config/status.ini
 tmp/
 public/order/

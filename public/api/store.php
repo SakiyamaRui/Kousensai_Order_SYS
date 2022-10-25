@@ -303,17 +303,30 @@
                         break;
                 }
             }else{
-                $sql = "SELECT
-                            `product_id`
-                        FROM
-                            `T_PRODUCT_INFORMATION`,
-                            `product_name`
-                        WHERE
-                            `orderable_flag` = 1";
-                $sql = $DB -> prepare($sql);
-                $sql -> execute();
-                $record = $sql -> fetchAll(PDO::FETCH_ASSOC);
-                
+                if (!isset($_GET['product_id'])) {
+                    $sql = "SELECT
+                                `product_id`,
+                                `product_name`
+                            FROM
+                                `T_PRODUCT_INFORMATION`
+                            WHERE
+                                `orderable_flag` = 1";
+                    $sql = $DB -> prepare($sql);
+                    $sql -> execute();
+                }else{
+                    $sql = "SELECT
+                                `product_id`,
+                                `product_name`
+                            FROM
+                                `T_PRODUCT_INFORMATION`
+                            WHERE
+                                `product_id` = :product_id";
+                    $sql = $DB -> prepare($sql);
+                    $sql -> bindValue(':product_id', $_GET['product_id'], PDO::PARAM_STR);
+                    $sql -> execute();
+                }
+
+                $record = $sql -> fetchAll(PDO::FETCH_ASSOC);    
                 $product_id_list = array_column($record, 'product_id');
             }
 
@@ -331,9 +344,10 @@
                 $option_data_link[$product_id] = Array();
 
                 foreach ($val as $option_name => $opt_val) {
-                    if (!isset($_SESSION['store_id']) && $opt_val['public'] == false) {
+                    if (!isset($_SESSION['store_id']) && $opt_val['isPublic'] == false) {
                         continue;
                     }
+
                     $option_data_link[$product_id][$option_name] = Array();
 
                     foreach ($opt_val['option_values'] as $value) {
