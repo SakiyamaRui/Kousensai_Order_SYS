@@ -58,6 +58,12 @@
             goto private_skip;
         }
 
+        // 管理者ページへのアクセスは起動を許容
+        preg_match('/\/(manage|api)/', $_SERVER['REQUEST_URI'], $matches, PREG_UNMATCHED_AS_NULL);
+        if ($matchs != null) {
+            goto private_skip;
+        }
+
         // 非公開モードの場合
         switch (RUN_CONFIG['private_mode']) {
             case 'before':
