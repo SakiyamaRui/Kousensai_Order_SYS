@@ -4,3 +4,4 @@ config/push.ini
 config/status.ini
 tmp/
 public/order/
+session/

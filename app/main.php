@@ -60,7 +60,7 @@
 
         // 管理者ページへのアクセスは起動を許容
         preg_match('/\/(manage|api)/', $_SERVER['REQUEST_URI'], $matches, PREG_UNMATCHED_AS_NULL);
-        if ($matchs != null) {
+        if ($matches != null) {
             goto private_skip;
         }
 
