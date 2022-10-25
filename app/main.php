@@ -41,7 +41,7 @@
     require_once(ROOT_PATH.'/app/qr-code/qr-code.php');
     require_once(ROOT_PATH.'/app/Push/web-push.php');
     require_once(ROOT_PATH.'/app/Push/customer_push.php');
-    // require_once(ROOT_PATH.'/app/server.php');
+    require_once(ROOT_PATH.'/app/server.php');
 
     // 公開・非公開モードの設定
     define('RUN_CONFIG', parse_ini_file(ROOT_PATH.'/config/status.ini', false));

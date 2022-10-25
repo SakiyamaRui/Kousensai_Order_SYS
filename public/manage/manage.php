@@ -24,6 +24,28 @@
         case 'login':
             require_once(ROOT_PATH .'/template/store/login.html');
             break;
+        case 'logout':
+            session::start();
+            unset($_SESSION['store_id']);
+            unset($_SESSION['account_id']);
+            unset($_SESSION['account_name']);
+
+            if (isset($_COOKIE['LOGIN_SESS'])) {
+                $sql = "UPDATE
+                        `T_STORE_TERMINAL_SESSION`
+                    SET
+                        `deleted` = 1
+                    WHERE
+                        `session_token` = :session_token";
+                $DB = DB_Connect();
+                $sql = $DB -> prepare($sql);
+
+                $sql -> bindValue(':session_token', $_COOKIE['LOGIN_SESS'], PDO::PARAM_STR);
+                $sql -> execute();
+            }
+
+            header('Location: https://kousensai.apori.jp/manage/');
+            break;
 
         case 'item':
             $type = '登録';
