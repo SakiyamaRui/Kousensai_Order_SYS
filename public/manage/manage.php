@@ -25,6 +25,7 @@
             require_once(ROOT_PATH .'/template/store/login.html');
             break;
         case 'logout':
+            session::start();
             unset($_SESSION['store_id']);
             unset($_SESSION['account_id']);
             unset($_SESSION['account_name']);
