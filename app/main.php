@@ -43,3 +43,39 @@
     require_once(ROOT_PATH.'/app/Push/customer_push.php');
     // require_once(ROOT_PATH.'/app/server.php');
 
+    // 公開・非公開モードの設定
+    define('RUN_CONFIG', parse_ini_file(ROOT_PATH.'/config/status.ini', false));
+
+    if (RUN_CONFIG['runnning_mode'] == 'private') {
+        // httpサーバーとして起動していない場合は無視
+        if (!isset($_SERVER['SERVER_NAME'])) {
+            goto private_skip;
+        }
+
+        // 管理者としてログインしている場合は起動を許容
+        session::start();
+        if (isset($_SESSION['store_id'])) {
+            goto private_skip;
+        }
+
+        // 非公開モードの場合
+        switch (RUN_CONFIG['private_mode']) {
+            case 'before':
+                require_once(ROOT_PATH .'/template/other/private_before.html');
+                exit;
+                break;
+            case 'after':
+                // トップページ、API、注文詳細のページは表示する
+                preg_match('/\/(order|api|detail)/', $_SERVER['REQUEST_URI'], $matches, PREG_UNMATCHED_AS_NULL);
+                
+                if ($matches != null) {
+                    goto private_skip;
+                }
+
+                require_once(ROOT_PATH .'/template/other/private_after.html');
+                exit;
+                break;
+        }
+    }
+
+    private_skip:
