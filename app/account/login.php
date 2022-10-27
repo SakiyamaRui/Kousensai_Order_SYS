@@ -21,6 +21,7 @@
 
             $result = $sql -> fetch();
 
+            unset($DB);
             if ($result == true) {
                 $_SESSION['store_id'] = $result['store_id'];
                 return true;
@@ -51,13 +52,15 @@
                     FROM
                         `T_STORE_TERMINAL_SESSION`
                     WHERE
-                        `login_session_id` = :login_session_id";
+                        `session_token` = :login_session_id";
             $sql = $DB -> prepare($sql);
 
             $sql -> bindValue(':login_session_id', $_COOKIE['LOGIN_SESS'], PDO::PARAM_STR);
             $sql -> execute();
 
             $result = $sql -> fetch();
+
+            unset($DB);
 
             if ($result == true) {
                 $_SESSION['store_id'] = $result['store_id'];
@@ -72,7 +75,7 @@
      * @param string $password
      */
     function storeLogin($username, $password) {
-        $DB = $DB = DB_Connect();
+        $DB = DB_Connect();
 
         $sql = "SELECT * FROM `T_STORE_ACCOUNT` WHERE `account_name` = :account_name;";
 
@@ -101,6 +104,8 @@
         if ($passCheck == false) {
             return false;
         }
+
+        session_genarate($DB, $result['store_id']);
 
         unset($DB);
 

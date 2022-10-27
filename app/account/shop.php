@@ -8,9 +8,9 @@
     }
 
     function pushSet($data, $DB) {
-        if ($_COOKIE['LOGIN_SESS']) {
+        if (isset($_COOKIE['LOGIN_SESS'])) {
             // データのアップデート
-            setcookie('LOGIN_SESS', $_COOKIE['LOGIN_SESS'], time() + 60*60*7, '/', 'kousensai.apori.jp', true, true);
+            setcookie('LOGIN_SESS', $_COOKIE['LOGIN_SESS'], time() + 60*60*7, '/', DOMAIN, true, true);
 
             $sql = "UPDATE
                         `T_NOTICE_DATA`
@@ -28,9 +28,10 @@
             $sql -> execute();
             return true;
         }
+
         // 新しいセッションの作成
         $new_id = session::newToken($DB);
-        setcookie('LOGIN_SESS', $new_id, time() + 60*60*7, '/', 'kousensai.apori.jp', true, true);
+        setcookie('LOGIN_SESS', $new_id, time() + 60*60*7, '/', DOMAIN, true, true);
 
         $sql = "INSERT INTO `T_NOTICE_DATA` (
                     `session_token`,
@@ -60,6 +61,33 @@
         $sql -> bindValue(':public_key', $data['userPublicKey'], PDO::PARAM_STR);
         $sql -> bindValue(':auth_token', $data['userAuthToken'], PDO::PARAM_STR);
         $sql -> bindValue(':store_id', $_SESSION['store_id'], PDO::PARAM_STR);
+
+        return $sql -> execute();
+    }
+
+    function session_genarate($DB, $store_id) {
+        $new_id = session::newToken($DB);
+        setcookie('LOGIN_SESS', $new_id, time() + 60*60*7, '/', DOMAIN, true, true);
+
+        $sql = "INSERT INTO `T_NOTICE_DATA` (
+                    `session_token`
+                )
+                VALUES (
+                    :sess_token
+                );
+                INSERT INTO `T_STORE_TERMINAL_SESSION` (
+                    `session_token`,
+                    `store_id`,
+                    `deleted`
+                )
+                VALUES (
+                    :sess_token,
+                    :store_id,
+                    0
+                );";
+        $sql = $DB -> prepare($sql);
+        $sql -> bindValue(':sess_token', $new_id, PDO::PARAM_STR);
+        $sql -> bindValue(':store_id', $store_id, PDO::PARAM_STR);
 
         return $sql -> execute();
     }
