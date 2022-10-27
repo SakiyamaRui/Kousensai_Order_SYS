@@ -12,6 +12,7 @@
      */
     define('ROOT_PATH', dirname(__DIR__));
     define('DOMAIN', (isset($_SERVER['SERVER_NAME']))? $_SERVER['SERVER_NAME']: '');
+    define('CSS_VERSION', '202210271603');
 
 
     /**
@@ -85,3 +86,8 @@
     }
 
     private_skip:
+
+    function return404() {
+        header("HTTP/1.1 404 Not Found");
+        exit;
+    }

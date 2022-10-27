@@ -57,7 +57,7 @@
             break;
         case 'orderRequest':
             if($_SERVER["REQUEST_METHOD"] != "POST") {
-                // 404
+                return404();
             }
 
             // 在庫確認・予約処理
@@ -92,7 +92,7 @@
         // webPush通知の登録
         case 'notice-subscription':
             if($_SERVER["REQUEST_METHOD"] != "POST") {
-                // 404
+                return404();
             }
 
             $result = noticeSubscribe($request);
@@ -114,8 +114,28 @@
             var_dump(orderReserve(Array('pickup_now' => true)));
             //
             break;
+        // 注文のキャンセル
+        case 'order-cancel':
+            if($_SERVER["REQUEST_METHOD"] != "POST") {
+                return404();
+            }
+
+            // キャンセル処理
+            $DB = DB_Connect();
+            $sql = "UPDATE
+                        `T_ORDER_INFORMATION_MAIN`
+                    SET
+                        `canceled` = 1
+                    WHERE
+                        `order_id` = :order_id";
+            $sql = $DB -> prepare($sql);
+            $sql -> bindValue(":order_id", $request['order_id'], PDO::PARAM_STR);
+            $result = $sql -> execute();
+
+            echo json_encode($result);
+            break;
 
         default:
-            // 404
+            return404();
             break;
     }

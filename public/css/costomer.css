@@ -896,6 +896,9 @@ body .order-detail .detail .content {
 body .order-detail .detail .content:first-of-type {
   margin-top: 0;
 }
+body .order-detail .detail .content.hide {
+  display: none;
+}
 body .order-detail .detail .content .label {
   font-size: 19px;
   font-family: "Noto Sans JP", sans-serif;

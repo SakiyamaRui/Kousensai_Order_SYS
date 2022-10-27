@@ -1057,6 +1057,10 @@ body {
                 &:first-of-type {
                     margin-top: 0;
                 }
+
+                &.hide {
+                    display: none;
+                }
     
                 .label {
                     font-size: 19px;

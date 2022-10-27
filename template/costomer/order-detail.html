@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>注文の詳細</title>
 
-    <link rel="stylesheet" href="/css/costomer.css">
+    <link rel="stylesheet" href="/css/costomer.css?<?php echo CSS_VERSION; ?>">
     <script src="/js/push-request.js"></script>
     <script src="/js/fingerPrint.js"></script>
     <!--Google Fonts-->
@@ -67,6 +67,19 @@
                     </div>
                 </div>
             </div>
+            <div class="content <?php echo $cancel_display; ?>" style="margin-bottom: 24px;">
+                <div class="label">
+                    注文のキャンセル
+                </div>
+                <div class="comment" style="font-size: 14px;">
+                    支払い前であれば、注文をキャンセルすることができます
+                </div>
+                <div class="notice-request">
+                    <button id="cancel-request-button" style="margin-top: 12px;">
+                        注文をキャンセル
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 </body>
@@ -76,6 +89,7 @@
         window.addEventListener('DOMContentLoaded', () => {
             try {
                 var btn = document.getElementById('notice-request-button');
+                var cancel_btn = document.getElementById('cancel-request-button');
 
                 var isSetting = false;
                 let notice_label = document.querySelector('.notice-request .status');
@@ -160,6 +174,41 @@
                 }).catch((err) => {
                     if (err == 'denied') {
                         alert('通知の受け取りが拒否になっています。\n通知の受信を許可してください。');
+                    }
+                });
+            });
+
+            cancel_btn.addEventListener('click', () => {
+                // 注文のキャンセルをリクエスト
+                return new Promise((resolve, reject) => {
+                    let order_id = document.querySelector('.order-id').textContent;
+                    let match = order_id.match(/注文番号: ([0-9]{5})/);
+                    if (match == null) {
+                        alert('キャンセルに失敗しました。\nお近くの係員に対応してもらってください。');
+                    }
+                    let data = {'order_id': match[1]};
+
+
+                    let xhr = new XMLHttpRequest();
+                    xhr.open('POST', '/api/costomer.php?mode=order-cancel');
+                    xhr.setRequestHeader("Content-Type", "application/json");
+                    xhr.send(JSON.stringify(data));
+
+                    xhr.onreadystatechange = () => {
+                        if (xhr.readyState === XMLHttpRequest.DONE) {
+                            if (xhr.status >= 200 && xhr.status < 400) {
+                                try {
+                                    let responceText = JSON.parse(xhr.responseText);
+
+                                    if (responceText == true) {
+                                        location.reload();
+                                        return true;
+                                    }
+                                }catch (e) {
+                                    alert('エラーが発生しました。\nお近くの係員に対応してもらってください。');
+                                }
+                            }
+                        }
                     }
                 });
             });

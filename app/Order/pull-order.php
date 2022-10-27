@@ -12,7 +12,8 @@
                     `token`,
                     `order_id`,
                     `confirmed_order_flag`,
-                    `order_time`
+                    `order_time`,
+                    `canceled`
                 FROM
                     `T_ORDER_INFORMATION_MAIN`
                 WHERE
@@ -43,6 +44,10 @@
                 $status = '注文確定済み';
 
                 $status = orderStatus($val['order_id'], $DB)['status'];
+            }
+
+            if ($val['canceled'] == 1) {
+                $status = 'キャンセル済';
             }
 
             array_push($order_list, Array(
