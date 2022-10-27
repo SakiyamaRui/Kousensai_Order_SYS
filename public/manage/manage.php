@@ -30,6 +30,8 @@
             unset($_SESSION['account_id']);
             unset($_SESSION['account_name']);
 
+            setcookie('LOGIN_SESS', '', 0, '/', DOMAIN, true, true);
+
             if (isset($_COOKIE['LOGIN_SESS'])) {
                 $sql = "UPDATE
                         `T_STORE_TERMINAL_SESSION`
