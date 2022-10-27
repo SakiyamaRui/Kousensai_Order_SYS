@@ -77,6 +77,10 @@
         $record = $sql -> fetchAll(PDO::FETCH_ASSOC);
 
         foreach ($record as $val) {
+            if ($val['end_point'] == null || $val['public_key'] == null || $val['auth_token'] == null) {
+                continue;
+            }
+
             pushNotice(Array(
                 'terminal' => Array(
                     'endPoint' => $val['end_point'],
