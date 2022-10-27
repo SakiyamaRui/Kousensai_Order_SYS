@@ -103,7 +103,7 @@
                 }
 
                 // 時間指定
-                let request_pickup_time = await pickUpTime();
+                // let request_pickup_time = await pickUpTime();
                 
                 // ローディングモーダルの表示
                 document.getElementById('loading').classList.remove('hidden');
@@ -119,8 +119,8 @@
 
                 let submit_data = {
                     'fingerPrint': fingerPrint,
-                    'pickup_now': (request_pickup_time == '今すぐ')? true: false,
-                    'pickup_time': (request_pickup_time == '今すぐ')? '00:00': request_pickup_time
+                    'pickup_now': false,
+                    'pickup_time': '00:00'
                 };
 
                 // xhr
