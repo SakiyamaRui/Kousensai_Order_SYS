@@ -16,7 +16,8 @@
                 `confirmed_order_flag`,
                 `session_token`,
                 `pickup_now`,
-                `pickup_time`
+                `pickup_time`,
+                `canceled`
             FROM
                 `T_ORDER_INFORMATION_MAIN`
             WHERE
@@ -58,9 +59,20 @@
         }
     }
 
+    $cancel_display = '';
+    if ($record['canceled'] == 1) {
+        $status = 'キャンセル';
+        $status_body = 'この注文はキャンセルされています。';
+        $cancel_display = 'hide';
+    }
+
+    if ($record['confirmed_order_flag'] == 1) {
+        $cancel_display = 'hide';
+    }
+
     // 受け取り希望時間
     if ($record['pickup_now'] == 0) {
-        $pickup_time = $record['pickup_time'];
+        $pickup_time = ($record['pickup_time'] == '00:00')? '未指定': $record['pickup_time'];
     }else{
         $pickup_time = '今すぐ';
     }
@@ -106,5 +118,8 @@
 
     // 合計金額
     $total = $record['order_total_price'];
+
+    // 注文の削除ボタン
+
 
     require_once(ROOT_PATH.'/template/costomer/order-detail.html');
