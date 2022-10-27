@@ -35,6 +35,37 @@
         header("Location: ".(empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST']."/manage/login/?return_to=${URL}");
     }
 
+    function storeAutoLogin() {
+        session::start();
+        // セッション内にIDがある場合はログイン済み
+        if (isset($_SESSION['store_id'])) {
+            return true;
+        }
+
+        // cookie内にトークンがあるかを確認する
+        if (isset($_COOKIE['LOGIN_SESS'])) {
+            // データベースで検索して復元
+            $DB = DB_Connect();
+            $sql = "SELECT
+                     *
+                    FROM
+                        `T_STORE_TERMINAL_SESSION`
+                    WHERE
+                        `login_session_id` = :login_session_id";
+            $sql = $DB -> prepare($sql);
+
+            $sql -> bindValue(':login_session_id', $_COOKIE['LOGIN_SESS'], PDO::PARAM_STR);
+            $sql -> execute();
+
+            $result = $sql -> fetch();
+
+            if ($result == true) {
+                $_SESSION['store_id'] = $result['store_id'];
+                return true;
+            }
+        }
+    }
+
     /**
      * Login
      * @param string $username

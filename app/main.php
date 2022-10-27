@@ -46,6 +46,8 @@
     // 公開・非公開モードの設定
     define('RUN_CONFIG', parse_ini_file(ROOT_PATH.'/config/status.ini', false));
 
+    storeAutoLogin();
+
     if (RUN_CONFIG['runnning_mode'] == 'private') {
         // httpサーバーとして起動していない場合は無視
         if (!isset($_SERVER['SERVER_NAME'])) {
