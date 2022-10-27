@@ -5,8 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>注文読み取り (会計側)</title>
-    <link rel="stylesheet" href="/css/store.css">
-    <link rel="stylesheet" href="/css/costomer.css">
+    <link rel="stylesheet" href="/css/store.css?<?php echo date('YmdHis');?>">
+    <link rel="stylesheet" href="/css/costomer.css?<?php echo date('YmdHis');?>">
     <script src="/js/jsQR.js"></script>
     <script src="/js/QRcode_reader.js"></script>
     <?php include(ROOT_PATH.'/template/fonts.html'); ?>
@@ -81,7 +81,74 @@
                     <spna class="total-price" id="order-total-price">0</spna>円
                 </div>
                 <span class="btn" id="order-detail-modal-passed">
-                    会計済み
+                    会計
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal hidden" id="order-payment">
+        <div class="content payment">
+            <div class="title">
+                会計処理
+            </div>
+            <div class="comment">
+                お預かりした金額を入力してください。
+                <div>
+                    全て記録として残るため、間違えのないように入力してください。
+                </div>
+            </div>
+            <div class="total">
+                <div class="label">
+                    合計: 
+                </div>
+                <span class="pay-total" id="payment-total">0</span>円
+            </div>
+            <div class="get">
+                <div class="label">
+                    お預かり: 
+                </div>
+                <input type="tel" id="payment-get-input">
+                円
+            </div>
+            <div class="change">
+                <div class="label">
+                    お釣り: 
+                </div>
+                <span class="pay-change" id="pay-change">0</span>円
+            </div>
+            <div class="buttons">
+                <span class="btn" id="payment-comp-trg">
+                    次へ
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal hidden" id="pickup-time-modal">
+        <div class="content request-time">
+            <div class="title">
+                時間指定
+            </div>
+            <div class="comment">
+                商品を受け取る時間を指定してください
+            </div>
+            <div class="selector">
+                受け取り希望時間: 
+                <select id="order_pickup_time">
+                    <option value="今すぐ">今すぐ</option>
+                    <option value="09:00">09:00</option>
+                </select>
+            </div>
+            <div class="comment detail">
+                商品を受け取る時間は20分以降から2時間後まで、5分単位で指定できます。
+                <div>
+                    混雑状況により希望時間より遅くなる可能性があることを伝達してください。
+                </div>
+            </div>
+            <div class="buttons">
+                <span class="btn">
+                    確定
                 </span>
             </div>
         </div>
@@ -115,6 +182,11 @@
                 orderDetailModal.target.classList.add('hidden');
             }
         };
+
+        let payment_data = {
+            get: 0,
+            total: 0
+        }
         
         window.addEventListener('DOMContentLoaded', () => {
             //
@@ -152,9 +224,35 @@
                 orderDetailModal.close();
                 Start();
             });
+
             let item_passed_trg = document.getElementById('order-detail-modal-passed');
-            item_passed_trg.addEventListener('click', () => {
-                paidSend();
+
+            item_passed_trg.addEventListener('click', async () => {
+                // 会計処理
+                await payment();
+
+                // 時間指定へ
+                let time = await pickUpTime();
+
+                paidSend(time);
+            });
+
+            // 会計処理のイベント
+            document.getElementById('payment-get-input').addEventListener('input', (e) => {
+                let price = e.currentTarget.value;
+
+                let match = price.match(/[0-9]*/);
+
+                if (match == null) {
+                    e.currentTarget.value = '';
+                }
+
+                e.currentTarget.value = match[0];
+                payment_data.get = Number(e.currentTarget.value);
+
+                // 残り金額を計算して表示
+                let balance = payment_data.get - payment_data.total;
+                document.getElementById('pay-change').innerText = balance;
             });
 
             // QRコードリーダーの読み取り開始
@@ -164,6 +262,7 @@
 
         function noOrders() {
             alert('注文が見つかりませんでした');
+            document.getElementById('loading').classList.add('hidden');
             Start();
         }
 
@@ -477,15 +576,13 @@
         }
 
         // 支払い済み送信
-        function paidSend() {
-            if (!confirm('会計処理を完了して注文を確定しますか?')) {
-                return false;
-            }
-
+        function paidSend(time) {
             document.getElementById('loading').classList.remove('hidden');
 
             let data = {
-                'price': Number(document.getElementById('order-total-price').textContent),
+                'price': payment_data.total,
+                'get': payment_data.get,
+                'time': time,
                 'order_id': order_id
             };
 
@@ -551,6 +648,113 @@
                         alert('注文を確定できませんでした。');
                     }
                 }
+            });
+        }
+
+        function pickUpTime() {
+            let modal = document.getElementById('pickup-time-modal');
+            // 時間を生成
+            let select = document.getElementById('order_pickup_time');
+            select.innerHTML = '';
+
+            let select_pls = document.createElement('option');
+            select_pls.appendChild(document.createTextNode('選択してください'));
+            select_pls.setAttribute('disabled', '');
+            select_pls.setAttribute('selected', '');
+            select_pls.setAttribute('value', 'null');
+            select.appendChild(select_pls);
+
+            let start_timecode = Math.ceil((new Date().getTime() / 1000 + (20 * 60)) / 60 / 5) * 60 * 5;
+            let limit_timecode = start_timecode + 2 * 60 * 60;
+
+            for (let t = start_timecode; t <= limit_timecode; t += 5 * 60) {
+                let time = new Date(t * 1000);
+                let timeString = `${('00' + time.getHours()).slice( -2 )}:${('00' + time.getMinutes()).slice( -2 )}`;
+                
+                let option = document.createElement('option');
+                option.setAttribute('value', timeString);
+                option.appendChild(document.createTextNode(timeString));
+
+                select.appendChild(option);
+            }
+
+            // モーダルの表示
+            modal.classList.remove('hidden');
+
+            return new Promise((resolve, reject) => {
+                // クリックされたときの処理
+                let btn = modal.querySelector('.buttons .btn');
+
+                let event = () => {
+                    let selector = document.getElementById('order_pickup_time');
+
+                    if (selector.value == 'null') {
+                        alert('時刻を選択してください');
+                        return false;
+                    }
+
+                    modal.classList.add('hidden');
+                    btn.removeEventListener('click', event);
+                    resolve(selector.value);
+                }
+
+                btn.addEventListener('click', event);
+            });
+
+        }
+
+        // 支払い処理
+        function payment() {
+            let total = Number(document.getElementById('order-total-price').textContent);
+
+            // データのセット
+            payment_data['total'] = total;
+            payment_data['get'] = 0;
+            
+            // 画面に描画
+            document.getElementById('payment-get-input').value = '';
+            document.getElementById('payment-total').innerText = total;
+            document.getElementById('pay-change').innerText = payment_data.get - payment_data.total;
+
+            // モーダルを表示
+            document.getElementById('order-payment').classList.remove('hidden');
+
+            let btn = document.getElementById('payment-comp-trg');
+
+            let btn_click_evt = () => {
+                let balance = payment_data.get - payment_data.total;
+
+                if (balance < 0) {
+                    alert('支払いが完了していません');
+                }
+
+                if (!confirm('お預かりとお釣りの金額はあたっていますか？\n操作は取り消すことができません。')) {
+                    return false;
+                }
+
+                btn.removeEventListener('click', btn_click_evt);
+
+                resolve();
+            };
+
+            return new Promise((resolve, reject) => {
+                btn.addEventListener('click', () => {
+                    let balance = payment_data.get - payment_data.total;
+
+                    if (balance < 0) {
+                        alert('支払いが完了していません');
+                        return false;
+                    }
+
+                    if (!confirm('お預かりとお釣りの金額はあたっていますか？\n操作は取り消すことができません。')) {
+                        return false;
+                    }
+
+                    btn.removeEventListener('click', btn_click_evt);
+
+                    document.getElementById('order-payment').classList.add('hidden');
+                    resolve();
+                });
             });
         }
     }());

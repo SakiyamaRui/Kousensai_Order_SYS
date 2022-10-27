@@ -71,7 +71,7 @@
             $DB = DB_Connect();
 
             // 支払いの確認
-            $sql = "SELECT `confirmed_order_flag` FROM `T_ORDER_INFORMATION_MAIN` WHERE ";
+            $sql = "SELECT `confirmed_order_flag` FROM `T_ORDER_INFORMATION_MAIN` WHERE `canceled` = 0 AND ";
             if ($type == 'token') {
                 $sql .= "`token` = :value";
             }else if ($type == 'order_id') {
@@ -82,6 +82,12 @@
             $sql -> bindValue(':value', $id, PDO::PARAM_STR);
             $sql -> execute();
             $paid = $sql -> fetch(PDO::FETCH_ASSOC);
+
+            if ($paid == false) {
+                echo 'false';
+                exit;
+            }
+
             if ($paid['confirmed_order_flag'] == 1) {
                 echo json_encode(Array(
                     'payment' => true,
@@ -147,24 +153,29 @@
             break;
         // 会計済み
         case 'paid':
-            if($_SERVER["REQUEST_METHOD"] != "POST"){
+            session::start();
+            if($_SERVER["REQUEST_METHOD"] != "POST" || !isset($_SESSION['store_id'])){
                 // 404
                 exit;
             }
 
             $DB = DB_Connect();
 
-            // 値段を変更
+            // 値段・受け取り時間を変更
             $price = $request['price'];
             $sql = "UPDATE
                         `T_ORDER_INFORMATION_MAIN`
                     SET
-                        `order_total_price` = :order_total
+                        `order_total_price` = :order_total,
+                        `pickup_time` = :request_time,
+                        `amount_received` = :amount_received
                     WHERE
                         `order_id` = :order_id";
             $sql = $DB -> prepare($sql);
             $sql -> bindValue(':order_total', $price, PDO::PARAM_INT);
             $sql -> bindValue(':order_id', $request['order_id'], PDO::PARAM_STR);
+            $sql -> bindValue(':request_time', $request['time'], PDO::PARAM_STR);
+            $sql -> bindValue(':amount_received', $request['get'], PDO::PARAM_INT);
             $sql -> execute();
 
             // 在庫の確認

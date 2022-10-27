@@ -255,6 +255,61 @@ body .modal .content.cart-appended .buttons span.btn {
   font-family: sans-serif;
   font-weight: 400;
 }
+body .modal .content.payment {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: calc(100% - 10px);
+  max-width: 450px;
+  box-sizing: border-box;
+}
+body .modal .content.payment .total,
+body .modal .content.payment .change {
+  width: 50%;
+  margin-left: auto;
+}
+body .modal .content.payment .get {
+  width: 100%;
+  padding-bottom: 3px;
+  border-bottom: 2px solid #000;
+}
+body .modal .content.payment .total,
+body .modal .content.payment .get,
+body .modal .content.payment .change {
+  display: flex;
+  align-items: flex-end;
+}
+body .modal .content.payment .total .label,
+body .modal .content.payment .get .label,
+body .modal .content.payment .change .label {
+  flex-shrink: 0;
+}
+body .modal .content.payment .total .pay-total,
+body .modal .content.payment .total input[type=tel],
+body .modal .content.payment .total .pay-change,
+body .modal .content.payment .get .pay-total,
+body .modal .content.payment .get input[type=tel],
+body .modal .content.payment .get .pay-change,
+body .modal .content.payment .change .pay-total,
+body .modal .content.payment .change input[type=tel],
+body .modal .content.payment .change .pay-change {
+  font-family: "Noto Sans JP", sans-serif;
+  font-weight: 700;
+  font-size: 23px;
+  padding: 0 3px;
+  margin-left: auto;
+  box-sizing: border-box;
+}
+body .modal .content.payment .total input[type=tel],
+body .modal .content.payment .get input[type=tel],
+body .modal .content.payment .change input[type=tel] {
+  width: calc(100% - 20px);
+  min-width: 0;
+  flex-shrink: 1;
+  margin: 2px 3px;
+  margin-left: 12px;
+  text-align: right;
+}
 body .modal .content.order-id, body .modal .content.order_list {
   display: flex;
   flex-direction: column;
