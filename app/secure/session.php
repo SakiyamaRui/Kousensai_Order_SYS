@@ -39,7 +39,16 @@
             // Cookieの中から取得
             if (isset($_COOKIE['SESS_TOKEN'])) {
                 $_SESSION['token'] = $_COOKIE['SESS_TOKEN'];
-                return $_SESSION['token'];
+
+                // セッションを検索
+                $sql = "SELECT * FROM `T_NOTICE_DATA` WHERE `session_token` = :session_token";
+                $sql = $DB -> prepare($sql);
+                $sql -> execute();
+                $result = $sql -> fetch();
+                
+                if ($result != false) {
+                    return $_SESSION['token'];
+                }
             }
 
             // 転送してフィンガープリントから値を取得
