@@ -275,7 +275,7 @@
             session::start();
             $DB = DB_Connect();
 
-            if (isset($_SESSION['store_id'])) {
+            if (isset($_SESSION['store_id']) && !isset($_GET['product_id'])) {
                 // 商品一覧を取得する
                 switch ($_SESSION['store_id']) {
                     case '会計局':
@@ -403,7 +403,7 @@
 
                     foreach($option_v as $option_value => $option_id) {
                         $opt_i = array_search($option_id, array_column($options_stock, 'option_id'));
-                        if ($opt_i == false) {
+                        if ($opt_i === false) {
                             $p_data['option'][$option_name][$option_value] = Array('stock' => '--');
                             continue;
                         }
@@ -414,6 +414,24 @@
                         );
                         $sum += ($options_stock[$opt_i]['current_stock'] == -1)? 0: $options_stock[$opt_i]['current_stock'];
                     }
+                }
+
+                // 一番要素が長いオプションを在庫数とする
+                $best_key = '';
+                $length = -1;
+                foreach ($p_data['option'] as $option_name => $option_v) {
+                    $len = count($option_v);
+
+                    if ($length < $len) {
+                        $length = $len;
+                        $best_key = $option_name;
+                        continue;
+                    }
+                }
+
+                $sum = 0;
+                foreach ($p_data['option'][$best_key] as $option_val => $option_id) {
+                    $sum += ($option_id['stock'] == '--')? 0: $option_id['stock'];
                 }
 
                 if (array_key_exists('stock', $p_data)) {
