@@ -5,13 +5,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{店舗名} 注文受付リスト</title>
-    <link rel="stylesheet" href="/css/store.css">
-    <link rel="stylesheet" href="/css/costomer.css">
+    <link rel="stylesheet" href="/css/store.css?<?php echo date('YmdHis');?>">
+    <link rel="stylesheet" href="/css/costomer.css?<?php echo date('YmdHis');?>">
     <?php include(ROOT_PATH.'/template/fonts.html'); ?>
     <script src="/js/push-request.js"></script>
 </head>
 <body class="order-list">
-    <!--ヘッダー-->
+    <!-- ヘッダー -->
+    <?php include(ROOT_PATH.'/template/store/header.html'); ?>
 
     <div class="title">
         注文一覧

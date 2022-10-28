@@ -106,6 +106,17 @@ body {
                 background-color: rgba(0, 0, 0, 0.1);
                 font-size: 13px;
                 min-height: 100px;
+                overflow: hidden;
+                position: relative;
+
+                img {
+                    width: 100%;
+                    object-fit: fill;
+                    position: absolute;
+                    transform: translate(-50%, -50%);
+                    top: 50%;
+                    left: 50%;
+                }
             }
 
             .info {
@@ -697,6 +708,12 @@ body {
             background-color: rgba(0, 0, 0, .1);
             overflow: hidden;
             border-radius: 3px;
+
+            img {
+                width: 100%;
+                height: 100%;
+                object-fit: fill
+            }
         }
 
         .product-info {

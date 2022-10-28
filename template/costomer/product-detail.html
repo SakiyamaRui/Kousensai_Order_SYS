@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $detail['product_name']; ?> | 沖縄高専祭2022</title>
 
-    <link rel="stylesheet" href="/css/costomer.css">
+    <link rel="stylesheet" href="/css/costomer.css?<?php echo date('YmdHis'); ?>">
     <!--Google Fonts-->
     <?php include(ROOT_PATH.'/template/fonts.html'); ?>
 </head>
@@ -15,7 +15,7 @@
 
     <div class="product-detail">
         <div class="img">
-            <?php echo ($detail['img'] == NULL)? 'No Image': '<img src="'.$data['img'].'">'; ?>
+            <?php echo ($detail['img'] == NULL)? 'No Image': '<img src="'.$detail['img'].'">'; ?>
         </div>
         <div class="product-info">
             <div class="store-name">
