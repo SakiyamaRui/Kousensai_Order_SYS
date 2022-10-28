@@ -33,6 +33,11 @@
 
         static function token_start($DB = null) {
             $DB_flag = false;
+            if ($DB == null) {
+                $DB = DB_Connect();
+                $DB_flag = true;
+            }
+
             self::start();
             $request = json_decode(file_get_contents('php://input'), 1);
 
@@ -43,6 +48,7 @@
                 // セッションを検索
                 $sql = "SELECT * FROM `T_NOTICE_DATA` WHERE `session_token` = :session_token";
                 $sql = $DB -> prepare($sql);
+                $sql -> bindValue(':session_token', $_COOKIE['SESS_TOKEN'], PDO::PARAM_STR);
                 $sql -> execute();
                 $result = $sql -> fetch();
                 
@@ -85,11 +91,6 @@
             // }
 
             // 新しいセッションの開始
-            if ($DB == null) {
-                $DB = DB_Connect();
-                $DB_flag = true;
-            }
-
             $sql = "INSERT INTO
                         `T_NOTICE_DATA` (
                             `session_token`,
