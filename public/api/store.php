@@ -458,4 +458,10 @@
             header('Content-Type: application/json');
             echo json_encode($data, JSON_UNESCAPED_UNICODE);
             break;
+        case 'calc':
+            $DB = DB_Connect();
+            $data = total_calc($DB);
+            header('Content-Type: application/json');
+            echo json_encode($data, JSON_UNESCAPED_UNICODE);
+            break;
     }
