@@ -188,6 +188,8 @@
             return Array();
         }
 
+        $product_id_list = array_values($product_id_list);
+
         $inClause = substr(str_repeat(',?', count($product_id_list)), 1);
         $sql = "SELECT
                     `product_id`,

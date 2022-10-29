@@ -721,6 +721,7 @@
 
             let btn = document.getElementById('payment-comp-trg');
 
+            let reso = null;
             let btn_click_evt = () => {
                 let balance = payment_data.get - payment_data.total;
 
@@ -733,12 +734,15 @@
                 }
 
                 btn.removeEventListener('click', btn_click_evt);
+                document.getElementById('order-payment').classList.add('hidden');
 
-                resolve();
+
+                reso();
             };
 
             return new Promise((resolve, reject) => {
-                btn.addEventListener('click', () => btn_click_evt);
+                reso = resolve;
+                btn.addEventListener('click', btn_click_evt);
             });
         }
     }());
